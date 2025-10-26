@@ -45,7 +45,7 @@ export function BottomNav() {
           if (item.primary) {
             return (
               <Link key={item.href} href={item.href} className="relative -mt-6">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-2xl shadow-elevated transition-transform active:scale-95">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-500 text-2xl shadow-elevated transition-transform active:scale-95">
                   {item.icon}
                 </div>
               </Link>

@@ -81,26 +81,26 @@ export default function JournalListPage() {
 
       {/* 필터 버튼 */}
       <div className="flex gap-2 overflow-x-auto pb-2">
-        <button className="flex-shrink-0 rounded-full bg-primary-500 px-4 py-2 text-sm font-medium text-white shadow-soft">
+        <button className="flex shrink-0 rounded-full bg-primary-500 px-4 py-2 text-sm font-medium text-white shadow-soft">
           전체
         </button>
-        <button className="flex-shrink-0 rounded-full bg-surface-elevated px-4 py-2 text-sm font-medium text-text-secondary">
+        <button className="flex shrink-0 rounded-full bg-surface-elevated px-4 py-2 text-sm font-medium text-text-secondary">
           수익률순
         </button>
-        <button className="flex-shrink-0 rounded-full bg-surface-elevated px-4 py-2 text-sm font-medium text-text-secondary">
+        <button className="flex shrink-0 rounded-full bg-surface-elevated px-4 py-2 text-sm font-medium text-text-secondary">
           감정별
         </button>
       </div>
 
       {/* 일지 카드 리스트 */}
-      <div className="space-y-4">
+      <div className="space-y-4  flex flex-col gap-2">
         {MOCK_JOURNALS.map((journal) => (
           <Link key={journal.id} href={ROUTES.JOURNAL.DETAIL(journal.id)}>
             <Card variant="elevated" padding="md" hoverable>
               <div className="flex items-start justify-between">
                 <div className="flex gap-4">
                   {/* 아이콘 */}
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-100 to-primary-200">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl  from-primary-100 to-primary-200">
                     <span className="text-2xl">{journal.emoji}</span>
                   </div>
 
@@ -137,7 +137,7 @@ export default function JournalListPage() {
               </div>
 
               {/* 미니 차트 (플레이스홀더) */}
-              <div className="mt-4 h-16 rounded-lg bg-gradient-to-r from-primary-50 to-transparent">
+              <div className="mt-4 h-16 rounded-lg from-primary-50 to-transparent">
                 <svg className="h-full w-full" viewBox="0 0 200 50" preserveAspectRatio="none">
                   <path
                     d={

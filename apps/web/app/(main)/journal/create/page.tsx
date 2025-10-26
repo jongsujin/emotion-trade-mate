@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { type Metadata } from 'next'
-import { Card, Button, Badge } from '@/components/common'
+import { Card, Button } from '@/components/common'
 import { EMOTION_DATA } from '@/constants'
 
 // export const metadata: Metadata = {

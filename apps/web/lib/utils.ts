@@ -79,7 +79,9 @@ export function getPlatform(): 'web' | 'ios' | 'android' {
   if (typeof window === 'undefined') return 'web'
 
   if ('Capacitor' in window) {
-    const platform = (window as any).Capacitor.getPlatform()
+    const platform = (
+      window as { Capacitor: { getPlatform: () => 'ios' | 'android' } }
+    ).Capacitor.getPlatform()
     return platform as 'ios' | 'android'
   }
 
@@ -89,7 +91,7 @@ export function getPlatform(): 'web' | 'ios' | 'android' {
 /**
  * 디바운스 함수
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {

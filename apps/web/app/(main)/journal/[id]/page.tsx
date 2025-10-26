@@ -8,6 +8,10 @@ interface JournalDetailPageProps {
 
 export async function generateMetadata({ params }: JournalDetailPageProps): Promise<Metadata> {
   // TODO: ID로 일지 정보 조회하여 종목명 가져오기
+  const { id } = await params
+
+  console.log('비동기 id 조회', id)
+
   return {
     title: `감정 타임라인 | EmotionTrade`,
     description: `투자 감정 기록 타임라인`,
@@ -21,11 +25,10 @@ export async function generateMetadata({ params }: JournalDetailPageProps): Prom
  * - 감정 요약 리스트 (메모 포함)
  * - AI 리포트 요청 버튼
  */
-export default function JournalDetailPage({ params }: JournalDetailPageProps) {
+export default async function JournalDetailPage({ params }: JournalDetailPageProps) {
   const { id } = params
 
-  // TODO: ID로 일지 데이터 조회
-  // const { data: journal } = useJournal(id)
+  console.log('비동기 id 조회', id)
 
   return (
     <div className="space-y-6">

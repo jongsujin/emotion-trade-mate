@@ -8,6 +8,10 @@ interface AddEmotionPageProps {
 
 export async function generateMetadata({ params }: AddEmotionPageProps): Promise<Metadata> {
   // TODO: ID로 일지 정보 조회하여 종목명 가져오기
+  const { id } = await params
+
+  console.log('비동기 id 조회', id)
+
   return {
     title: `감정 추가 | EmotionTrade`,
     description: `새로운 감정 기록 추가`,
@@ -20,11 +24,10 @@ export async function generateMetadata({ params }: AddEmotionPageProps): Promise
  * - 감정 선택 (이모지)
  * - 감정 메모 입력
  */
-export default function AddEmotionPage({ params }: AddEmotionPageProps) {
-  const { id } = params
+export default async function AddEmotionPage({ params }: AddEmotionPageProps) {
+  const { id } = await params
 
-  // TODO: ID로 일지 데이터 조회
-  // const { data: journal } = useJournal(id)
+  console.log('비동기 id 조회', id)
 
   return (
     <div className="space-y-6">

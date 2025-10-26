@@ -7,7 +7,10 @@ interface ReportPageProps {
 }
 
 export async function generateMetadata({ params }: ReportPageProps): Promise<Metadata> {
-  // TODO: ID로 일지 정보 조회하여 종목명 가져오기
+  const { id } = await params
+
+  console.log('비동기 id 조회', id)
+
   return {
     title: `AI 리포트 | EmotionTrade`,
     description: `AI 분석 리포트`,
@@ -20,11 +23,10 @@ export async function generateMetadata({ params }: ReportPageProps): Promise<Met
  * - 감정 트렌드 그래프
  * - PDF 다운로드 버튼
  */
-export default function ReportPage({ params }: ReportPageProps) {
-  const { id } = params
+export default async function ReportPage({ params }: ReportPageProps) {
+  const { id } = await params
 
-  // TODO: ID로 리포트 데이터 조회
-  // const { data: report } = useReport(id)
+  console.log('비동기 id 조회', id)
 
   return (
     <div className="space-y-6">
