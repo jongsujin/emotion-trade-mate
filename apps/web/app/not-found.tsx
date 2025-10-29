@@ -15,7 +15,7 @@ export default function NotFound() {
         <div className="mt-8 flex justify-center gap-4">
           <Link
             href={ROUTES.HOME}
-            className="rounded-lg bg-primary px-6 py-3 text-white hover:bg-primary/90"
+            className="bg-primary hover:bg-primary/90 rounded-lg px-6 py-3 text-white"
           >
             홈으로 돌아가기
           </Link>

@@ -29,14 +29,14 @@ export default function Error({ error, reset }: ErrorProps) {
 
         {process.env.NODE_ENV === 'development' && (
           <div className="mt-4 rounded-lg bg-red-50 p-4 text-left">
-            <p className="text-sm font-mono text-red-600">{error.message}</p>
+            <p className="font-mono text-sm text-red-600">{error.message}</p>
           </div>
         )}
 
         <div className="mt-8 flex justify-center gap-4">
           <button
             onClick={reset}
-            className="rounded-lg bg-primary px-6 py-3 text-white hover:bg-primary/90"
+            className="bg-primary hover:bg-primary/90 rounded-lg px-6 py-3 text-white"
           >
             다시 시도
           </button>

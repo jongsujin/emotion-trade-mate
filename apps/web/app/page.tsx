@@ -17,14 +17,14 @@ export default function Home() {
       {/* 헤더 */}
       <header className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-500">
+          <div className="bg-primary-500 flex h-8 w-8 items-center justify-center rounded-lg">
             <span className="text-lg">📊</span>
           </div>
           <span className="text-lg font-bold text-gray-900">EmotionTrade</span>
         </div>
         <Link
           href={ROUTES.LOGIN}
-          className="text-sm font-medium text-primary-600 hover:text-primary-700"
+          className="text-primary-600 hover:text-primary-700 text-sm font-medium"
         >
           로그인
         </Link>
@@ -35,10 +35,10 @@ export default function Home() {
         <div className="w-full max-w-md space-y-12">
           {/* 히어로 섹션 */}
           <div className="text-center">
-            <div className="mb-8 inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-primary-400 to-primary-600 shadow-lg">
+            <div className="from-primary-400 to-primary-600 mb-8 inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br shadow-lg">
               <span className="text-4xl">💭</span>
             </div>
-            <h1 className="mb-4 text-4xl font-bold leading-tight text-gray-900">
+            <h1 className="mb-4 text-4xl leading-tight font-bold text-gray-900">
               감정으로 보는
               <br />
               나의 투자 습관

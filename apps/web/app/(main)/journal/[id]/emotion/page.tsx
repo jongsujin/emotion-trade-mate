@@ -49,7 +49,7 @@ export default async function AddEmotionPage({ params }: AddEmotionPageProps) {
         <button className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 hover:bg-gray-50">
           취소
         </button>
-        <button className="flex-1 rounded-lg bg-primary px-4 py-2 text-white hover:bg-primary/90">
+        <button className="bg-primary hover:bg-primary/90 flex-1 rounded-lg px-4 py-2 text-white">
           저장
         </button>
       </div>

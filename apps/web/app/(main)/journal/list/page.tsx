@@ -48,7 +48,7 @@ const MOCK_JOURNALS = [
 ]
 
 /**
- * 감정 일지 리스트 페이지 - 토스 스타일
+ * 감정 일지 리스트 페이지 - 토스 스타일 (390px 최적화)
  */
 export default function JournalListPage() {
   // 통계 계산
@@ -62,9 +62,9 @@ export default function JournalListPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 헤더 */}
-      <div className="bg-white px-5 pb-6 pt-4">
+      <div className="bg-white px-4 pt-3 pb-5">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900">투자</h1>
+          <h1 className="text-lg font-bold text-gray-900">투자</h1>
           <Link
             href={ROUTES.JOURNAL.CREATE}
             className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -74,48 +74,42 @@ export default function JournalListPage() {
         </div>
 
         {/* 총 수익 */}
-        <div className="mt-8">
-          <p className="text-sm text-gray-600">총 수익</p>
-          <div className="mt-1 flex items-baseline gap-2">
+        <div className="mt-6">
+          <p className="text-xs text-gray-600">총 수익</p>
+          <div className="mt-1 flex items-baseline gap-1.5">
             <span
-              className={`text-4xl font-bold ${
-                totalProfit >= 0 ? 'text-gray-900' : 'text-red-500'
-              }`}
+              className={`text-3xl font-bold ${totalProfit >= 0 ? 'text-gray-900' : 'text-red-500'}`}
             >
               {totalProfit >= 0 ? '+' : ''}
               {totalProfit.toFixed(0)}
             </span>
-            <span className="text-lg text-gray-500">원</span>
+            <span className="text-base text-gray-500">원</span>
           </div>
-          <div className="mt-2 flex items-center gap-2">
-            <span
-              className={`text-base font-medium ${
-                avgReturn >= 0 ? 'text-red-500' : 'text-blue-500'
-              }`}
-            >
+          <div className="mt-1.5 flex items-center gap-2 text-sm">
+            <span className={`font-medium ${avgReturn >= 0 ? 'text-red-500' : 'text-blue-500'}`}>
               {avgReturn >= 0 ? '+' : ''}
               {avgReturn.toFixed(2)}%
             </span>
-            <span className="text-sm text-gray-500">{MOCK_JOURNALS.length}개 보유</span>
+            <span className="text-gray-500">{MOCK_JOURNALS.length}개 보유</span>
           </div>
         </div>
       </div>
 
       {/* 종목 리스트 */}
-      <div className="mt-2 space-y-2 px-5 pb-24">
+      <div className="space-y-2 px-4 pt-3 pb-24">
         {MOCK_JOURNALS.map((journal) => {
           const isProfit = journal.returnRate >= 0
           const profit = (journal.currentPrice - journal.buyPrice) * 10 // 가정: 10주
 
           return (
             <Link key={journal.id} href={ROUTES.JOURNAL.DETAIL(journal.id)}>
-              <div className="group rounded-2xl bg-white p-5 active:bg-gray-50">
+              <div className="group rounded-2xl bg-white p-4 active:bg-gray-50">
                 <div className="flex items-center justify-between">
                   {/* 왼쪽: 종목 정보 */}
                   <div className="flex items-center gap-3">
                     {/* 이모지 */}
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
-                      <span className="text-2xl">{journal.emoji}</span>
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100">
+                      <span className="text-xl">{journal.emoji}</span>
                     </div>
 
                     {/* 종목명 */}
@@ -146,7 +140,7 @@ export default function JournalListPage() {
                 </div>
 
                 {/* 가격 정보 */}
-                <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-3 text-sm">
+                <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 text-sm">
                   <span className="text-gray-500">현재가</span>
                   <span className="font-medium text-gray-900">
                     ${journal.currentPrice.toFixed(2)}
@@ -159,8 +153,8 @@ export default function JournalListPage() {
 
         {/* 새 일지 추가 버튼 */}
         <Link href={ROUTES.JOURNAL.CREATE}>
-          <div className="flex items-center justify-center gap-2 rounded-2xl bg-white p-5 text-gray-600 active:bg-gray-50">
-            <span className="text-xl">+</span>
+          <div className="flex items-center justify-center gap-2 rounded-2xl bg-white p-4 text-gray-600 active:bg-gray-50">
+            <span className="text-lg">+</span>
             <span className="text-sm font-medium">새 감정 일지 추가</span>
           </div>
         </Link>
@@ -168,13 +162,13 @@ export default function JournalListPage() {
 
       {/* 빈 상태 */}
       {MOCK_JOURNALS.length === 0 && (
-        <div className="flex min-h-[60vh] items-center justify-center px-5">
+        <div className="flex min-h-[60vh] items-center justify-center px-4">
           <div className="text-center">
-            <span className="text-6xl">📝</span>
+            <span className="text-5xl">📝</span>
             <p className="mt-4 text-base font-semibold text-gray-900">아직 기록이 없어요</p>
             <p className="mt-2 text-sm text-gray-600">첫 투자 감정을 기록해보세요</p>
             <Link href={ROUTES.JOURNAL.CREATE}>
-              <button className="mt-6 rounded-xl bg-primary-500 px-8 py-4 text-base font-semibold text-white active:bg-primary-600">
+              <button className="bg-primary-500 active:bg-primary-600 mt-6 rounded-xl px-8 py-3.5 text-base font-semibold text-white">
                 감정 일지 작성하기
               </button>
             </Link>
