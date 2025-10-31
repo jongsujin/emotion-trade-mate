@@ -62,7 +62,7 @@ export default function JournalListPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 헤더 */}
-      <div className="bg-white px-4 pt-3 pb-5">
+      <div className="mx-4 rounded-2xl bg-white px-4 pt-3 pb-5">
         <div className="flex items-center justify-between">
           <h1 className="text-lg font-bold text-gray-900">투자</h1>
           <Link
@@ -96,7 +96,7 @@ export default function JournalListPage() {
       </div>
 
       {/* 종목 리스트 */}
-      <div className="space-y-2 px-4 pt-3 pb-24">
+      <div className="flex flex-col gap-2 space-y-2 px-4 pt-3 pb-24">
         {MOCK_JOURNALS.map((journal) => {
           const isProfit = journal.returnRate >= 0
           const profit = (journal.currentPrice - journal.buyPrice) * 10 // 가정: 10주

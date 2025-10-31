@@ -34,7 +34,7 @@ export default function JournalCreatePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 헤더 */}
-      <div className="bg-white px-4 py-3.5">
+      <div className="mx-4 rounded-2xl bg-white px-4 py-3.5">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}

@@ -26,7 +26,7 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
       {/* 헤더 */}
-      <div className="bg-white px-4 py-3.5">
+      <div className="mx-4 rounded-2xl bg-white px-4 py-3.5">
         <h1 className="text-lg font-bold text-gray-900">설정</h1>
       </div>
 
@@ -34,7 +34,7 @@ export default function SettingsPage() {
         {/* 프로필 */}
         <div className="rounded-2xl bg-white p-4">
           <div className="flex items-center gap-3">
-            <div className="from-primary-400 to-primary-600 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br">
+            <div className="from-primary-400 to-primary-600 flex h-14 w-14 items-center justify-center rounded-full">
               <span className="text-2xl text-white">👤</span>
             </div>
             <div className="flex-1">

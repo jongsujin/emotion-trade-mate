@@ -33,9 +33,9 @@ export default function ReportSummaryPage() {
   const router = useRouter()
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50">
       {/* 헤더 */}
-      <div className="bg-white px-4 py-4">
+      <div className="mx-4 rounded-2xl bg-white px-4 py-4">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
