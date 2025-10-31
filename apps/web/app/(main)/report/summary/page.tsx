@@ -1,8 +1,9 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import router from 'next/router'
 import { ROUTES } from '@/constants'
+import TitleSection from '@/components/common/TitleSection'
 
 // Mock 데이터
 const MOCK_SUMMARY = {
@@ -30,22 +31,10 @@ const MOCK_SUMMARY = {
  * 전체 감정 요약 리포트 페이지 - 토스 스타일
  */
 export default function ReportSummaryPage() {
-  const router = useRouter()
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 헤더 */}
-      <div className="mx-4 rounded-2xl bg-white px-4 py-4">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.back()}
-            className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-gray-100"
-          >
-            <span className="text-xl">←</span>
-          </button>
-          <h1 className="text-lg font-bold text-gray-900">전체 감정 리포트</h1>
-        </div>
-      </div>
+      <TitleSection title="전체 감정 리포트" onClick={() => router.back()} />
 
       <div className="space-y-3 px-4 py-5">
         {/* 전체 요약 */}

@@ -2,6 +2,7 @@ import { type Metadata } from 'next'
 import Link from 'next/link'
 import { ROUTES } from '@/constants'
 import { Button } from '@/components/common'
+import Header from '@/components/common/Header'
 
 export const metadata: Metadata = {
   title: 'EmotionTrade | 감정 기반 투자 일지',
@@ -15,27 +16,14 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-white">
       {/* 헤더 */}
-      <header className="flex items-center justify-between px-6 py-4">
-        <div className="flex items-center gap-2">
-          <div className="bg-primary-500 flex h-8 w-8 items-center justify-center rounded-lg">
-            <span className="text-lg">📊</span>
-          </div>
-          <span className="text-lg font-bold text-gray-900">EmotionTrade</span>
-        </div>
-        <Link
-          href={ROUTES.LOGIN}
-          className="text-primary-600 hover:text-primary-700 text-sm font-medium"
-        >
-          로그인
-        </Link>
-      </header>
+      <Header />
 
       {/* 메인 콘텐츠 */}
       <main className="flex flex-1 flex-col items-center justify-center px-6 pb-12">
         <div className="w-full max-w-md space-y-12">
           {/* 히어로 섹션 */}
           <div className="text-center">
-            <div className="from-primary-400 to-primary-600 mb-8 inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br shadow-lg">
+            <div className="from-primary-400 to-primary-600 mb-8 inline-flex h-20 w-20 items-center justify-center rounded-3xl shadow-lg">
               <span className="text-4xl">💭</span>
             </div>
             <h1 className="mb-4 text-4xl leading-tight font-bold text-gray-900">
@@ -53,7 +41,7 @@ export default function Home() {
           {/* 주요 기능 */}
           <div className="space-y-4">
             <div className="flex gap-4">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-blue-50">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50">
                 <span className="text-2xl">😊</span>
               </div>
               <div>
@@ -63,7 +51,7 @@ export default function Home() {
             </div>
 
             <div className="flex gap-4">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-green-50">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-green-50">
                 <span className="text-2xl">📈</span>
               </div>
               <div>
@@ -73,7 +61,7 @@ export default function Home() {
             </div>
 
             <div className="flex gap-4">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-purple-50">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-purple-50">
                 <span className="text-2xl">🤖</span>
               </div>
               <div>

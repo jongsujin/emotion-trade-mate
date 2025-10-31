@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import TitleSection from '@/components/common/TitleSection'
 
 /**
  * 설정 페이지 - 토스 스타일 (390px 최적화)
@@ -26,9 +27,7 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
       {/* 헤더 */}
-      <div className="mx-4 rounded-2xl bg-white px-4 py-3.5">
-        <h1 className="text-lg font-bold text-gray-900">설정</h1>
-      </div>
+      <TitleSection title="설정" onClick={() => router.back()} />
 
       <div className="space-y-3 px-4 py-5">
         {/* 프로필 */}
