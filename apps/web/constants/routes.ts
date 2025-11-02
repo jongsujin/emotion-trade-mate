@@ -15,7 +15,7 @@ export const ROUTES = {
   JOURNAL: {
     LIST: '/journal/list',
     CREATE: '/journal/create',
-    DETAIL: (id: string) => `/journal/${id}`,
+    DETAIL: (id: number) => `/journal/${id}`,
     ADD_EMOTION: (id: string) => `/journal/${id}/emotion`,
   },
 

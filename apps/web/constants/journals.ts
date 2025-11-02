@@ -1,0 +1,40 @@
+import { JournalItemData } from '@/types/journals'
+
+export const MOCK_JOURNALS: JournalItemData[] = [
+  {
+    id: 1,
+    symbol: 'AAPL',
+    symbolName: 'Apple Inc.',
+    emoji: '😊',
+    emotionLabel: '자신감',
+    emotionCount: 5,
+    returnRate: 15.3,
+    currentPrice: 180.75,
+    buyPrice: 156.5,
+    buyDate: '2024.01.15',
+  },
+  {
+    id: 2,
+    symbol: 'TSLA',
+    symbolName: 'Tesla',
+    emoji: '😰',
+    emotionLabel: '불안',
+    emotionCount: 5,
+    returnRate: -2.35,
+    currentPrice: 720.5,
+    buyPrice: 737.82,
+    buyDate: '2024.02.20',
+  },
+  {
+    id: 3,
+    symbol: 'NVDA',
+    symbolName: 'NVIDIA',
+    emoji: '🤑',
+    emotionLabel: '욕심',
+    emotionCount: 5,
+    returnRate: 28.5,
+    currentPrice: 465.32,
+    buyPrice: 362.15,
+    buyDate: '2023.12.01',
+  },
+]
