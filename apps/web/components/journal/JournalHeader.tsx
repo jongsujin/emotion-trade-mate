@@ -1,8 +1,8 @@
+import { ROUTES } from '@/constants'
 import { JournalHeaderProps } from '@/types/journals'
 import Link from 'next/link'
 
 export default function JournalHeader({
-  href,
   totalProfit,
   avgReturn,
   holdingCount,
@@ -12,7 +12,7 @@ export default function JournalHeader({
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-bold text-gray-900">투자</h1>
         <Link
-          href={href}
+          href={ROUTES.JOURNAL.CREATE}
           className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200"
         >
           <span className="text-lg">+</span>

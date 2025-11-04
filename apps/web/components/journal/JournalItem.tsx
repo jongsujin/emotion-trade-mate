@@ -5,9 +5,9 @@ import Link from 'next/link'
  * 개별 일지 항목 컴포넌트
  * 종목 정보, 감정 기록 횟수, 수익률 표시
  */
-export default function JournalItem({ journal, href, quantity = 10 }: JournalItemProps) {
+export default function JournalItem({ journal, href }: JournalItemProps) {
   const isProfit = journal.returnRate >= 0
-  const profit = (journal.currentPrice - journal.buyPrice) * quantity
+  const profit = (journal.currentPrice - journal.buyPrice) * journal.quantity
 
   return (
     <Link href={href}>

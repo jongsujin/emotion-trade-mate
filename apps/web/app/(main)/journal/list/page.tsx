@@ -1,5 +1,4 @@
 import { type Metadata } from 'next'
-import { ROUTES } from '@/constants'
 import JournalHeader from '@/components/journal/JournalHeader'
 import JournalList from '@/components/journal/JournalList'
 import JournalEmptyState from '@/components/journal/JournalEmptyState'
@@ -25,12 +24,11 @@ export default function JournalListPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <JournalHeader
-        href={ROUTES.JOURNAL.CREATE}
         totalProfit={totalProfit}
         avgReturn={avgReturn}
         holdingCount={MOCK_JOURNALS.length}
       />
-      <JournalList journals={MOCK_JOURNALS} href={(id) => ROUTES.JOURNAL.DETAIL(id)} />
+      <JournalList journals={MOCK_JOURNALS} />
       {MOCK_JOURNALS.length === 0 && <JournalEmptyState />}
     </div>
   )
