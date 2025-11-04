@@ -96,6 +96,7 @@ const MOCK_REPORT = {
 export default function ReportDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const { id } = use(params)
+  console.log('id', id)
 
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
@@ -142,7 +143,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
         {/* 주요 감정 */}
         <div className="rounded-2xl bg-white p-4">
           <h3 className="text-base font-semibold text-gray-900">가장 많이 느낀 감정</h3>
-          <div className="mt-3 flex items-center justify-center gap-4 rounded-xl bg-gradient-to-br from-blue-50 to-purple-50 py-6">
+          <div className="bg-primary-50 mt-3 flex items-center justify-center gap-4 rounded-xl py-6">
             <span className="text-5xl">{MOCK_REPORT.dominantEmoji}</span>
             <div>
               <p className="text-xl font-bold text-gray-900">{MOCK_REPORT.dominantEmotion}</p>

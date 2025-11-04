@@ -4,9 +4,11 @@ import { use } from 'react'
 import Link from 'next/link'
 import { ROUTES } from '@/constants'
 import { MOCK_JOURNAL_DETAIL } from '@/constants/journals'
-import JournalDetailHeader from '@/components/journal/detail/JournalDetailHeader'
-import JournalDetailSummary from '@/components/journal/detail/JournalDetailSummary'
-import JournalDetailEmotionTimeLine from '@/components/journal/detail/JournalDetailEmotionTimeLine'
+import {
+  JournalDetailEmotionTimeLine,
+  JournalDetailHeader,
+  JournalDetailSummary,
+} from '@/components/journal/detail'
 
 /**
  * 종목별 감정 타임라인 페이지
