@@ -1,218 +1,63 @@
 'use client'
 
+import {
+  ReportDetailHeader,
+  ReportEmotions,
+  ReportStockInfo,
+  ReportEmotionBreakdown,
+  ReportKeywords,
+  ReportMemoTimeline,
+  ReportAIInsights,
+  ReportPdfDownload,
+} from '@/components/report/detail'
 import { MOCK_REPORT } from '@/constants/reports'
-import { useRouter } from 'next/navigation'
 import { use } from 'react'
 
 /**
  * AI 리포트 상세 페이지 - 메모 복기 기능 추가
  */
 export default function ReportDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const router = useRouter()
   const { id } = use(params)
   console.log('id', id)
 
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
       {/* 헤더 */}
-      <div className="bg-white px-4 py-3.5">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.back()}
-            className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-gray-100"
-          >
-            <span className="text-xl">←</span>
-          </button>
-          <h1 className="text-lg font-bold text-gray-900">AI 분석 리포트</h1>
-        </div>
-      </div>
+      <ReportDetailHeader />
 
       <div className="space-y-3 px-4 py-5">
         {/* 종목 정보 */}
-        <div className="rounded-2xl bg-white p-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100">
-              <span className="text-xl">{MOCK_REPORT.emoji}</span>
-            </div>
-            <div className="flex-1">
-              <h2 className="text-base font-bold text-gray-900">{MOCK_REPORT.symbol}</h2>
-              <p className="text-sm text-gray-600">{MOCK_REPORT.symbolName}</p>
-            </div>
-            <div className="text-right">
-              <div className="text-lg font-bold text-red-500">+{MOCK_REPORT.returnRate}%</div>
-              <div className="text-sm text-gray-600">+{MOCK_REPORT.profit.toLocaleString()}원</div>
-            </div>
-          </div>
-
-          <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 text-sm">
-            <span className="text-gray-600">분석 기간</span>
-            <span className="font-medium text-gray-900">{MOCK_REPORT.period}</span>
-          </div>
-          <div className="flex items-center justify-between pt-2 text-sm">
-            <span className="text-gray-600">기록 횟수</span>
-            <span className="font-medium text-gray-900">{MOCK_REPORT.totalRecords}회</span>
-          </div>
-        </div>
+        <ReportStockInfo
+          emoji={MOCK_REPORT.emoji}
+          symbol={MOCK_REPORT.symbol}
+          returnRate={MOCK_REPORT.returnRate}
+          profit={MOCK_REPORT.profit}
+          period={MOCK_REPORT.period}
+          totalRecords={MOCK_REPORT.totalRecords}
+          symbolName={MOCK_REPORT.symbolName}
+        />
 
         {/* 주요 감정 */}
-        <div className="rounded-2xl bg-white p-4">
-          <h3 className="text-base font-semibold text-gray-900">가장 많이 느낀 감정</h3>
-          <div className="bg-primary-50 mt-3 flex items-center justify-center gap-4 rounded-xl py-6">
-            <span className="text-5xl">{MOCK_REPORT.dominantEmoji}</span>
-            <div>
-              <p className="text-xl font-bold text-gray-900">{MOCK_REPORT.dominantEmotion}</p>
-              <p className="mt-1 text-sm text-gray-600">전체의 42%</p>
-            </div>
-          </div>
-        </div>
+        <ReportEmotions
+          dominantEmoji={MOCK_REPORT.dominantEmoji}
+          dominantEmotion={MOCK_REPORT.dominantEmotion}
+          percentage={MOCK_REPORT.emotionBreakdown[0]?.percentage || 0}
+        />
 
         {/* 감정 분포 */}
-        <div className="rounded-2xl bg-white p-4">
-          <h3 className="text-base font-semibold text-gray-900">감정 분포</h3>
-          <div className="mt-3 space-y-3">
-            {MOCK_REPORT.emotionBreakdown.map((item, idx) => (
-              <div key={idx}>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium text-gray-900">{item.emotion}</span>
-                  <span className="text-gray-600">
-                    {item.count}회 ({item.percentage}%)
-                  </span>
-                </div>
-                <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-gray-100">
-                  <div
-                    className="bg-primary-500 h-full rounded-full"
-                    style={{ width: `${item.percentage}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <ReportEmotionBreakdown emotionBreakdown={MOCK_REPORT.emotionBreakdown} />
 
         {/* 자주 쓴 키워드 */}
-        <div className="rounded-2xl bg-white p-4">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">💬</span>
-            <h3 className="text-base font-semibold text-gray-900">자주 쓴 단어</h3>
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {MOCK_REPORT.keywords.map((keyword, idx) => (
-              <div
-                key={idx}
-                className="rounded-full bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700"
-              >
-                {keyword.word} <span className="text-xs text-gray-500">{keyword.count}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <ReportKeywords keywords={MOCK_REPORT.keywords} />
 
         {/* 메모 타임라인 */}
-        <div className="rounded-2xl bg-white p-4">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">📝</span>
-            <h3 className="text-base font-semibold text-gray-900">내가 쓴 메모</h3>
-          </div>
-          <p className="mt-1 text-xs text-gray-500">시간순으로 복기해보세요</p>
-
-          <div className="mt-4 space-y-3">
-            {MOCK_REPORT.memoTimeline.map((entry, idx) => (
-              <div key={idx} className="rounded-xl bg-gray-50 p-3">
-                {/* 헤더: 날짜 + 감정 */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">{entry.emotion}</span>
-                    <div>
-                      <p className="text-xs font-medium text-gray-900">{entry.date}</p>
-                      <p className="text-xs text-gray-600">{entry.emotionLabel}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-gray-900">${entry.price}</p>
-                    <p
-                      className={`text-xs font-medium ${
-                        entry.priceChange >= 0 ? 'text-red-500' : 'text-blue-500'
-                      }`}
-                    >
-                      {entry.priceChange >= 0 ? '+' : ''}
-                      {entry.priceChange}%
-                    </p>
-                  </div>
-                </div>
-
-                {/* 메모 내용 */}
-                <p className="mt-2 text-sm leading-relaxed text-gray-700">{entry.memo}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <ReportMemoTimeline memoTimeline={MOCK_REPORT.memoTimeline} />
 
         {/* AI 인사이트 */}
-        <div className="rounded-2xl bg-white p-4">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🤖</span>
-            <h3 className="text-base font-semibold text-gray-900">AI 분석</h3>
-          </div>
-
-          <div className="mt-3 space-y-2">
-            {MOCK_REPORT.insights.map((insight, idx) => (
-              <div
-                key={idx}
-                className={`rounded-xl p-3 ${
-                  insight.type === 'positive'
-                    ? 'bg-green-50'
-                    : insight.type === 'warning'
-                      ? 'bg-orange-50'
-                      : 'bg-blue-50'
-                }`}
-              >
-                <div className="flex items-start gap-2">
-                  <span className="text-base">
-                    {insight.type === 'positive' ? '✅' : insight.type === 'warning' ? '⚠️' : '💡'}
-                  </span>
-                  <div className="flex-1">
-                    <p
-                      className={`text-sm font-semibold ${
-                        insight.type === 'positive'
-                          ? 'text-green-900'
-                          : insight.type === 'warning'
-                            ? 'text-orange-900'
-                            : 'text-blue-900'
-                      }`}
-                    >
-                      {insight.title}
-                    </p>
-                    <p
-                      className={`mt-1 text-xs ${
-                        insight.type === 'positive'
-                          ? 'text-green-700'
-                          : insight.type === 'warning'
-                            ? 'text-orange-700'
-                            : 'text-blue-700'
-                      }`}
-                    >
-                      {insight.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <ReportAIInsights insights={MOCK_REPORT.insights} />
 
         {/* 리포트 다운로드 */}
-        <button className="w-full rounded-2xl bg-white p-4 text-left active:bg-gray-50">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-xl">📄</span>
-              <div>
-                <p className="font-semibold text-gray-900">PDF로 저장</p>
-                <p className="text-sm text-gray-600">리포트를 다운로드하세요</p>
-              </div>
-            </div>
-            <span className="text-gray-400">›</span>
-          </div>
-        </button>
+        <ReportPdfDownload />
       </div>
     </div>
   )

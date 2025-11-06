@@ -1,4 +1,4 @@
-import { ReportSummaryProps } from '@/types/reports'
+import { ReportSummaryProps, ReportDetailData } from '@/types/reports'
 
 export const MOCK_SUMMARY: ReportSummaryProps = {
   totalRecords: 48,
@@ -21,7 +21,7 @@ export const MOCK_SUMMARY: ReportSummaryProps = {
   ],
 }
 
-export const MOCK_REPORT = {
+export const MOCK_REPORT: ReportDetailData = {
   symbol: 'AAPL',
   symbolName: 'Apple Inc.',
   emoji: '😊',
