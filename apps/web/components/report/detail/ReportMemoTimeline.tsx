@@ -42,4 +42,3 @@ export default function ReportMemoTimeline({ memoTimeline }: ReportMemoTimelineP
     </div>
   )
 }
-
