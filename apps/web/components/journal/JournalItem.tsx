@@ -48,7 +48,9 @@ export default function JournalItem({ journal, href }: JournalItemProps) {
         {/* 가격 정보 */}
         <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 text-sm">
           <span className="text-gray-500">현재가</span>
-          <span className="font-medium text-gray-900">${journal.currentPrice.toFixed(2)}</span>
+          <span className="font-medium text-gray-900">
+            ₩{journal.currentPrice.toLocaleString()}
+          </span>
         </div>
       </div>
     </Link>

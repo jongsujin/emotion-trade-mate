@@ -24,7 +24,7 @@ export default function JournalForm({
             <label className="text-xs text-gray-600">종목명</label>
             <input
               type="text"
-              placeholder="예: AAPL"
+              placeholder="예: 005930"
               value={formData.symbol}
               onChange={(e) => setFormData({ ...formData, symbol: e.target.value.toUpperCase() })}
               className="focus:border-primary-500 mt-1 w-full rounded-xl border border-gray-200 px-3.5 py-3 text-base focus:outline-none"
@@ -35,7 +35,7 @@ export default function JournalForm({
             <label className="text-xs text-gray-600">회사명 (선택)</label>
             <input
               type="text"
-              placeholder="예: Apple Inc."
+              placeholder="예: 삼성전자"
               value={formData.symbolName}
               onChange={(e) => setFormData({ ...formData, symbolName: e.target.value })}
               className="focus:border-primary-500 mt-1 w-full rounded-xl border border-gray-200 px-3.5 py-3 text-base focus:outline-none"
@@ -47,10 +47,10 @@ export default function JournalForm({
             <div>
               <label className="text-xs text-gray-600">거래 가격</label>
               <div className="relative mt-1">
-                <span className="absolute top-1/2 left-3.5 -translate-y-1/2 text-gray-500">$</span>
+                <span className="absolute top-1/2 left-3.5 -translate-y-1/2 text-gray-500">₩</span>
                 <input
                   type="number"
-                  placeholder="180.75"
+                  placeholder="75000"
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                   className="focus:border-primary-500 w-full rounded-xl border border-gray-200 py-3 pr-3.5 pl-7 text-base focus:outline-none"

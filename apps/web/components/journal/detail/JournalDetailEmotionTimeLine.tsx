@@ -40,14 +40,16 @@ export default function JournalDetailEmotionTimeLine({
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-gray-900">${record.price}</p>
+                  <p className="text-sm font-semibold text-gray-900">
+                    ₩{record.price.toLocaleString()}
+                  </p>
                   {idx < emotionHistory.length - 1 && (
                     <p
                       className={`text-xs font-medium ${
                         priceDiff >= 0 ? 'text-red-500' : 'text-blue-500'
                       }`}
                     >
-                      {priceDiff >= 0 ? '+' : ''}${priceDiff.toFixed(2)}
+                      {priceDiff >= 0 ? '+' : ''}₩{priceDiff.toLocaleString()}
                     </p>
                   )}
                 </div>

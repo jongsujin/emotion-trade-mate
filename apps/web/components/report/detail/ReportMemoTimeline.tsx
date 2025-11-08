@@ -22,7 +22,9 @@ export default function ReportMemoTimeline({ memoTimeline }: ReportMemoTimelineP
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-semibold text-gray-900">${entry.price}</p>
+                <p className="text-sm font-semibold text-gray-900">
+                  ₩{entry.price.toLocaleString()}
+                </p>
                 <p
                   className={`text-xs font-medium ${
                     entry.priceChange >= 0 ? 'text-red-500' : 'text-blue-500'

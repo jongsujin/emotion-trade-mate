@@ -111,3 +111,24 @@ export interface ReportDetailData {
   memoTimeline: MemoTimelineEntry[]
   keywords: KeywordItem[]
 }
+
+/**---------------------------------------------------- */
+
+export interface ReportDetailResponse {
+  id: number
+  journalId: number
+  symbol: string
+  symbolName: string
+  emoji: string
+  period: string
+  totalRecords: number
+  dominantEmotion: string
+  dominantEmoji: string
+  returnRate: number
+  profit: number
+  emotionBreakdown: EmotionBreakdownItem[]
+  insights: InsightItem[]
+  memoTimeline: MemoTimelineEntry[]
+  keywords: KeywordItem[]
+  createdAt: string
+}

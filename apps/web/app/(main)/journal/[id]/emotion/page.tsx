@@ -1,21 +1,17 @@
-import { type Metadata } from 'next'
+'use client'
+
+import { useState, use } from 'react'
+import { useRouter } from 'next/navigation'
+import { ROUTES, type EmotionType } from '@/constants'
+import TitleSection from '@/components/common/TitleSection'
+import { Button } from '@/components/common/Button'
+import { EmotionAddForm } from '@/components/journal/add-emotion'
+import type { EmotionAddFormData, EmotionAddRequest } from '@/types/journals'
+// import { API_ROUTES } from '@/constants/routes'
+// import { apiClient } from '@/lib/api'
 
 interface AddEmotionPageProps {
-  params: {
-    id: string
-  }
-}
-
-export async function generateMetadata({ params }: AddEmotionPageProps): Promise<Metadata> {
-  // TODO: ID로 일지 정보 조회하여 종목명 가져오기
-  const { id } = await params
-
-  console.log('비동기 id 조회', id)
-
-  return {
-    title: `감정 추가 | EmotionTrade`,
-    description: `새로운 감정 기록 추가`,
-  }
+  params: Promise<{ id: string }>
 }
 
 /**
@@ -23,35 +19,155 @@ export async function generateMetadata({ params }: AddEmotionPageProps): Promise
  * - 현재 시세 입력 or 자동 호출
  * - 감정 선택 (이모지)
  * - 감정 메모 입력
+ * - 추가 매수 수량 (선택)
  */
-export default async function AddEmotionPage({ params }: AddEmotionPageProps) {
-  const { id } = await params
+export default function AddEmotionPage({ params }: AddEmotionPageProps) {
+  const { id } = use(params)
+  const router = useRouter()
+  const [selectedEmotion, setSelectedEmotion] = useState<EmotionType | null>(null)
+  const [formData, setFormData] = useState<EmotionAddFormData>({
+    price: '',
+    quantity: '',
+    memo: '',
+  })
+  const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingPrice, setIsLoadingPrice] = useState(false)
 
-  console.log('비동기 id 조회', id)
+  // TODO: 일지 정보 조회 (종목명, 심볼 가져오기)
+  const journalSymbol = 'AAPL' // 임시
+  const journalSymbolName = 'Apple Inc.' // 임시
+
+  /**
+   * 현재가 자동 조회
+   */
+  const handleFetchPrice = async () => {
+    setIsLoadingPrice(true)
+    try {
+      // TODO: 주식 API 호출
+      // const response = await apiClient.get(API_ROUTES.STOCK.PRICE(journalSymbol))
+      // if (response.success && response.data) {
+      //   setFormData({ ...formData, price: response.data.currentPrice.toString() })
+      // }
+
+      // 임시: mock 데이터
+      setTimeout(() => {
+        setFormData({ ...formData, price: '75000' })
+        setIsLoadingPrice(false)
+      }, 500)
+    } catch (error) {
+      console.error('현재가 조회 실패:', error)
+      setIsLoadingPrice(false)
+    }
+  }
+
+  /**
+   * 폼 데이터를 API 요청 형식으로 변환
+   */
+  const convertFormToRequest = (): EmotionAddRequest => {
+    const request: EmotionAddRequest = {
+      emotionId: selectedEmotion!,
+    }
+
+    if (formData.price) {
+      request.price = Number(formData.price)
+    }
+
+    if (formData.quantity) {
+      request.quantity = Number(formData.quantity)
+      // 추가 매수 시 가격 필수
+      if (!formData.price) {
+        throw new Error('추가 매수 시 현재 가격을 입력해주세요')
+      }
+    }
+
+    if (formData.memo) {
+      request.memo = formData.memo
+    }
+
+    return request
+  }
+
+  /**
+   * 저장 핸들러
+   */
+  const handleSubmit = async () => {
+    if (!selectedEmotion) {
+      alert('감정을 선택해주세요')
+      return
+    }
+
+    // 추가 매수 수량이 있으면 가격 필수
+    if (formData.quantity && !formData.price) {
+      alert('추가 매수 시 현재 가격을 입력해주세요')
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      const requestData = convertFormToRequest()
+
+      // TODO: API 호출
+      // const response = await apiClient.post(
+      //   API_ROUTES.JOURNAL.ADD_EMOTION(id),
+      //   requestData
+      // )
+      // if (!response.success) {
+      //   alert(response.error || '감정 기록 추가에 실패했습니다')
+      //   return
+      // }
+
+      console.log('감정 기록 추가:', requestData)
+
+      // 성공 시 일지 상세 페이지로 이동
+      router.push(ROUTES.JOURNAL.DETAIL(Number(id)))
+    } catch (error) {
+      console.error('감정 기록 추가 실패:', error)
+      alert('감정 기록 추가 중 오류가 발생했습니다')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const isFormValid = selectedEmotion && formData.price
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">종목명 (로딩중...)</h1>
-        <p className="mt-2 text-gray-600">새로운 감정 기록 추가</p>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* 헤더 */}
+      <TitleSection title="감정 추가" onClick={() => router.back()} />
 
-      {/* TODO: 감정 추가 폼 컴포넌트 구현 */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="space-y-4">
-          <div className="text-center text-gray-500">💰 현재 시세 입력 영역 (구현 예정)</div>
-          <div className="text-center text-gray-500">😊 감정 선택 영역 (구현 예정)</div>
-          <div className="text-center text-gray-500">📝 메모 입력 영역 (구현 예정)</div>
+      {/* 폼 */}
+      <EmotionAddForm
+        symbol={journalSymbol}
+        symbolName={journalSymbolName}
+        formData={formData}
+        setFormData={setFormData}
+        selectedEmotion={selectedEmotion}
+        setSelectedEmotion={setSelectedEmotion}
+        onFetchPrice={handleFetchPrice}
+        isLoadingPrice={isLoadingPrice}
+      />
+
+      {/* 하단 고정 버튼 */}
+      <div className="px-5 pb-5">
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            variant="outline"
+            onClick={() => router.back()}
+            disabled={isLoading}
+            className="w-full"
+          >
+            취소
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleSubmit}
+            disabled={!isFormValid || isLoading}
+            className="w-full"
+          >
+            {isLoading ? '저장 중...' : '저장'}
+          </Button>
         </div>
-      </div>
-
-      <div className="flex gap-4">
-        <button className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 hover:bg-gray-50">
-          취소
-        </button>
-        <button className="bg-primary hover:bg-primary/90 flex-1 rounded-lg px-4 py-2 text-white">
-          저장
-        </button>
       </div>
     </div>
   )

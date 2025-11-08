@@ -1,4 +1,5 @@
 import type { EmotionType } from '@/constants/emotions'
+import { EmotionHistoryResponse } from './emotion'
 
 /**
  * @description 일지 리스트 페이지 헤더 컴포넌트 타입
@@ -183,3 +184,70 @@ export type JournalCreateFormToRequest = (
   formData: JournalCreateFormData,
   emotionId: EmotionType
 ) => JournalCreateRequest
+
+/**
+ * @description 감정 추가 폼 데이터
+ * @param price 현재 시세 (선택, 없으면 자동 조회)
+ * @param quantity 추가 매수 수량 (선택)
+ * @param memo 감정 메모 (선택)
+ */
+export interface EmotionAddFormData {
+  price: string
+  quantity: string
+  memo: string
+}
+
+/**
+ * @description 감정 추가 API 요청 데이터
+ * @param emotionId 감정 타입 (필수)
+ * @param price 현재 시세 (선택, quantity가 있으면 필수)
+ * @param quantity 추가 매수 수량 (선택)
+ * @param memo 감정 메모 (선택)
+ */
+export interface EmotionAddRequest {
+  emotionId: EmotionType
+  price?: number
+  quantity?: number
+  memo?: string
+}
+
+/**---------------------------------------------------- */
+
+export interface JournalListResponse {
+  id: number
+  symbol: string
+  symbolName: string
+  journalCount: number
+  currentPrice: number
+  profit: number
+  profitPercentage: number
+}
+
+export interface JournalCreateRequest {
+  symbol: string
+  buyPrice: number
+  quantity: number
+  emotionId: EmotionType
+  memo?: string
+  buyDate: string
+}
+
+export interface JournalUpdateRequest extends JournalCreateRequest {
+  id: number
+}
+
+export interface JournalDetailResponse {
+  id: number
+  symbol: string
+  symbolName: string
+  buyDate: string
+  buyPrice: number
+  initialQuantity: number
+  averageCost: number
+  totalCost: number
+  currentPrice: number
+  totalQuantity: number
+  profitPercentage: number
+  profit: number
+  emotionList: EmotionHistoryResponse[]
+}
