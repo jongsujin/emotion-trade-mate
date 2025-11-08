@@ -9,3 +9,8 @@ export interface PaginateResponse<T> extends ApiResponse<T> {
   hasNext: boolean
   hasPrevious: boolean
 }
+
+export interface DeleteResponse {
+  success: boolean
+  message: string
+}
