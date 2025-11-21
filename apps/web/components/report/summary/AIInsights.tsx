@@ -1,24 +1,21 @@
-export interface AIInsightsProps {
-  insights: string[]
-}
+import type { AIInsightsProps } from '@/types/reports'
 
 export default function AIInsights({ insights }: AIInsightsProps) {
   return (
-    <div className="rounded-2xl bg-white p-4">
-      <div className="flex items-center gap-2">
-        <span className="text-xl">🤖</span>
-        <h3 className="text-base font-semibold text-gray-900">핵심 인사이트</h3>
+    <div className="rounded-3xl bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+      <div className="mb-4 flex items-center gap-2">
+        <span className="text-2xl">🤖</span>
+        <h3 className="text-[17px] font-bold text-[#191F28]">AI 인사이트</h3>
       </div>
 
-      <div className="mt-3 space-y-2">
+      <div className="space-y-3">
         {insights.map((insight, idx) => (
-          <div key={idx} className="flex gap-2 rounded-xl bg-blue-50 p-3">
+          <div key={idx} className="flex gap-3 rounded-2xl bg-[#EFF6FF] p-4">
             <span className="text-lg">💡</span>
-            <p className="flex-1 text-sm text-blue-900">{insight}</p>
+            <p className="flex-1 text-sm leading-relaxed font-medium text-[#1E40AF]">{insight}</p>
           </div>
         ))}
       </div>
     </div>
   )
 }
-

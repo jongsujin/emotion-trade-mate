@@ -3,14 +3,13 @@ import { cn } from '@/lib/utils'
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode
-  variant?: 'default' | 'elevated' | 'flat'
+  variant?: 'default' | 'flat'
   padding?: 'none' | 'sm' | 'md' | 'lg'
   hoverable?: boolean
 }
 
 /**
- * 카드 컴포넌트
- * 레퍼런스 앱 스타일 적용
+
  */
 export function Card({
   children,
@@ -20,23 +19,22 @@ export function Card({
   className,
   ...props
 }: CardProps) {
-  const baseStyles = 'bg-surface-primary rounded-card transition-all duration-200'
+  const baseStyles = 'bg-white rounded-3xl transition-all duration-200 overflow-hidden'
 
   const variants = {
-    default: 'border border-gray-100 shadow-soft',
-    elevated: 'shadow-card',
-    flat: 'border border-gray-100',
+    default: 'shadow-[0_2px_8px_rgba(0,0,0,0.04)]',
+    flat: 'bg-[#F2F4F6]',
   }
 
   const paddings = {
     none: '',
-    sm: 'p-3',
+    sm: 'p-4',
     md: 'p-5',
     lg: 'p-6',
   }
 
   const hoverStyles = hoverable
-    ? 'hover:shadow-elevated hover:-translate-y-0.5 cursor-pointer active:scale-[0.98]'
+    ? 'active:scale-[0.98] active:bg-[#F9FAFB] cursor-pointer'
     : ''
 
   return (

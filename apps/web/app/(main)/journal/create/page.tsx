@@ -10,19 +10,15 @@ import { Button } from '@/components/common/Button'
 
 /**
  * 폼 데이터를 API 요청 데이터로 변환
- * handleSubmit에서 이미 빈 문자열 검증을 완료했으므로 여기서는 변환만 수행
  */
 function convertFormToRequest(
   formData: JournalCreateFormData,
   emotionId: EmotionType
 ): JournalCreateRequest {
-  // YYYY-MM-DD 형식으로 변환
   const today: string = new Date().toISOString().substring(0, 10)
-
   const buyPrice = Number(formData.price)
   const quantity = Number(formData.quantity)
 
-  // 변환 실패 시 예외 (이론적으로는 발생하지 않아야 하지만 안전장치)
   if (isNaN(buyPrice) || isNaN(quantity)) {
     throw new Error('가격 또는 수량이 유효한 숫자가 아닙니다')
   }
@@ -39,7 +35,7 @@ function convertFormToRequest(
 }
 
 /**
- * 감정 일지 작성 페이지 - 토스 스타일 (390px 최적화)
+ * 감정 일지 작성 페이지
  */
 export default function JournalCreatePage() {
   const router = useRouter()
@@ -58,24 +54,24 @@ export default function JournalCreatePage() {
       return
     }
 
-    // 폼 데이터를 API 요청 형식으로 변환
-    // selectedEmotion이 null이 아니므로 타입 단언 불필요 (위에서 이미 체크함)
-    const requestData: JournalCreateRequest = convertFormToRequest(formData, selectedEmotion)
-
-    console.log('Submit:', requestData)
-    // TODO: API 호출
-    // await createJournal(requestData)
-    router.push(ROUTES.JOURNAL.LIST)
+    try {
+      const requestData = convertFormToRequest(formData, selectedEmotion)
+      console.log('Submit:', requestData)
+      // TODO: API 호출
+      router.push(ROUTES.JOURNAL.LIST)
+    } catch (e) {
+      alert('입력값을 확인해주세요')
+    }
   }
 
   const isFormValid = selectedEmotion && formData.symbol && formData.price && formData.quantity
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* 헤더 */}
-      <TitleSection title="감정 일지 작성" onClick={() => router.back()} />
+    <div className="min-h-screen bg-[#F2F4F6] pb-24">
+      <div className="bg-[#F2F4F6] sticky top-0 z-10">
+        <TitleSection title="일지 작성" onClick={() => router.back()} />
+      </div>
 
-      {/* 폼 */}
       <JournalForm
         formData={formData}
         setFormData={setFormData}
@@ -84,17 +80,17 @@ export default function JournalCreatePage() {
       />
 
       {/* 하단 고정 버튼 */}
-      <div className="px-5">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-5 pb-8 max-w-[480px] mx-auto shadow-[0_-4px_12px_rgba(0,0,0,0.04)]">
         <Button
           onClick={handleSubmit}
           disabled={!isFormValid}
-          className={`w-full rounded-xl py-3.5 text-base font-semibold transition-colors ${
-            isFormValid
-              ? 'bg-primary-500 active:bg-primary-600 text-white'
-              : 'bg-gray-100 text-gray-400'
+          fullWidth
+          size="lg"
+          className={`text-[17px] font-bold ${
+            isFormValid ? 'shadow-lg shadow-[#3182F6]/30' : 'bg-[#E5E8EB] text-[#B0B8C1]'
           }`}
         >
-          {isFormValid ? '작성 완료' : '필수 항목을 입력해주세요'}
+          {isFormValid ? '작성 완료' : '내용을 입력해주세요'}
         </Button>
       </div>
     </div>

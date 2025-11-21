@@ -9,20 +9,17 @@ export const metadata: Metadata = {
   description: '투자 감정을 기록하고 AI 분석으로 패턴을 파악하세요',
 }
 
-/**
- * 온보딩 페이지
- */
 export default function Home() {
   return (
-    <div className="bg-background-primary flex min-h-screen flex-col">
+    <div className="bg-[#F2F4F6] min-h-screen flex flex-col pb-32">
       <Header />
-      <main className="flex flex-1 flex-col items-center justify-center px-6 pb-12">
-        <div className="w-full max-w-md space-y-12">
+      <main className="flex-1 px-5 flex flex-col items-center">
+        <div className="w-full max-w-md">
           <OnBoardingHero />
           <OnBoardingFeature />
-          <OnBoardingCta />
         </div>
       </main>
+      <OnBoardingCta />
     </div>
   )
 }

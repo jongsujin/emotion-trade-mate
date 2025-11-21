@@ -1,22 +1,19 @@
 export default function OnBoardingHero() {
   return (
-    <div className="w-full max-w-md space-y-12">
-      {/* 히어로 섹션 */}
-      <div className="text-center">
-        <div className="from-primary-400 to-primary-600 mb-8 inline-flex h-20 w-20 items-center justify-center rounded-3xl shadow-lg">
-          <span className="text-4xl">💭</span>
-        </div>
-        <h1 className="mb-4 text-4xl leading-tight font-bold text-gray-900">
-          감정으로 보는
-          <br />
-          나의 투자 습관
-        </h1>
-        <p className="text-lg text-gray-600">
-          투자 결정 순간의 감정을 기록하고
-          <br />
-          패턴을 분석해보세요
-        </p>
+    <div className="w-full pt-8 pb-8 text-center">
+      <div className="mb-8 inline-flex h-[88px] w-[88px] items-center justify-center rounded-[32px] bg-white shadow-[0_8px_16px_rgba(0,0,0,0.08)]">
+        <span className="text-5xl">💭</span>
       </div>
+      <h1 className="mb-5 text-[32px] font-bold leading-[1.3] text-[#191F28] tracking-tight">
+        투자의 순간,
+        <br />
+        <span className="text-[#3182F6]">감정</span>을 기록하세요
+      </h1>
+      <p className="text-[17px] leading-[1.6] text-[#6B7684]">
+        내 감정이 수익률에 미치는 영향을
+        <br />
+        AI가 분석해 드립니다.
+      </p>
     </div>
   )
 }

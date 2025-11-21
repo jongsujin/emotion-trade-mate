@@ -36,16 +36,33 @@ const NAV_ITEMS = [
 export function BottomNav() {
   const pathname = usePathname()
 
+  // BottomNav를 숨겨야 하는 페이지 조건
+  // 1. 일지 작성 페이지 (/journal/create)
+  // 2. 일지 상세 페이지 (/journal/숫자)
+  // 3. 감정 추가 페이지 (/journal/숫자/emotion)
+  // 4. 리포트 상세 페이지 (/report/문자열)
+  // 5. 온보딩 (/)
+  
+  const isCreatePage = pathname === ROUTES.JOURNAL.CREATE
+  // /journal/숫자 형식이면 상세 페이지 (create 제외)
+  const isJournalDetail = pathname.startsWith('/journal/') && pathname !== ROUTES.JOURNAL.LIST && pathname !== ROUTES.JOURNAL.CREATE
+  const isReportDetail = pathname.startsWith('/report/') && pathname !== ROUTES.REPORT.SUMMARY
+  const isHome = pathname === '/'
+
+  if (isCreatePage || isJournalDetail || isReportDetail || isHome) {
+    return null
+  }
+
   return (
-    <nav className="safe-area-bottom fixed right-0 bottom-0 left-0 z-50 border-t border-gray-100 bg-white/80 backdrop-blur-lg">
-      <div className="mx-auto flex max-w-lg items-center justify-around px-4 py-2">
+    <nav className="safe-area-bottom fixed right-0 bottom-0 left-0 z-40 border-t border-gray-100 bg-white/80 backdrop-blur-lg mx-auto max-w-[480px]">
+      <div className="flex items-center justify-around px-4 py-2">
         {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
+          const isActive = pathname === item.href
 
           if (item.primary) {
             return (
               <Link key={item.href} href={item.href} className="relative -mt-6">
-                <div className="bg-primary-500 shadow-elevated flex h-14 w-14 items-center justify-center rounded-full text-2xl transition-transform active:scale-95">
+                <div className="bg-[#3182F6] shadow-[0_8px_16px_rgba(49,130,246,0.4)] flex h-14 w-14 items-center justify-center rounded-full text-2xl transition-transform active:scale-95 border-4 border-[#F2F4F6]">
                   {item.icon}
                 </div>
               </Link>
@@ -58,11 +75,11 @@ export function BottomNav() {
               href={item.href}
               className={cn(
                 'flex flex-col items-center gap-1 rounded-xl px-3 py-2 transition-colors',
-                isActive ? 'text-primary-600' : 'text-text-tertiary hover:text-text-secondary'
+                isActive ? 'text-[#191F28]' : 'text-[#B0B8C1] hover:text-[#4E5968]'
               )}
             >
               <span className="text-2xl">{item.icon}</span>
-              <span className="text-xs font-medium">{item.label}</span>
+              <span className={`text-[10px] font-medium ${isActive ? 'font-bold' : ''}`}>{item.label}</span>
             </Link>
           )
         })}

@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  ReportDetailHeader,
   ReportEmotions,
   ReportStockInfo,
   ReportEmotionBreakdown,
@@ -12,20 +11,23 @@ import {
 } from '@/components/report/detail'
 import { MOCK_REPORT } from '@/constants/reports'
 import { use } from 'react'
+import { useRouter } from 'next/navigation'
+import TitleSection from '@/components/common/TitleSection'
 
 /**
- * AI 리포트 상세 페이지 - 메모 복기 기능 추가
+ * AI 리포트 상세 페이지
  */
 export default function ReportDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  console.log('id', id)
+  const router = useRouter()
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
-      {/* 헤더 */}
-      <ReportDetailHeader />
+    <div className="min-h-screen bg-[#F4F5F7] pb-24">
+      <div className="sticky top-0 z-10 bg-[#F4F5F7]/90 backdrop-blur-md">
+        <TitleSection title={`${MOCK_REPORT.symbol} 리포트`} onClick={() => router.back()} />
+      </div>
 
-      <div className="space-y-3 px-4 py-5">
+      <div className="space-y-4 px-5 pt-2">
         {/* 종목 정보 */}
         <ReportStockInfo
           emoji={MOCK_REPORT.emoji}

@@ -1,15 +1,15 @@
 export default function MyProfile() {
   return (
-    <div className="rounded-2xl bg-white p-4">
-      <div className="flex items-center gap-3">
-        <div className="from-primary-400 to-primary-600 flex h-14 w-14 items-center justify-center rounded-full">
-          <span className="text-2xl text-white">👤</span>
+    <div className="rounded-3xl bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+      <div className="flex items-center gap-4">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#E8F3FF]">
+          <span className="text-3xl">👤</span>
         </div>
         <div className="flex-1">
-          <p className="text-base font-bold text-gray-900">투자자</p>
-          <p className="text-sm text-gray-600">investor@example.com</p>
+          <h2 className="text-[19px] font-bold text-[#191F28]">투자자</h2>
+          <p className="text-sm text-[#8B95A1]">investor@example.com</p>
         </div>
-        <button className="rounded-lg bg-gray-100 px-3.5 py-2 text-sm font-medium text-gray-700 active:bg-gray-200">
+        <button className="rounded-xl bg-[#F2F4F6] px-4 py-2 text-[13px] font-semibold text-[#4E5968] active:bg-[#E5E8EB]">
           편집
         </button>
       </div>

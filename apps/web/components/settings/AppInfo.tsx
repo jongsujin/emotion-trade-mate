@@ -1,28 +1,22 @@
 export default function AppInfo() {
   return (
-    <div className="rounded-2xl bg-white">
-      <button className="flex w-full items-center justify-between border-b border-gray-100 p-4 active:bg-gray-50">
-        <div className="flex items-center gap-3">
-          <span className="text-xl">📱</span>
-          <p className="font-medium text-gray-900">앱 버전</p>
-        </div>
-        <span className="text-sm text-gray-600">1.0.0</span>
-      </button>
-
-      <button className="flex w-full items-center justify-between border-b border-gray-100 p-4 active:bg-gray-50">
+    <div className="rounded-3xl bg-white p-2 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+      <button className="flex w-full items-center justify-between rounded-2xl p-4 hover:bg-[#F2F4F6] active:scale-[0.98] transition-all">
         <div className="flex items-center gap-3">
           <span className="text-xl">📄</span>
-          <p className="font-medium text-gray-900">이용약관</p>
+          <p className="text-[15px] font-medium text-[#333D4B]">이용약관</p>
         </div>
-        <span className="text-gray-400">›</span>
+        <span className="text-[#B0B8C1]">›</span>
       </button>
 
-      <button className="flex w-full items-center justify-between p-4 active:bg-gray-50">
+      <div className="mx-4 h-[1px] bg-[#F2F4F6]" />
+
+      <button className="flex w-full items-center justify-between rounded-2xl p-4 hover:bg-[#F2F4F6] active:scale-[0.98] transition-all">
         <div className="flex items-center gap-3">
           <span className="text-xl">🔒</span>
-          <p className="font-medium text-gray-900">개인정보 처리방침</p>
+          <p className="text-[15px] font-medium text-[#333D4B]">개인정보 처리방침</p>
         </div>
-        <span className="text-gray-400">›</span>
+        <span className="text-[#B0B8C1]">›</span>
       </button>
     </div>
   )

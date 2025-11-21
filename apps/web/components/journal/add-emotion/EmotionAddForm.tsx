@@ -17,11 +17,7 @@ interface EmotionAddFormProps {
 }
 
 /**
- * 감정 추가 폼 컴포넌트
- * - 현재 시세 입력/자동 조회
- * - 감정 선택
- * - 메모 입력
- * - 추가 매수 수량 (선택)
+ * 감정 추가 폼 컴포넌트 (Toss Style)
  */
 export default function EmotionAddForm({
   symbol,
@@ -36,81 +32,75 @@ export default function EmotionAddForm({
   const [showAdditionalBuy, setShowAdditionalBuy] = useState(false)
 
   return (
-    <div className="space-y-3 px-4 py-5">
-      {/* 종목 정보 표시 */}
-      <div className="rounded-2xl bg-white p-4">
-        <h2 className="text-base font-semibold text-gray-900">종목 정보</h2>
-        <p className="mt-1 text-xs text-gray-500">감정을 기록할 종목</p>
-        <div className="mt-3">
-          <p className="text-sm font-medium text-gray-900">{symbolName}</p>
-          <p className="text-xs text-gray-600">{symbol}</p>
-        </div>
+    <div className="space-y-4 px-5 pt-2">
+      {/* 종목 정보 표시 (심플하게) */}
+      <div className="px-2">
+        <h2 className="text-2xl font-bold text-[#191F28]">{symbolName}</h2>
+        <p className="text-sm font-medium text-[#8B95A1]">{symbol}</p>
       </div>
 
       {/* 현재 시세 입력 */}
-      <div className="rounded-2xl bg-white p-4">
-        <h2 className="text-base font-semibold text-gray-900">현재 시세</h2>
-        <p className="mt-1 text-xs text-gray-500">오늘의 주가를 입력하세요</p>
-
-        <div className="mt-4 space-y-3">
-          <div>
-            <label className="text-xs text-gray-600">현재 가격</label>
-            <div className="relative mt-1">
-              <span className="absolute top-1/2 left-3.5 -translate-y-1/2 text-gray-500">₩</span>
-              <input
+      <div className="rounded-3xl bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+        <div className="flex justify-between items-center mb-4">
+             <h2 className="text-[17px] font-bold text-[#191F28]">현재 시세</h2>
+             {onFetchPrice && (
+                <button
+                    type="button"
+                    onClick={onFetchPrice}
+                    disabled={isLoadingPrice}
+                    className="text-sm font-semibold text-[#3182F6] hover:underline disabled:opacity-50"
+                >
+                    {isLoadingPrice ? '조회 중...' : '자동 조회'}
+                </button>
+             )}
+        </div>
+        
+        <div className="relative">
+            <input
                 type="number"
-                placeholder="75000"
+                placeholder="0"
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                className="focus:border-primary-500 w-full rounded-xl border border-gray-200 py-3 pr-3.5 pl-7 text-base focus:outline-none"
-              />
-            </div>
-          </div>
-
-          {onFetchPrice && (
-            <button
-              type="button"
-              onClick={onFetchPrice}
-              disabled={isLoadingPrice}
-              className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 active:bg-gray-200 disabled:opacity-50"
-            >
-              {isLoadingPrice ? '조회 중...' : '💰 현재가 자동 조회'}
-            </button>
-          )}
+                className="w-full border-b-2 border-[#E5E8EB] py-2 text-xl font-bold text-[#191F28] placeholder-[#B0B8C1] focus:border-[#3182F6] focus:outline-none bg-transparent transition-colors rounded-none"
+            />
+            <span className="absolute right-0 top-2.5 text-[#4E5968] font-medium">원</span>
         </div>
+        <p className="mt-3 text-sm text-[#8B95A1]">오늘의 주가를 입력하거나 자동 조회하세요</p>
       </div>
 
       {/* 감정 선택 */}
-      <div className="rounded-2xl bg-white p-4">
-        <h2 className="text-base font-semibold text-gray-900">감정 선택</h2>
-        <p className="mt-1 text-xs text-gray-500">지금 어떤 감정인가요?</p>
+      <div className="rounded-3xl bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+        <h2 className="text-[17px] font-bold text-[#191F28] mb-1">지금 기분이 어떠신가요?</h2>
+        <p className="text-sm text-[#8B95A1] mb-5">솔직한 감정이 정확한 분석을 만듭니다</p>
 
-        <div className="mt-4 grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-3 gap-3">
           {Object.values(EMOTION_DATA).map((emotion) => (
             <button
               key={emotion.id}
               type="button"
               onClick={() => setSelectedEmotion(emotion.id)}
-              className={`flex flex-col items-center gap-1.5 rounded-2xl p-3 transition-all ${
+              className={`relative flex flex-col items-center justify-center gap-2 rounded-2xl py-5 transition-all duration-200 ${
                 selectedEmotion === emotion.id
-                  ? 'bg-primary-50 ring-primary-500 ring-2'
-                  : 'bg-gray-50 active:bg-gray-100'
+                  ? 'bg-[#E8F3FF] ring-2 ring-[#3182F6] text-[#1B64DA]'
+                  : 'bg-[#F9FAFB] text-[#4E5968] hover:bg-[#F2F4F6]'
               }`}
             >
-              <span className="text-2xl">{emotion.emoji}</span>
-              <span className="text-xs font-medium text-gray-700">{emotion.label}</span>
+              <span className="text-3xl filter drop-shadow-sm mb-1">{emotion.emoji}</span>
+              <span className="text-sm font-bold">{emotion.label}</span>
             </button>
           ))}
         </div>
       </div>
 
-      {/* 추가 매수 (선택) */}
-      <div className="rounded-2xl bg-white p-4">
+      {/* 추가 매수 (선택) - 토글 스타일 */}
+      <div className="rounded-3xl bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-base font-semibold text-gray-900">추가 매수</h2>
-            <p className="mt-1 text-xs text-gray-500">오늘 추가로 매수하셨나요?</p>
+            <h2 className="text-[17px] font-bold text-[#191F28]">추가 매수 하셨나요?</h2>
+            <p className="text-sm text-[#8B95A1]">평단가가 자동으로 계산됩니다</p>
           </div>
+          
+          {/* iOS Style Toggle Switch */}
           <button
             type="button"
             onClick={() => {
@@ -119,64 +109,60 @@ export default function EmotionAddForm({
                 setFormData({ ...formData, quantity: '' })
               }
             }}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-              showAdditionalBuy
-                ? 'bg-primary-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            className={`relative h-8 w-14 rounded-full transition-colors duration-200 ease-in-out focus:outline-none ${
+                showAdditionalBuy ? 'bg-[#3182F6]' : 'bg-[#E5E8EB]'
             }`}
           >
-            {showAdditionalBuy ? '추가 매수함' : '추가 매수 안함'}
+            <span
+                className={`absolute left-[2px] top-[2px] h-7 w-7 rounded-full bg-white shadow transform transition-transform duration-200 ease-in-out ${
+                    showAdditionalBuy ? 'translate-x-6' : 'translate-x-0'
+                }`}
+            />
           </button>
         </div>
 
         {showAdditionalBuy && (
-          <div className="mt-4">
-            <label className="text-xs text-gray-600">추가 매수 수량</label>
-            <div className="relative mt-1">
+          <div className="mt-6 animate-fadeIn">
+            <div className="relative">
               <input
                 type="number"
-                placeholder="10"
+                placeholder="0"
                 value={formData.quantity}
                 onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                className="focus:border-primary-500 w-full rounded-xl border border-gray-200 px-3.5 py-3 text-base focus:outline-none"
+                className="w-full border-b-2 border-[#E5E8EB] py-2 text-xl font-bold text-[#191F28] placeholder-[#B0B8C1] focus:border-[#3182F6] focus:outline-none bg-transparent transition-colors rounded-none text-right pr-8"
               />
-              <span className="absolute top-1/2 right-3.5 -translate-y-1/2 text-gray-500">주</span>
+              <span className="absolute right-0 top-2.5 text-[#4E5968] font-medium">주</span>
             </div>
-            <p className="mt-2 text-xs text-gray-500">
-              💡 추가 매수 시 평균 단가가 자동으로 재계산됩니다
+            <p className="mt-2 text-right text-sm text-[#3182F6] font-medium">
+               매수 수량을 입력해주세요
             </p>
           </div>
         )}
       </div>
 
       {/* 메모 (선택) */}
-      <div className="rounded-2xl bg-white p-4">
-        <h2 className="text-base font-semibold text-gray-900">
-          메모 <span className="text-sm font-normal text-gray-500">(선택)</span>
-        </h2>
-        <p className="mt-1 text-xs text-gray-500">왜 그런 감정이었는지 기록해보세요</p>
-
+      <div className="rounded-3xl bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+        <h2 className="text-[17px] font-bold text-[#191F28] mb-4">메모하기</h2>
         <textarea
           value={formData.memo}
           onChange={(e) => setFormData({ ...formData, memo: e.target.value })}
-          placeholder="예: 주가가 급등해서 FOMO가 생겼다..."
+          placeholder="매수 이유나 당시 상황을 자유롭게 적어주세요."
           maxLength={200}
-          className="focus:border-primary-500 mt-3 h-20 w-full resize-none rounded-xl border border-gray-200 p-3 text-sm focus:outline-none"
+          className="w-full h-32 bg-[#F9FAFB] rounded-xl p-4 text-[15px] text-[#191F28] placeholder-[#B0B8C1] focus:outline-none focus:ring-2 focus:ring-[#3182F6]/20 resize-none"
         />
-        <div className="mt-2 text-right text-xs text-gray-500">{formData.memo.length}/200</div>
+        <div className="mt-2 text-right text-xs text-[#8B95A1] font-medium">
+          {formData.memo.length}/200
+        </div>
       </div>
 
       {/* 팁 카드 */}
-      <div className="rounded-2xl bg-blue-50 p-3.5">
-        <div className="flex gap-2.5">
-          <span className="text-lg">💡</span>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-blue-900">감정 기록이 쌓이면</p>
-            <p className="mt-0.5 text-xs text-blue-700">AI가 당신의 투자 패턴을 분석해드려요</p>
-          </div>
-        </div>
+      <div className="flex items-start gap-3 px-2 py-2 mb-8">
+        <span className="text-xl">💡</span>
+        <p className="text-sm text-[#6B7684] leading-relaxed">
+          <strong className="text-[#191F28]">AI 투자 비서</strong><br/>
+          감정 기록이 쌓일수록 더 정확한 투자 패턴을 분석해드려요.
+        </p>
       </div>
     </div>
   )
 }
-
