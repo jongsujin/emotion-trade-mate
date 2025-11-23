@@ -2,32 +2,66 @@
  * @description JournalsService
  */
 
-import { DatabaseService } from 'src/core/database/database.service';
+import { Injectable } from '@nestjs/common';
+import { JournalsRepository } from './journals.repository'; // Repository import
 import { JournalsEntity } from './entities/journals.entities';
+import { Pagination } from 'src/core/common/types/common';
+import { UpdateJournalDto } from './dto/dto';
 
+@Injectable()
 export class JournalsService {
-  constructor(private readonly databaseService: DatabaseService) {
-    this.databaseService = databaseService;
-  }
+  constructor(private readonly journalsRepository: JournalsRepository) {}
+
+  /**
+   * 일지 생성
+   */
   async createJournal(journal: JournalsEntity): Promise<JournalsEntity> {
-    const query = `
-    INSERT INTO journals (user_id, symbol, symbol_name, buy_price, initial_quantity, buy_date, total_quantity, total_cost, average_cost, price_updated_at)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-    RETURNING *
-    `;
-    const values = [
-      journal.userId,
-      journal.symbol,
-      journal.symbolName,
-      journal.buyPrice,
-      journal.initialQuantity,
-      journal.buyDate,
-      journal.totalQuantity,
-      journal.totalCost,
-      journal.averageCost,
-      journal.priceUpdatedAt,
-    ];
-    const result = await this.databaseService.query(query, values);
-    return result[0] as JournalsEntity;
+    // DB 저장은 Repository에게 위임
+    return await this.journalsRepository.create(journal);
+  }
+
+  /**
+   * 일지 목록 조회 (페이징)
+   */
+  async getJournals(
+    userId: number,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<Pagination<JournalsEntity>> {
+    // 1. 전체 개수 조회
+    const totalCount = await this.journalsRepository.countAll(userId);
+
+    // 2. 페이징 계산
+    const totalPages = Math.ceil(totalCount / limit);
+    const offset = (page - 1) * limit;
+
+    // 3. 데이터 조회
+    const content = await this.journalsRepository.findAll(
+      userId,
+      limit,
+      offset,
+    );
+
+    // 4. Pagination 객체 반환
+    return {
+      content,
+      hasNext: page < totalPages,
+      hasPrevious: page > 1,
+      totalCount,
+      totalPages,
+      page,
+    };
+  }
+
+  async updateJournal(
+    userId: number,
+    journalId: number,
+    dto: UpdateJournalDto,
+  ): Promise<JournalsEntity | null> {
+    return await this.journalsRepository.update(userId, journalId, dto);
+  }
+
+  async deleteJournal(userId: number, journalId: number): Promise<boolean> {
+    return await this.journalsRepository.delete(userId, journalId);
   }
 }

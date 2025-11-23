@@ -5,29 +5,15 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/core/database/database.service';
 import { JournalsEntity } from './entities/journals.entities';
-
-const INSERT_JOURNAL_QUERY = /* sql */ `
-  INSERT INTO journals (
-    user_id, symbol, symbol_name, buy_price, initial_quantity, 
-    buy_date, total_quantity, total_cost, average_cost, price_updated_at
-  )
-  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-  RETURNING *
-`;
-
-const FIND_ALL_JOURNALS_QUERY = /* sql */ `
-  SELECT * FROM journals WHERE user_id = $1
-`;
-
-const FIND_BY_ID_JOURNAL_QUERY = /* sql */ `
-  SELECT * FROM journals WHERE user_id = $1 AND id = $2
-`;
-
-const DELETE_JOURNAL_QUERY = `
-  DELETE FROM journals 
-  WHERE user_id = $1 AND id = $2
-  RETURNING id
-`;
+import {
+  COUNT_ALL_JOURNALS_QUERY,
+  DELETE_JOURNAL_QUERY,
+  FIND_ALL_JOURNALS_QUERY,
+  FIND_BY_ID_JOURNAL_QUERY,
+  INSERT_JOURNAL_QUERY,
+  UPDATE_JOURNAL_QUERY,
+} from 'src/core/database/sql/journals/query';
+import { UpdateJournalDto } from './dto/dto';
 
 @Injectable()
 export class JournalsRepository {
@@ -52,14 +38,26 @@ export class JournalsRepository {
     return result[0] as JournalsEntity;
   }
 
-  async findAll(userId: number): Promise<JournalsEntity[]> {
-    const query = FIND_ALL_JOURNALS_QUERY;
-    const values = [userId];
+  async findAll(
+    userId: number,
+    limit: number,
+    offset: number,
+  ): Promise<JournalsEntity[]> {
+    const values = [userId, limit, offset];
     const result = await this.databaseService.query<JournalsEntity>(
-      query,
+      FIND_ALL_JOURNALS_QUERY,
       values,
     );
     return result;
+  }
+
+  async countAll(userId: number): Promise<number> {
+    const values = [userId];
+    const result = await this.databaseService.query<{ count: string }>(
+      COUNT_ALL_JOURNALS_QUERY,
+      values,
+    );
+    return parseInt(result[0].count, 10); // COUNT 결과는 문자열로 올 수 있음
   }
 
   async findById(
@@ -68,6 +66,27 @@ export class JournalsRepository {
   ): Promise<JournalsEntity | null> {
     const query = FIND_BY_ID_JOURNAL_QUERY;
     const values = [usersId, journalId];
+    const result = await this.databaseService.queryOne<JournalsEntity>(
+      query,
+      values,
+    );
+    return result;
+  }
+
+  async update(
+    userId: number,
+    journalId: number,
+    dto: UpdateJournalDto,
+  ): Promise<JournalsEntity | null> {
+    const query = UPDATE_JOURNAL_QUERY;
+    const values = [
+      userId,
+      journalId,
+      dto.buyPrice,
+      dto.quantity,
+      dto.emotionId,
+      dto.memo,
+    ];
     const result = await this.databaseService.queryOne<JournalsEntity>(
       query,
       values,
