@@ -1,0 +1,60 @@
+import { Injectable } from '@nestjs/common';
+import { DatabaseService } from 'src/core/database/database.service';
+import { UsersEntity } from './entities/users.entity';
+import {
+  FIND_BY_EMAIL_USER_QUERY,
+  FIND_BY_ID_USER_QUERY,
+  CREATE_USER_QUERY,
+  UPDATE_USER_QUERY,
+} from 'src/core/database/sql/users/query';
+
+@Injectable()
+export class UsersRepository {
+  constructor(private readonly databaseService: DatabaseService) {
+    this.databaseService = databaseService;
+  }
+
+  async findByEmail(email: string): Promise<UsersEntity | null> {
+    const query = FIND_BY_EMAIL_USER_QUERY;
+    const values = [email];
+    const result = await this.databaseService.queryOne<UsersEntity>(
+      query,
+      values,
+    );
+    return result;
+  }
+
+  async create(
+    email: string,
+    passwordHash: string,
+    nickname: string,
+  ): Promise<UsersEntity | null> {
+    const query = CREATE_USER_QUERY;
+    const values = [nickname, email, passwordHash];
+    const result = await this.databaseService.queryOne<UsersEntity>(
+      query,
+      values,
+    );
+    return result ?? null;
+  }
+
+  async findById(id: number): Promise<UsersEntity | null> {
+    const query = FIND_BY_ID_USER_QUERY;
+    const values = [id];
+    const result = await this.databaseService.queryOne<UsersEntity>(
+      query,
+      values,
+    );
+    return result ?? null;
+  }
+
+  async update(user: UsersEntity): Promise<UsersEntity | null> {
+    const query = UPDATE_USER_QUERY;
+    const values = [user.email, user.passwordHash];
+    const result = await this.databaseService.queryOne<UsersEntity>(
+      query,
+      values,
+    );
+    return result ?? null;
+  }
+}

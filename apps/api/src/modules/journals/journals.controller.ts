@@ -11,7 +11,7 @@ import {
 import { JournalsService } from './journals.service';
 import { JournalsEntity } from './entities/journals.entities';
 import { ApiResponse, Pagination } from 'src/core/common/types/common';
-import { UpdateJournalDto } from './dto/dto';
+import { UpdateJournalDto } from '../../core/dto/journals.dto';
 
 @Controller('journals')
 export class JournalsController {

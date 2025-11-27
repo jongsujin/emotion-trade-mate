@@ -6,7 +6,7 @@ import { Injectable } from '@nestjs/common';
 import { JournalsRepository } from './journals.repository'; // Repository import
 import { JournalsEntity } from './entities/journals.entities';
 import { Pagination } from 'src/core/common/types/common';
-import { UpdateJournalDto } from './dto/dto';
+import { UpdateJournalDto } from '../../core/dto/journals.dto';
 
 @Injectable()
 export class JournalsService {

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { UsersRepository } from './users.repository';
+import { UsersEntity } from './entities/users.entity';
 
 export interface User {
   id: number;
@@ -13,27 +15,14 @@ export interface User {
 
 @Injectable()
 export class UsersService {
-  private readonly users = [
-    {
-      id: 1,
-      nickname: 'john',
-      email: 'john@example.com',
-      password: 'changeme',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 2,
-      nickname: 'maria',
-      email: 'maria@example.com',
-      password: 'guess',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ];
+  constructor(private readonly usersRepository: UsersRepository) {}
 
-  findOne(email: string): User | undefined {
-    return this.users.find((user) => user.email === email);
+  async findByEmail(email: string): Promise<UsersEntity | null> {
+    return this.usersRepository.findByEmail(email);
+  }
+
+  async create(email: string, passwordHash: string, nickname: string) {
+    return this.usersRepository.create(email, passwordHash, nickname);
   }
 
   // 1. 회원가입 시 비밀번호 암호화

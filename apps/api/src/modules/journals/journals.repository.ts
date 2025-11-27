@@ -13,7 +13,7 @@ import {
   INSERT_JOURNAL_QUERY,
   UPDATE_JOURNAL_QUERY,
 } from 'src/core/database/sql/journals/query';
-import { UpdateJournalDto } from './dto/dto';
+import { UpdateJournalDto } from '../../core/dto/journals.dto';
 
 @Injectable()
 export class JournalsRepository {
