@@ -9,3 +9,14 @@ export interface SignupFormData {
   password: string
   confirmPassword: string
 }
+
+export interface SignupRequest {
+  email: string
+  nickname: string
+  password: string
+}
+
+export interface AuthTokens {
+  accessToken: string
+  refreshToken: string
+}

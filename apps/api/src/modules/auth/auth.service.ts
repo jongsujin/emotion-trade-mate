@@ -34,10 +34,7 @@ export class AuthService {
     if (!user)
       throw new UnauthorizedException('이메일 또는 비밀번호가 잘못되었습니다.');
 
-    const ok = await this.usersService.comparePassword(
-      password,
-      user.passwordHash,
-    );
+    const ok = await this.usersService.comparePassword(password, user.password);
     if (!ok)
       throw new UnauthorizedException('이메일 또는 비밀번호가 잘못되었습니다.');
 
@@ -51,12 +48,12 @@ export class AuthService {
 
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_ACCESS_SECRET,
-      expiresIn: Number(process.env.JWT_ACCESS_EXPIRES ?? '1h'),
+      expiresIn: '1h',
     });
 
     const refreshToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: Number(process.env.JWT_REFRESH_EXPIRES ?? '7d'),
+      expiresIn: '7d',
     });
 
     return { accessToken, refreshToken };

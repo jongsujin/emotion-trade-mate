@@ -26,11 +26,11 @@ export class UsersRepository {
 
   async create(
     email: string,
-    passwordHash: string,
+    password: string,
     nickname: string,
   ): Promise<UsersEntity | null> {
     const query = CREATE_USER_QUERY;
-    const values = [nickname, email, passwordHash];
+    const values = [nickname, email, password];
     const result = await this.databaseService.queryOne<UsersEntity>(
       query,
       values,
@@ -50,7 +50,7 @@ export class UsersRepository {
 
   async update(user: UsersEntity): Promise<UsersEntity | null> {
     const query = UPDATE_USER_QUERY;
-    const values = [user.email, user.passwordHash];
+    const values = [user.email, user.password];
     const result = await this.databaseService.queryOne<UsersEntity>(
       query,
       values,

@@ -21,8 +21,8 @@ export class UsersService {
     return this.usersRepository.findByEmail(email);
   }
 
-  async create(email: string, passwordHash: string, nickname: string) {
-    return this.usersRepository.create(email, passwordHash, nickname);
+  async create(email: string, password: string, nickname: string) {
+    return this.usersRepository.create(email, password, nickname);
   }
 
   // 1. 회원가입 시 비밀번호 암호화

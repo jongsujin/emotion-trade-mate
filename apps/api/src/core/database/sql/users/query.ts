@@ -7,14 +7,14 @@ export const FIND_BY_ID_USER_QUERY = /* sql */ `
 `;
 
 export const CREATE_USER_QUERY = /* sql */ `
-  INSERT INTO users (nickname, email, password_hash)
+  INSERT INTO users (nickname, email, password)
   VALUES ($1, $2, $3)
   RETURNING *
 `;
 
 export const UPDATE_USER_QUERY = /* sql */ `
   UPDATE users
-  SET nickname = COALESCE($2, nickname), email = COALESCE($3, email), password_hash = COALESCE($4, password_hash)
+  SET nickname = COALESCE($2, nickname), email = COALESCE($3, email), password = COALESCE($4, password)
   WHERE id = $1
   RETURNING *
 `;
