@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/common/Button'
+import { signup } from '@/features/auth'
 import { SignupFormData } from '@/types/auth'
 
 /**
@@ -57,24 +58,20 @@ export default function SignupForm() {
     setIsLoading(true)
 
     try {
-      // TODO: API 호출
-      // const response = await apiClient.post('/auth/signup', {
-      //   email: formData.email,
-      //   nickname: formData.nickname,
-      //   password: formData.password,
-      // })
-      // if (!response.success) {
-      //   setError(response.error || '회원가입에 실패했습니다')
-      //   return
-      // }
-
-      console.log('Signup:', {
+      const response = await signup({
         email: formData.email,
         nickname: formData.nickname,
         password: formData.password,
       })
-      // 임시: 성공 시 로그인 페이지로 이동
-      router.push('/login')
+
+      if (!response.success || !response.data) {
+        setError(response.error || '회원가입에 실패했습니다')
+        return
+      }
+
+      // TODO: 토큰 저장 및 자동 로그인 로직 연결
+      console.log('Signup success', response.data)
+      router.push('/login?signup=success')
     } catch (err) {
       setError(`회원가입 중 오류가 발생했습니다: ${err}`)
     } finally {
