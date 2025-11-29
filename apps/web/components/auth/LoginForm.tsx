@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/common/Button'
 import { LoginFormData } from '@/types/auth'
+import { login } from '@/features/auth'
 
 /**
  * 로그인 폼 컴포넌트
@@ -20,30 +21,16 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-
-    // 간단한 유효성 검사
-    if (!formData.email || !formData.password) {
-      setError('이메일과 비밀번호를 입력해주세요')
-      return
-    }
-
-    if (!formData.email.includes('@')) {
-      setError('올바른 이메일 형식을 입력해주세요')
-      return
-    }
-
     setIsLoading(true)
 
     try {
-      // TODO: API 호출
-      // const response = await apiClient.post('/auth/login', formData)
-      // if (!response.success) {
-      //   setError(response.error || '로그인에 실패했습니다')
-      //   return
-      // }
+      const response = await login(formData)
+      if (!response.success || !response.data) {
+        setError(response.error || '로그인에 실패했습니다')
+        return
+      }
 
-      console.log('Login:', formData)
-      // 임시: 성공 시 홈으로 이동
+      console.log('Login:', response.data)
       router.push('/')
     } catch (err) {
       setError(`로그인 중 오류가 발생했습니다: ${err}`)
