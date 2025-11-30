@@ -38,4 +38,13 @@ export class AuthController {
       message: '로그인 성공',
     };
   }
+
+  @Post('logout')
+  logout(@Res({ passthrough: true }) res: express.Response) {
+    this.authService.logout(res);
+    return {
+      success: true,
+      message: '로그아웃 성공',
+    };
+  }
 }
