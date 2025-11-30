@@ -1,8 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(cookieParser()); // 쿠키 파서 사용
 
   const allowedOrigins = process.env.CORS_ORIGIN?.split(',').map((origin) =>
     origin.trim(),

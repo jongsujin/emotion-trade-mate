@@ -26,7 +26,7 @@ export class AuthService {
       throw new InternalServerErrorException('회원가입에 실패했습니다.');
     }
 
-    return this.issueTokens(user);
+    return { message: '회원가입 성공', success: true };
   }
 
   async login(email: string, password: string) {
