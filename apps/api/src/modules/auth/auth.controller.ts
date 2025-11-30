@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
 import type express from 'express';
 import { AuthService } from './auth.service';
 import { SignupDto } from 'src/core/dto/signup.dto';
@@ -40,8 +40,8 @@ export class AuthController {
   }
 
   @Post('logout')
-  async logout(@Res({ passthrough: true }) res: express.Response) {
-    await this.authService.logout(res);
+  logout(@Res({ passthrough: true }) res: express.Response) {
+    this.authService.logout(res);
     return {
       success: true,
       message: '로그아웃 성공',
