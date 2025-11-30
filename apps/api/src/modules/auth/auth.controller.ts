@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import type express from 'express';
 import { AuthService } from './auth.service';
 import { SignupDto } from 'src/core/dto/signup.dto';
@@ -36,6 +36,15 @@ export class AuthController {
     return {
       success: true,
       message: '로그인 성공',
+    };
+  }
+
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) res: express.Response) {
+    await this.authService.logout(res);
+    return {
+      success: true,
+      message: '로그아웃 성공',
     };
   }
 }
