@@ -20,3 +20,10 @@ export interface AuthTokens {
   accessToken: string
   refreshToken: string
 }
+
+export interface UserInfo {
+  id: number
+  email: string
+  nickname: string
+  createdAt: string
+}

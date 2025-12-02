@@ -7,24 +7,26 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { JournalsService } from './journals.service';
 import { JournalsEntity } from './entities/journals.entities';
 import { Pagination } from 'src/core/common/types/common';
 import { UpdateJournalDto } from '../../core/dto/journals.dto';
+import { CurrentUser } from 'src/core/common/decorators/user.decorator';
+import { JwtAuthGuard } from 'src/core/common/guards/jwt-auth.guard';
 
 @Controller('journals')
 export class JournalsController {
   constructor(private readonly journalsService: JournalsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async createJournal(
     @Body() journal: JournalsEntity,
+    @CurrentUser() user: { userId: number },
   ): Promise<JournalsEntity> {
-    // TODO: JWT 인증 구현 후 @CurrentUser() 데코레이터로 userId 가져오기
-    // 임시로 userId = 1로 하드코딩
-    journal.userId = 1;
-
+    journal.userId = user.userId;
     // 자동 계산 필드 설정
     journal.totalCost = journal.buyPrice * journal.totalQuantity;
     journal.averageCost = journal.buyPrice;
@@ -34,12 +36,13 @@ export class JournalsController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async getJournals(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
+    @CurrentUser() user: { userId: number },
   ): Promise<Pagination<JournalsEntity>> {
-    // 임시 userID 사용
-    const userId = 1;
+    const userId = user.userId;
 
     const result = await this.journalsService.getJournals(userId, page, limit);
 
@@ -47,17 +50,23 @@ export class JournalsController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   async updateJournal(
+    @CurrentUser() user: { userId: number },
     @Param('id') id: number,
     @Body() dto: UpdateJournalDto,
   ): Promise<JournalsEntity | null> {
-    const userId = 1;
+    const userId = user.userId;
     return await this.journalsService.updateJournal(userId, id, dto);
   }
 
   @Delete(':id')
-  async deleteJournal(@Param('id') id: number): Promise<boolean> {
-    const userId = 1;
+  @UseGuards(JwtAuthGuard)
+  async deleteJournal(
+    @CurrentUser() user: { userId: number },
+    @Param('id') id: number,
+  ): Promise<boolean> {
+    const userId = user.userId;
     return await this.journalsService.deleteJournal(userId, id);
   }
 }

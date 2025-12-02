@@ -54,24 +54,22 @@ export default function SettingsPage() {
 
         {/* 계정 관리 (로그아웃 / 탈퇴) */}
         <div className="rounded-3xl bg-white p-2 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
-            <button
-              onClick={handleLogout}
-              className="w-full rounded-2xl p-4 text-center text-[15px] font-medium text-[#4E5968] hover:bg-[#F2F4F6] active:scale-[0.98] transition-all"
-            >
-              로그아웃
-            </button>
-            <div className="mx-4 h-[1px] bg-[#F2F4F6]" />
-            <button
-              onClick={handleDeleteAccount}
-              className="w-full rounded-2xl p-4 text-center text-[15px] font-medium text-[#FF6B6B] hover:bg-[#FFF0F0] active:scale-[0.98] transition-all"
-            >
-              회원 탈퇴
-            </button>
+          <button
+            onClick={handleLogout}
+            className="w-full rounded-2xl p-4 text-center text-[15px] font-medium text-[#4E5968] transition-all hover:bg-[#F2F4F6] active:scale-[0.98]"
+          >
+            로그아웃
+          </button>
+          <div className="mx-4 h-px bg-[#F2F4F6]" />
+          <button
+            onClick={handleDeleteAccount}
+            className="w-full rounded-2xl p-4 text-center text-[15px] font-medium text-[#FF6B6B] transition-all hover:bg-[#FFF0F0] active:scale-[0.98]"
+          >
+            회원 탈퇴
+          </button>
         </div>
-        
-        <p className="text-center text-xs text-[#B0B8C1] py-4">
-            EmotionTrade v1.0.0
-        </p>
+
+        <p className="py-4 text-center text-xs text-[#B0B8C1]">EmotionTrade v1.0.0</p>
       </div>
     </div>
   )
