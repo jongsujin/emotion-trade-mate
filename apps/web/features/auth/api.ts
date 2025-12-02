@@ -1,6 +1,6 @@
 import { API_ROUTES } from '@/constants'
 import { apiClient } from '@/lib/api/client'
-import type { AuthTokens, LoginFormData, SignupRequest } from '@/types/auth'
+import { UserInfo, type AuthTokens, type LoginFormData, type SignupRequest } from '@/types/auth'
 
 /**
  * 인증 관련 API 모음
@@ -11,4 +11,8 @@ export async function signup(data: SignupRequest) {
 
 export async function login(data: LoginFormData) {
   return apiClient.post<AuthTokens>(API_ROUTES.AUTH.LOGIN, data)
+}
+
+export async function getMe() {
+  return apiClient.get<UserInfo>(API_ROUTES.AUTH.ME)
 }

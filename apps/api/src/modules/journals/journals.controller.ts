@@ -12,6 +12,7 @@ import { JournalsService } from './journals.service';
 import { JournalsEntity } from './entities/journals.entities';
 import { Pagination } from 'src/core/common/types/common';
 import { UpdateJournalDto } from '../../core/dto/journals.dto';
+import { CurrentUser } from 'src/core/common/decorators/user.decorator';
 
 @Controller('journals')
 export class JournalsController {
@@ -20,11 +21,9 @@ export class JournalsController {
   @Post()
   async createJournal(
     @Body() journal: JournalsEntity,
+    @CurrentUser() user: { userId: number },
   ): Promise<JournalsEntity> {
-    // TODO: JWT 인증 구현 후 @CurrentUser() 데코레이터로 userId 가져오기
-    // 임시로 userId = 1로 하드코딩
-    journal.userId = 1;
-
+    journal.userId = user.userId;
     // 자동 계산 필드 설정
     journal.totalCost = journal.buyPrice * journal.totalQuantity;
     journal.averageCost = journal.buyPrice;
