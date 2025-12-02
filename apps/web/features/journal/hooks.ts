@@ -1,0 +1,89 @@
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  type UseQueryResult,
+  type UseMutationResult,
+} from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
+import { getJournals, createJournal, updateJournal, deleteJournal } from './api'
+import type {
+  CreateJournalRequest,
+  UpdateJournalRequest,
+  Journal,
+  Pagination,
+  ApiResponse,
+} from '@/types'
+
+/**
+ * 일지 목록 조회 훅
+ */
+export function useJournals(
+  page = 1,
+  limit = 10
+): UseQueryResult<ApiResponse<Pagination<Journal>>, Error> {
+  return useQuery({
+    queryKey: ['journals', page, limit],
+    queryFn: () => getJournals(page, limit),
+  })
+}
+
+/**
+ * 일지 생성 훅
+ */
+export function useCreateJournal(): UseMutationResult<
+  ApiResponse<Journal>,
+  Error,
+  CreateJournalRequest,
+  unknown
+> {
+  const router = useRouter()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: CreateJournalRequest) => createJournal(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['journals'] })
+      router.push('/journal/list')
+    },
+  })
+}
+
+/**
+ * 일지 수정 훅
+ */
+export function useUpdateJournal(): UseMutationResult<
+  ApiResponse<Journal | null>,
+  Error,
+  { id: number; data: UpdateJournalRequest },
+  unknown
+> {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: UpdateJournalRequest }) =>
+      updateJournal(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['journals'] })
+    },
+  })
+}
+
+/**
+ * 일지 삭제 훅
+ */
+export function useDeleteJournal(): UseMutationResult<
+  ApiResponse<boolean>,
+  Error,
+  number,
+  unknown
+> {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: number) => deleteJournal(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['journals'] })
+    },
+  })
+}

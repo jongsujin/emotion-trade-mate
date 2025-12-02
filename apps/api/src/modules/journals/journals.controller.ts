@@ -21,6 +21,15 @@ export class JournalsController {
   async createJournal(
     @Body() journal: JournalsEntity,
   ): Promise<JournalsEntity> {
+    // TODO: JWT 인증 구현 후 @CurrentUser() 데코레이터로 userId 가져오기
+    // 임시로 userId = 1로 하드코딩
+    journal.userId = 1;
+
+    // 자동 계산 필드 설정
+    journal.totalCost = journal.buyPrice * journal.totalQuantity;
+    journal.averageCost = journal.buyPrice;
+    journal.priceUpdatedAt = new Date();
+
     return this.journalsService.createJournal(journal);
   }
 

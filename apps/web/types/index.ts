@@ -12,21 +12,46 @@ export interface User {
 }
 
 /**
- * 감정 일지 타입
+ * 감정 일지 타입 (백엔드 JournalsEntity와 동기화)
  */
 export interface Journal {
-  id: string
-  userId: string
+  id: number
+  userId: number
   symbol: string
   symbolName: string
   buyPrice: number
-  quantity: number
-  currentPrice?: number
-  emotionType: EmotionType
-  memo: string
-  screenshotUrl?: string
-  createdAt: Date
-  updatedAt: Date
+  initialQuantity: number
+  buyDate: string // Date를 ISO string으로 받음
+  totalQuantity: number
+  totalCost: number
+  averageCost: number
+  priceUpdatedAt: string
+  createdAt: string
+  updatedAt: string
+  deletedAt?: string | null
+}
+
+/**
+ * 일지 생성 요청 타입 (백엔드 CreateJournalDto와 동기화)
+ */
+export interface CreateJournalRequest {
+  symbol: string
+  symbolName: string
+  buyPrice: number
+  initialQuantity: number
+  buyDate: string // ISO 형식: "2024-01-15"
+  totalQuantity: number
+  memo?: string
+}
+
+/**
+ * 일지 수정 요청 타입 (백엔드 UpdateJournalDto와 동기화)
+ */
+export interface UpdateJournalRequest {
+  buyPrice?: number
+  quantity?: number
+  emotionId?: number
+  memo?: string
 }
 
 /**
@@ -72,7 +97,7 @@ export interface OCRResult {
 }
 
 /**
- * API 응답 타입
+ * API 응답 타입 (백엔드 ApiResponse와 동기화)
  */
 export interface ApiResponse<T> {
   success: boolean
@@ -82,16 +107,13 @@ export interface ApiResponse<T> {
 }
 
 /**
- * 페이지네이션 타입
+ * 페이지네이션 타입 (백엔드 Pagination과 동기화)
  */
-export interface Pagination {
-  page: number
-  limit: number
-  total: number
+export interface Pagination<T> {
+  content: T[]
+  hasNext: boolean
+  hasPrevious: boolean
+  totalCount: number
   totalPages: number
-}
-
-export interface PaginatedResponse<T> {
-  data: T[]
-  pagination: Pagination
+  page: number
 }

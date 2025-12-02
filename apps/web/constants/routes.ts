@@ -44,20 +44,20 @@ export const API_ROUTES = {
     ME: '/api/auth/me',
   },
   JOURNAL: {
-    LIST: '/api/journal',
-    CREATE: '/api/journal',
-    DETAIL: (id: string) => `/api/journal/${id}`,
-    UPDATE: (id: string) => `/api/journal/${id}`,
-    DELETE: (id: string) => `/api/journal/${id}`,
-    ADD_EMOTION: (id: string) => `/api/journal/${id}/emotion`,
+    LIST: '/api/journals', // GET
+    CREATE: '/api/journals', // POST
+    DETAIL: (id: string) => `/api/journals/${id}`, // GET
+    UPDATE: (id: string) => `/api/journals/${id}`, // PUT
+    DELETE: (id: string) => `/api/journals/${id}`, // DELETE
+    ADD_EMOTION: (id: string) => `/api/journals/${id}/emotion`,
   },
   OCR: {
-    UPLOAD: '/api/ocr/upload',
-    EXTRACT: '/api/ocr/extract',
+    UPLOAD: '/ocr/upload',
+    EXTRACT: '/ocr/extract',
   },
   REPORT: {
-    GENERATE: '/api/report/generate',
-    DETAIL: (id: string) => `/api/report/${id}`,
-    PDF: (id: string) => `/api/report/${id}/pdf`,
+    GENERATE: '/report/generate',
+    DETAIL: (id: string) => `/report/${id}`,
+    PDF: (id: string) => `/report/${id}/pdf`,
   },
 } as const
