@@ -38,4 +38,8 @@ export class UsersService {
   ): Promise<boolean> {
     return await bcrypt.compare(password, hashedPassword);
   }
+
+  async findById(id: number): Promise<UsersEntity | null> {
+    return this.usersRepository.findById(id);
+  }
 }
