@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import type express from 'express';
 import { AuthService } from './auth.service';
 import { SignupDto } from 'src/core/dto/signup.dto';
@@ -60,10 +68,7 @@ export class AuthController {
     const userInfo = await this.usersService.findById(user.userId);
 
     if (!userInfo) {
-      return {
-        success: false,
-        message: '사용자를 찾을 수 없습니다',
-      };
+      throw new UnauthorizedException('사용자를 찾을 수 없습니다');
     }
 
     return {
