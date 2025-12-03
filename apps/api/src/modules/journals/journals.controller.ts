@@ -12,7 +12,10 @@ import {
 import { JournalsService } from './journals.service';
 import { JournalsEntity } from './entities/journals.entities';
 import { Pagination } from 'src/core/common/types/common';
-import { UpdateJournalDto } from '../../core/dto/journals.dto';
+import {
+  CreateJournalDto,
+  UpdateJournalDto,
+} from '../../core/dto/journals.dto';
 import { CurrentUser } from 'src/core/common/decorators/user.decorator';
 import { JwtAuthGuard } from 'src/core/common/guards/jwt-auth.guard';
 
@@ -23,15 +26,20 @@ export class JournalsController {
   @Post()
   @UseGuards(JwtAuthGuard)
   async createJournal(
-    @Body() journal: JournalsEntity,
+    @Body() dto: CreateJournalDto,
     @CurrentUser() user: { userId: number },
   ): Promise<JournalsEntity> {
+    const journal = new JournalsEntity();
     journal.userId = user.userId;
-    // 자동 계산 필드 설정
-    journal.totalCost = journal.buyPrice * journal.totalQuantity;
-    journal.averageCost = journal.buyPrice;
+    journal.symbol = dto.symbol;
+    journal.symbolName = dto.symbolName;
+    journal.buyPrice = dto.buyPrice;
+    journal.initialQuantity = dto.initialQuantity;
+    journal.buyDate = new Date(dto.buyDate);
+    journal.totalQuantity = dto.totalQuantity;
+    journal.totalCost = dto.buyPrice * dto.totalQuantity;
+    journal.averageCost = dto.buyPrice;
     journal.priceUpdatedAt = new Date();
-
     return this.journalsService.createJournal(journal);
   }
 
