@@ -4,7 +4,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/core/database/database.service';
-import { JournalsEntity } from './entities/journals.entities';
+import { JournalEntity } from './entities/journals.entities';
 import {
   COUNT_ALL_JOURNALS_QUERY,
   DELETE_JOURNAL_QUERY,
@@ -20,7 +20,7 @@ export class JournalsRepository {
   constructor(private readonly databaseService: DatabaseService) {
     this.databaseService = databaseService;
   }
-  async create(journal: JournalsEntity): Promise<JournalsEntity> {
+  async create(journal: JournalEntity): Promise<JournalEntity> {
     const query = INSERT_JOURNAL_QUERY;
     const values = [
       journal.userId,
@@ -35,16 +35,16 @@ export class JournalsRepository {
       journal.priceUpdatedAt,
     ];
     const result = await this.databaseService.query(query, values);
-    return result[0] as JournalsEntity;
+    return result[0] as JournalEntity;
   }
 
   async findAll(
     userId: number,
     limit: number,
     offset: number,
-  ): Promise<JournalsEntity[]> {
+  ): Promise<JournalEntity[]> {
     const values = [userId, limit, offset];
-    const result = await this.databaseService.query<JournalsEntity>(
+    const result = await this.databaseService.query<JournalEntity>(
       FIND_ALL_JOURNALS_QUERY,
       values,
     );
@@ -63,10 +63,10 @@ export class JournalsRepository {
   async findById(
     usersId: number,
     journalId: number,
-  ): Promise<JournalsEntity | null> {
+  ): Promise<JournalEntity | null> {
     const query = FIND_BY_ID_JOURNAL_QUERY;
     const values = [usersId, journalId];
-    const result = await this.databaseService.queryOne<JournalsEntity>(
+    const result = await this.databaseService.queryOne<JournalEntity>(
       query,
       values,
     );
@@ -77,7 +77,7 @@ export class JournalsRepository {
     userId: number,
     journalId: number,
     dto: UpdateJournalDto,
-  ): Promise<JournalsEntity | null> {
+  ): Promise<JournalEntity | null> {
     const query = UPDATE_JOURNAL_QUERY;
     const values = [
       userId,
@@ -87,7 +87,7 @@ export class JournalsRepository {
       dto.emotionId,
       dto.memo,
     ];
-    const result = await this.databaseService.queryOne<JournalsEntity>(
+    const result = await this.databaseService.queryOne<JournalEntity>(
       query,
       values,
     );

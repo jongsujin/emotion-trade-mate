@@ -1,6 +1,6 @@
 import { JournalsEmotionsEntity } from 'src/modules/emotions/entities/emotions.entities';
 
-export class JournalsEntity {
+export class JournalEntity {
   id: number;
   userId: number;
   symbol: string;
@@ -17,7 +17,7 @@ export class JournalsEntity {
   deletedAt?: Date | null;
 }
 
-export class JournalsListEntity {
+export class JournalListEntity {
   id: number;
   symbol: string;
   symbolName: string;

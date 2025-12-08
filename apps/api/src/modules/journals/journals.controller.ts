@@ -10,7 +10,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JournalsService } from './journals.service';
-import { JournalsEntity } from './entities/journals.entities';
+import {
+  JournalEntity,
+  // JournalsListEntity,
+} from './entities/journals.entities';
 import { Pagination } from 'src/core/common/types/common';
 import {
   CreateJournalDto,
@@ -28,8 +31,8 @@ export class JournalsController {
   async createJournal(
     @Body() dto: CreateJournalDto,
     @CurrentUser() user: { userId: number },
-  ): Promise<JournalsEntity> {
-    const journal = new JournalsEntity();
+  ): Promise<JournalEntity> {
+    const journal = new JournalEntity();
     journal.userId = user.userId;
     journal.symbol = dto.symbol;
     journal.symbolName = dto.symbolName;
@@ -49,7 +52,7 @@ export class JournalsController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
     @CurrentUser() user: { userId: number },
-  ): Promise<Pagination<JournalsEntity>> {
+  ): Promise<Pagination<JournalEntity>> {
     const userId = user.userId;
 
     const result = await this.journalsService.getJournals(userId, page, limit);
@@ -63,7 +66,7 @@ export class JournalsController {
     @CurrentUser() user: { userId: number },
     @Param('id') id: number,
     @Body() dto: UpdateJournalDto,
-  ): Promise<JournalsEntity | null> {
+  ): Promise<JournalEntity | null> {
     const userId = user.userId;
     return await this.journalsService.updateJournal(userId, id, dto);
   }
