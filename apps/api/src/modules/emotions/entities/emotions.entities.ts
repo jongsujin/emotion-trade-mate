@@ -9,3 +9,10 @@ export class EmotionsEntity {
   updatedAt: Date;
   deletedAt?: Date | null;
 }
+
+export class JournalsEmotionsEntity {
+  emotionId: string;
+  price: number;
+  memo: string;
+  createdAt: Date;
+}
