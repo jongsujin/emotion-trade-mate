@@ -30,3 +30,28 @@ export class JournalListEntity {
   emotionCount: number;
   latestEmotion: JournalsEmotionsEntity;
 }
+
+export class JournalDetailEntity {
+  id: number;
+  symbol: string;
+  symbolName: string;
+  buyDate: Date;
+
+  buyPrice: number;
+  initialQuantity: number;
+
+  averageCost: number;
+  totalCost: number;
+
+  currentPrice: number;
+  totalQuantity: number;
+
+  // 평가손익 (보유분 기준)
+  profitPercentage: number;
+  profit: number;
+
+  // 확정손익(실제 매도해서 확정된 부분)
+  realizedProfit: number;
+
+  emotionList: JournalsEmotionsEntity[];
+}

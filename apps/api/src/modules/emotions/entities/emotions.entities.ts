@@ -11,8 +11,16 @@ export class EmotionsEntity {
 }
 
 export class JournalsEmotionsEntity {
-  emotionId: string;
-  price: number;
-  memo: string;
+  id: number;
+  journalId: number;
+
+  type: 'EMOTION' | 'BUY' | 'SELL' | 'NOTE';
+
+  emotionId?: string; // EMOTION일 때만 필요
+  memo?: string;
+
+  price?: number; // BUY / SELL / EMOTION 모두 시점 가격 기록
+  quantity?: number; // BUY(+), SELL(-)일 때 사용
+
   createdAt: Date;
 }
