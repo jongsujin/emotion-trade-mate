@@ -12,6 +12,7 @@ import {
 import { JournalsService } from './journals.service';
 import {
   JournalEntity,
+  JournalListEntity,
   // JournalsListEntity,
 } from './entities/journals.entities';
 import { Pagination } from 'src/core/common/types/common';
@@ -52,7 +53,7 @@ export class JournalsController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
     @CurrentUser() user: { userId: number },
-  ): Promise<Pagination<JournalEntity>> {
+  ): Promise<Pagination<JournalListEntity>> {
     const userId = user.userId;
 
     const result = await this.journalsService.getJournals(userId, page, limit);

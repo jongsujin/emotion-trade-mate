@@ -4,7 +4,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/core/database/database.service';
-import { JournalEntity } from './entities/journals.entities';
+import { JournalEntity, JournalListEntity } from './entities/journals.entities';
 import {
   COUNT_ALL_JOURNALS_QUERY,
   DELETE_JOURNAL_QUERY,
@@ -42,9 +42,9 @@ export class JournalsRepository {
     userId: number,
     limit: number,
     offset: number,
-  ): Promise<JournalEntity[]> {
+  ): Promise<JournalListEntity[]> {
     const values = [userId, limit, offset];
-    const result = await this.databaseService.query<JournalEntity>(
+    const result = await this.databaseService.query<JournalListEntity>(
       FIND_ALL_JOURNALS_QUERY,
       values,
     );

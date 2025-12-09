@@ -4,7 +4,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { JournalsRepository } from './journals.repository'; // Repository import
-import { JournalsEntity } from './entities/journals.entities';
+import { JournalEntity, JournalListEntity } from './entities/journals.entities';
 import { Pagination } from 'src/core/common/types/common';
 import { UpdateJournalDto } from '../../core/dto/journals.dto';
 
@@ -15,7 +15,7 @@ export class JournalsService {
   /**
    * 일지 생성
    */
-  async createJournal(journal: JournalsEntity): Promise<JournalsEntity> {
+  async createJournal(journal: JournalEntity): Promise<JournalEntity> {
     // DB 저장은 Repository에게 위임
     return await this.journalsRepository.create(journal);
   }
@@ -27,7 +27,7 @@ export class JournalsService {
     userId: number,
     page: number = 1,
     limit: number = 10,
-  ): Promise<Pagination<JournalsEntity>> {
+  ): Promise<Pagination<JournalListEntity>> {
     // 1. 전체 개수 조회
     const totalCount = await this.journalsRepository.countAll(userId);
 
@@ -57,7 +57,7 @@ export class JournalsService {
     userId: number,
     journalId: number,
     dto: UpdateJournalDto,
-  ): Promise<JournalsEntity | null> {
+  ): Promise<JournalEntity | null> {
     return await this.journalsRepository.update(userId, journalId, dto);
   }
 
