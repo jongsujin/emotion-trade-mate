@@ -79,7 +79,6 @@ export const UPDATE_JOURNAL_QUERY = /* sql */ `
     buy_price = COALESCE($3, buy_price),
     total_quantity = COALESCE($4, total_quantity),
     emotion_id = COALESCE($5, emotion_id),
-    memo = COALESCE($6, memo),
     updated_at = NOW()
   WHERE user_id = $1 AND id = $2
   RETURNING 
@@ -107,12 +106,20 @@ export const FIND_BY_ID_JOURNAL_DETAIL_QUERY = `
     j.buy_date AS "buyDate",
     j.buy_price AS "buyPrice",
     j.initial_quantity AS "initialQuantity",
-    j.total_quantity AS "totalQuantity,
+    j.total_quantity AS "totalQuantity",
     j.total_cost AS "totalCost",
     j.average_cost AS "averageCost",
     j.price_updated_at AS "priceUpdatedAt",
-    j.created_at AS "createdAt,
+    j.created_at AS "createdAt",
 
-  FROM journals j
-  WHERE j.user_id = $1 AND j.id = $2
-  `;
+    e.id AS "emotionId",
+    e.emotion_id AS "emotionCode",
+    e.price AS "emotionPrice",
+    e.quantity AS "emotionQuantity",
+    e.memo AS "emotionMemo",
+    e.created_at AS "emotionCreatedAt"
+  
+    FROM journals j
+    LEFT JOIN emotions e ON j.id = e.journal_id
+    WHERE j.user_id = $1 AND j.id = $2
+`;
