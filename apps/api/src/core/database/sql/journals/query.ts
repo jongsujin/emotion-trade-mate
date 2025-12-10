@@ -98,3 +98,21 @@ export const UPDATE_JOURNAL_QUERY = /* sql */ `
     updated_at AS "updatedAt",
     deleted_at AS "deletedAt"
 `;
+
+export const FIND_BY_ID_JOURNAL_DETAIL_QUERY = `
+  SELECT
+    j.id,
+    j.symbol,
+    j.symbol_name AS "symbolName",
+    j.buy_date AS "buyDate",
+    j.buy_price AS "buyPrice",
+    j.initial_quantity AS "initialQuantity",
+    j.total_quantity AS "totalQuantity,
+    j.total_cost AS "totalCost",
+    j.average_cost AS "averageCost",
+    j.price_updated_at AS "priceUpdatedAt",
+    j.created_at AS "createdAt,
+
+  FROM journals j
+  WHERE j.user_id = $1 AND j.id = $2
+  `;
