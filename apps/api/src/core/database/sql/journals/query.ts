@@ -94,7 +94,8 @@ export const FIND_BY_ID_JOURNAL_QUERY = /* sql */ `
     created_at AS "createdAt",
     updated_at AS "updatedAt",
     deleted_at AS "deletedAt"
-  FROM journals 
+  FROM journals
+  LEFT JOIN journal_events ON journals.id = journal_events.journal_id
   WHERE user_id = $1 AND id = $2
 `;
 

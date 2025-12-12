@@ -5,18 +5,6 @@ export enum JournalEventType {
   NOTE = 'NOTE',
 }
 
-export class EmotionsEntity {
-  id: number;
-  journalId: number;
-  emotionId: string;
-  price: number;
-  quantity: number;
-  memo: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date | null;
-}
-
 export class JournalEventsEntity {
   id: number;
   journalId: number;
