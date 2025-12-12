@@ -21,25 +21,60 @@ export const INSERT_JOURNAL_QUERY = /* sql */ `
     deleted_at AS "deletedAt"
 `;
 
-export const FIND_ALL_JOURNALS_QUERY = `
-  SELECT 
-    id,
-    user_id AS "userId",
-    symbol,
-    symbol_name AS "symbolName",
-    buy_price AS "buyPrice",
-    initial_quantity AS "initialQuantity",
-    buy_date AS "buyDate",
-    total_quantity AS "totalQuantity",
-    total_cost AS "totalCost",
-    average_cost AS "averageCost",
-    price_updated_at AS "priceUpdatedAt",
-    created_at AS "createdAt",
-    updated_at AS "updatedAt",
-    deleted_at AS "deletedAt"
-  FROM journals 
-  WHERE user_id = $1
-  ORDER BY buy_date DESC
+export const FIND_ALL_JOURNALS_QUERY = /* sql */ `
+  WITH latest AS (
+    SELECT DISTINCT ON (journal_id)
+      id,
+      journal_id,
+      type,
+      price,
+      quantity,
+      memo,
+      created_at
+    FROM journal_events
+    WHERE deleted_at IS NULL
+    ORDER BY journal_id, created_at DESC
+  ),
+  counts AS (
+    SELECT journal_id, COUNT(*)::int AS event_count
+    FROM journal_events
+    WHERE deleted_at IS NULL
+    GROUP BY journal_id
+  )
+  SELECT
+    j.id,
+    j.user_id AS "userId",
+    j.symbol,
+    j.symbol_name AS "symbolName",
+    j.buy_price AS "buyPrice",
+    j.initial_quantity AS "initialQuantity",
+    j.buy_date AS "buyDate",
+    j.total_quantity AS "totalQuantity",
+    j.total_cost AS "totalCost",
+    j.average_cost AS "averageCost",
+    j.price_updated_at AS "priceUpdatedAt",
+    j.created_at AS "createdAt",
+    j.updated_at AS "updatedAt",
+    j.deleted_at AS "deletedAt",
+
+    COALESCE(c.event_count, 0) AS "eventCount",
+
+    -- latestEvent를 컬럼으로 펼쳐서 내려주기(매핑 쉬움)
+    l.id AS "latestEventId",
+    l.type AS "latestEventType",
+    l.price AS "latestEventPrice",
+    l.quantity AS "latestEventQuantity",
+    l.memo AS "latestEventMemo",
+    l.created_at AS "latestEventCreatedAt"
+
+  FROM journals j
+  LEFT JOIN counts c ON c.journal_id = j.id
+  LEFT JOIN latest l ON l.journal_id = j.id
+
+  WHERE j.user_id = $1
+    AND j.deleted_at IS NULL
+
+  ORDER BY j.buy_date DESC
   LIMIT $2 OFFSET $3
 `;
 

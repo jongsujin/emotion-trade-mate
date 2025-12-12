@@ -1,3 +1,10 @@
+export enum JournalEventType {
+  BUY = 'BUY',
+  SELL = 'SELL',
+  EMOTION = 'EMOTION',
+  NOTE = 'NOTE',
+}
+
 export class EmotionsEntity {
   id: number;
   journalId: number;
@@ -13,10 +20,7 @@ export class EmotionsEntity {
 export class JournalEventsEntity {
   id: number;
   journalId: number;
-
-  type: 'EMOTION' | 'BUY' | 'SELL' | 'NOTE';
-
-  emotionId?: string; // EMOTION일 때만 필요
+  type: JournalEventType;
   memo?: string;
 
   price?: number; // BUY / SELL / EMOTION 모두 시점 가격 기록
