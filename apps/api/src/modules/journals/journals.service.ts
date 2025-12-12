@@ -4,7 +4,11 @@
 
 import { Injectable } from '@nestjs/common';
 import { JournalsRepository } from './journals.repository'; // Repository import
-import { JournalEntity, JournalListEntity } from './entities/journals.entities';
+import {
+  JournalDetailEntity,
+  JournalEntity,
+  JournalListEntity,
+} from './entities/journals.entities';
 import { Pagination } from 'src/core/common/types/common';
 import { UpdateJournalDto } from '../../core/dto/journals.dto';
 
@@ -63,5 +67,12 @@ export class JournalsService {
 
   async deleteJournal(userId: number, journalId: number): Promise<boolean> {
     return await this.journalsRepository.delete(userId, journalId);
+  }
+
+  async getJournalDetail(
+    userId: number,
+    journalId: number,
+  ): Promise<JournalDetailEntity | null> {
+    return await this.journalsRepository.findByIdDetail(userId, journalId);
   }
 }

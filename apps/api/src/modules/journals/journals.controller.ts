@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { JournalsService } from './journals.service';
 import {
+  JournalDetailEntity,
   JournalEntity,
   JournalListEntity,
   // JournalsListEntity,
@@ -80,5 +81,15 @@ export class JournalsController {
   ): Promise<boolean> {
     const userId = user.userId;
     return await this.journalsService.deleteJournal(userId, id);
+  }
+
+  @Get(':id/detail')
+  @UseGuards(JwtAuthGuard)
+  async getJournalDetail(
+    @CurrentUser() user: { userId: number },
+    @Param('id') id: number,
+  ): Promise<JournalDetailEntity | null> {
+    const userId = user.userId;
+    return await this.journalsService.getJournalDetail(userId, id);
   }
 }

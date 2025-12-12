@@ -4,11 +4,16 @@
 
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/core/database/database.service';
-import { JournalEntity, JournalListEntity } from './entities/journals.entities';
+import {
+  JournalDetailEntity,
+  JournalEntity,
+  JournalListEntity,
+} from './entities/journals.entities';
 import {
   COUNT_ALL_JOURNALS_QUERY,
   DELETE_JOURNAL_QUERY,
   FIND_ALL_JOURNALS_QUERY,
+  FIND_BY_ID_JOURNAL_DETAIL_QUERY,
   FIND_BY_ID_JOURNAL_QUERY,
   INSERT_JOURNAL_QUERY,
   UPDATE_JOURNAL_QUERY,
@@ -99,5 +104,18 @@ export class JournalsRepository {
     const values = [userId, journalId];
     const result = await this.databaseService.query(query, values);
     return result.length > 0;
+  }
+
+  async findByIdDetail(
+    userId: number,
+    journalId: number,
+  ): Promise<JournalDetailEntity | null> {
+    const query = FIND_BY_ID_JOURNAL_DETAIL_QUERY;
+    const values = [userId, journalId];
+    const result = await this.databaseService.queryOne<JournalDetailEntity>(
+      query,
+      values,
+    );
+    return result ?? null;
   }
 }
