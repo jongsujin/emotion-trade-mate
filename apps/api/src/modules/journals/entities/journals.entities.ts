@@ -1,4 +1,4 @@
-import { JournalsEmotionsEntity } from 'src/modules/emotions/entities/emotions.entities';
+import { JournalEventsEntity } from 'src/modules/emotions/entities/emotions.entities';
 
 export class JournalEntity {
   id: number;
@@ -23,12 +23,13 @@ export class JournalListEntity {
   symbolName: string;
   buyPrice: number;
   initialQuantity: number;
+  status: JournalStatus;
   buyDate: Date;
   totalQuantity: number;
   averagecost: number;
   createdAt: Date;
-  emotionCount: number;
-  latestEmotion: JournalsEmotionsEntity;
+  eventCount: number;
+  latestEvent: JournalEventsEntity;
 }
 
 export class JournalDetailEntity {
@@ -53,5 +54,10 @@ export class JournalDetailEntity {
   // 확정손익(실제 매도해서 확정된 부분)
   realizedProfit: number;
 
-  emotionList: JournalsEmotionsEntity[];
+  eventList: JournalEventsEntity[];
+}
+
+export enum JournalStatus {
+  OPEN = 'OPEN',
+  CLOSED = 'CLOSED',
 }

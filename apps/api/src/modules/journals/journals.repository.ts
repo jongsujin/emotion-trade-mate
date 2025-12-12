@@ -27,6 +27,8 @@ export class JournalsRepository {
   }
   async create(journal: JournalEntity): Promise<JournalEntity> {
     const query = INSERT_JOURNAL_QUERY;
+    const totalCost = journal.buyPrice * journal.initialQuantity;
+    const averageCost = totalCost / journal.initialQuantity;
     const values = [
       journal.userId,
       journal.symbol,
@@ -35,8 +37,8 @@ export class JournalsRepository {
       journal.initialQuantity,
       journal.buyDate,
       journal.totalQuantity,
-      journal.totalCost,
-      journal.averageCost,
+      totalCost,
+      averageCost,
       journal.priceUpdatedAt,
     ];
     const result = await this.databaseService.query(query, values);

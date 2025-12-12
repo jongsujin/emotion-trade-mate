@@ -10,7 +10,7 @@ export class EmotionsEntity {
   deletedAt?: Date | null;
 }
 
-export class JournalsEmotionsEntity {
+export class JournalEventsEntity {
   id: number;
   journalId: number;
 
