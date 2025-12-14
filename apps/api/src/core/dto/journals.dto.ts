@@ -148,3 +148,28 @@ export class JournalDetailResponseDto {
     createdAt: string;
   }>;
 }
+
+export class CreateJournalEventDto {
+  @IsNotEmpty()
+  @IsEnum(['BUY', 'SELL', 'EMOTION', 'NOTE'])
+  type: 'BUY' | 'SELL' | 'EMOTION' | 'NOTE';
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  price: number;
+
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  quantity?: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  memo?: string;
+
+  @IsOptional()
+  @IsString({ each: true })
+  emotionCodes?: string[];
+}

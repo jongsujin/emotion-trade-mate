@@ -20,6 +20,7 @@ import {
 import { Pagination } from 'src/core/common/types/common';
 import {
   CreateJournalDto,
+  CreateJournalEventDto,
   CreateJournalResponseDto,
   JournalDetailResponseDto,
 } from '../../core/dto/journals.dto';
@@ -53,6 +54,21 @@ export class JournalsController {
         400,
       );
     }
+  }
+
+  @Post(':id/events')
+  @UseGuards(JwtAuthGuard)
+  async createJournalEvent(
+    @CurrentUser() user: { userId: number },
+    @Param('id') journalId: number,
+    @Body() dto: CreateJournalEventDto,
+  ): Promise<JournalEventsEntity> {
+    const userId = user.userId;
+    return await this.journalsService.createJournalEvent(
+      userId,
+      journalId,
+      dto,
+    );
   }
 
   @Get()

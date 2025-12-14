@@ -15,8 +15,10 @@ import {
 import { Pagination } from 'src/core/common/types/common';
 import {
   CreateJournalDto,
+  CreateJournalEventDto,
   JournalDetailResponseDto,
 } from 'src/core/dto/journals.dto';
+import { JournalEventsEntity } from '../journal_events/entities/journal_event.entities';
 
 @Injectable()
 export class JournalsService {
@@ -48,6 +50,20 @@ export class JournalsService {
       journal,
       dto.firstEmotion,
     );
+  }
+
+  async createJournalEvent(
+    userId: number,
+    journalId: number,
+    dto: CreateJournalEventDto,
+  ): Promise<JournalEventsEntity> {
+    // 해당 journal이 user의 것인지 검증
+    const journal = await this.journalsRepository.findById(userId, journalId);
+    if (!journal) {
+      throw new Error('Journal not found or access denied');
+    }
+
+    return await this.journalsRepository.createEvent(userId, journalId, dto);
   }
 
   /**

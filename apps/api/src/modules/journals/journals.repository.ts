@@ -28,6 +28,7 @@ import {
 } from 'src/core/database/sql/journals/query';
 import {
   CreateFirstEmotionDto,
+  CreateJournalEventDto,
   JournalDetailResponseDto,
 } from 'src/core/dto/journals.dto';
 import {
@@ -102,6 +103,47 @@ export class JournalsRepository {
         }
       }
       return journalResult.rows[0] as JournalEntity;
+    });
+  }
+
+  async createEvent(
+    userId: number,
+    journalId: number,
+    event: CreateJournalEventDto,
+  ): Promise<JournalEventsEntity> {
+    return await this.databaseService.transaction(async (client) => {
+      // 1. journal_event 생성
+      const eventValues = [
+        journalId, // $1: journal_id
+        event.type, // $2: type
+        event.price, // $3: price
+        event.quantity, // $4: quantity
+        event.memo, // $5: memo
+      ];
+      const eventResult = await client.query(
+        INSERT_JOURNAL_EVENT_QUERY,
+        eventValues,
+      );
+
+      // 2. emotionCodes가 있으면 감정 태그 연결
+      if (event.emotionCodes && event.emotionCodes.length > 0) {
+        for (const emotionCode of event.emotionCodes) {
+          // emotion_tags에서 code로 id 조회
+          const emotionTagResult = await client.query(
+            'SELECT id FROM emotion_tags WHERE code = $1',
+            [emotionCode],
+          );
+
+          if (emotionTagResult.rows[0]) {
+            await client.query(
+              'INSERT INTO journal_event_emotions (event_id, emotion_tag_id) VALUES ($1, $2)',
+              [eventResult.rows[0].id, emotionTagResult.rows[0].id],
+            );
+          }
+        }
+      }
+
+      return eventResult.rows[0] as JournalEventsEntity;
     });
   }
 
