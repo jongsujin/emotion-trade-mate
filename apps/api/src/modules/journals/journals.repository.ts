@@ -6,9 +6,9 @@ import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/core/database/database.service';
 import {
   CreateJournalEntity,
-  JournalDetailEntity,
   JournalEntity,
   JournalListEntity,
+  JournalStatus,
 } from './entities/journals.entities';
 import {
   COUNT_ALL_JOURNALS_QUERY,
@@ -16,10 +16,14 @@ import {
   FIND_ALL_JOURNALS_QUERY,
   FIND_BY_ID_JOURNAL_DETAIL_QUERY,
   FIND_BY_ID_JOURNAL_QUERY,
+  FIND_JOURNAL_EVENTS_WITH_EMOTIONS_QUERY,
   INSERT_JOURNAL_EVENT_QUERY,
   INSERT_JOURNAL_QUERY,
 } from 'src/core/database/sql/journals/query';
-import { CreateFirstEmotionDto } from 'src/core/dto/journals.dto';
+import {
+  CreateFirstEmotionDto,
+  JournalDetailResponseDto,
+} from 'src/core/dto/journals.dto';
 import { JournalEventType } from '../journal_events/entities/journal_event.entities';
 
 @Injectable()
@@ -137,13 +141,82 @@ export class JournalsRepository {
   async findByIdDetail(
     userId: number,
     journalId: number,
-  ): Promise<JournalDetailEntity | null> {
-    const query = FIND_BY_ID_JOURNAL_DETAIL_QUERY;
-    const values = [userId, journalId];
-    const result = await this.databaseService.queryOne<JournalDetailEntity>(
-      query,
-      values,
-    );
-    return result ?? null;
+  ): Promise<JournalDetailResponseDto | null> {
+    // 1. journals 정보 조회
+    const journalQuery = FIND_BY_ID_JOURNAL_DETAIL_QUERY;
+    const journalValues = [userId, journalId];
+    const journalData = await this.databaseService.queryOne<{
+      id: number;
+      symbol: string;
+      symbolName: string;
+      buyDate: Date;
+      buyPrice: number;
+      initialQuantity: number;
+      totalQuantity: number;
+      totalCost: number;
+      averageCost: number;
+    }>(journalQuery, journalValues);
+
+    if (!journalData) {
+      return null;
+    }
+
+    // 2. journal_events + 감정 정보 조회
+    const eventsQuery = FIND_JOURNAL_EVENTS_WITH_EMOTIONS_QUERY;
+    const eventsValues = [journalId];
+    const eventsData = await this.databaseService.query<{
+      id: number;
+      type: string;
+      price: number;
+      quantity: number | null;
+      memo: string | null;
+      createdAt: Date;
+      emotions: any[];
+    }>(eventsQuery, eventsValues);
+
+    // 3. 현재가 조회 (임시로 buyPrice 사용, 실제로는 외부 API 연동 필요)
+    const currentPrice = journalData.buyPrice; // TODO: 외부 API로 현재가 조회
+
+    // 4. 손익 계산
+    const totalValue = currentPrice * journalData.totalQuantity; // 현재 평가금액
+    const profit = totalValue - journalData.totalCost; // 평가손익
+    const profitPercentage =
+      journalData.totalCost > 0 ? (profit / journalData.totalCost) * 100 : 0; // 수익률 %
+
+    // 5. 확정손익 계산 (SELL 이벤트들의 실현 수익 합계)
+    // TODO: 실제 매수/매도 가격 차이 계산 로직 구현 필요
+    // 현재는 임시로 0 반환
+    const realizedProfit = 0;
+
+    // 6. 응답 데이터 구성
+    return {
+      journal: {
+        id: journalData.id,
+        symbol: journalData.symbol,
+        symbolName: journalData.symbolName,
+        status: JournalStatus.OPEN, // TODO: 실제 status 필드 추가
+        buyDate: journalData.buyDate.toISOString().split('T')[0],
+        buyPrice: journalData.buyPrice,
+        initialQuantity: journalData.initialQuantity,
+        totalQuantity: journalData.totalQuantity,
+        totalCost: journalData.totalCost,
+        averageCost: journalData.averageCost,
+      },
+      metrics: {
+        currentPrice,
+        profit,
+        profitPercentage,
+        realizedProfit,
+      },
+      events: eventsData.map((event) => ({
+        id: event.id,
+        type: event.type as 'BUY' | 'SELL' | 'NOTE' | 'EMOTION',
+        price: event.price,
+        quantity: event.quantity,
+        memo: event.memo,
+        emotions: event.emotions || [],
+        createdAt: event.createdAt?.toISOString(),
+      })),
+    };
   }
 }

@@ -12,6 +12,7 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
+import { JournalStatus } from 'src/modules/journals/entities/journals.entities';
 
 /**
  * GET /journals?page=1&limit=10
@@ -105,4 +106,45 @@ export class CreateJournalResponseDto {
   @IsNotEmpty()
   @IsString()
   message: string;
+}
+
+export class JournalDetailResponseDto {
+  journal: {
+    id: number;
+    symbol: string;
+    symbolName: string;
+    status: JournalStatus;
+
+    buyDate: string;
+    buyPrice: number;
+    initialQuantity: number;
+
+    totalQuantity: number;
+    totalCost: number;
+    averageCost: number;
+  };
+
+  metrics: {
+    currentPrice?: number;
+
+    profit: number; // 평가손익
+    profitPercentage: number; // 수익률 %
+    realizedProfit: number; // 확정손익
+  };
+
+  events: Array<{
+    id: number;
+    type: 'BUY' | 'SELL' | 'NOTE' | 'EMOTION';
+
+    price: number;
+    quantity?: number | null;
+    memo?: string | null;
+
+    emotions: Array<{
+      code: string;
+      label: string;
+    }>;
+
+    createdAt: string;
+  }>;
 }

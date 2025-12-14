@@ -180,3 +180,29 @@ export const FIND_EMOTIONS_BY_JOURNAL_ID_QUERY = /* sql */ `
   WHERE journal_id = $1
   ORDER BY created_at DESC
 `;
+
+// 일지 이벤트 + 감정 정보 조회 (JournalDetailResponseDto용)
+export const FIND_JOURNAL_EVENTS_WITH_EMOTIONS_QUERY = /* sql */ `
+  SELECT
+    je.id,
+    je.type,
+    je.price,
+    je.quantity,
+    je.memo,
+    je.created_at AS "createdAt",
+    COALESCE(
+      json_agg(
+        json_build_object(
+          'code', et.code,
+          'label', et.label_ko
+        )
+      ) FILTER (WHERE et.id IS NOT NULL),
+      '[]'::json
+    ) AS emotions
+  FROM journal_events je
+  LEFT JOIN journal_event_emotions jee ON je.id = jee.event_id
+  LEFT JOIN emotion_tags et ON jee.emotion_tag_id = et.id
+  WHERE je.journal_id = $1
+  GROUP BY je.id, je.type, je.price, je.quantity, je.memo, je.created_at
+  ORDER BY je.created_at DESC
+`;

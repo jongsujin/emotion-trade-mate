@@ -10,14 +10,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JournalsService } from './journals.service';
-import {
-  JournalDetailEntity,
-  JournalListEntity,
-} from './entities/journals.entities';
+import { JournalListEntity } from './entities/journals.entities';
 import { Pagination } from 'src/core/common/types/common';
 import {
   CreateJournalDto,
   CreateJournalResponseDto,
+  JournalDetailResponseDto,
 } from '../../core/dto/journals.dto';
 import { CurrentUser } from 'src/core/common/decorators/user.decorator';
 import { JwtAuthGuard } from 'src/core/common/guards/jwt-auth.guard';
@@ -64,17 +62,6 @@ export class JournalsController {
     return result;
   }
 
-  // @Put(':id')
-  // @UseGuards(JwtAuthGuard)
-  // async updateJournal(
-  //   @CurrentUser() user: { userId: number },
-  //   @Param('id') id: number,
-  //   @Body() dto: UpdateJournalDto,
-  // ): Promise<JournalEntity | null> {
-  //   const userId = user.userId;
-  //   return await this.journalsService.updateJournal(userId, id, dto);
-  // }
-
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   async deleteJournal(
@@ -90,7 +77,7 @@ export class JournalsController {
   async getJournalDetail(
     @CurrentUser() user: { userId: number },
     @Param('id') id: number,
-  ): Promise<JournalDetailEntity | null> {
+  ): Promise<JournalDetailResponseDto | null> {
     const userId = user.userId;
     return await this.journalsService.getJournalDetail(userId, id);
   }
