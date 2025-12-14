@@ -124,31 +124,6 @@ export const COUNT_ALL_JOURNALS_QUERY = `
   SELECT COUNT(*) FROM journals WHERE user_id = $1
 `;
 
-export const UPDATE_JOURNAL_QUERY = /* sql */ `
-  UPDATE journals
-  SET
-    buy_price = COALESCE($3, buy_price),
-    total_quantity = COALESCE($4, total_quantity),
-    emotion_id = COALESCE($5, emotion_id),
-    updated_at = NOW()
-  WHERE user_id = $1 AND id = $2
-  RETURNING 
-    id,
-    user_id AS "userId",
-    symbol,
-    symbol_name AS "symbolName",
-    buy_price AS "buyPrice",
-    initial_quantity AS "initialQuantity",
-    buy_date AS "buyDate",
-    total_quantity AS "totalQuantity",
-    total_cost AS "totalCost",
-    average_cost AS "averageCost",
-    price_updated_at AS "priceUpdatedAt",
-    created_at AS "createdAt",
-    updated_at AS "updatedAt",
-    deleted_at AS "deletedAt"
-`;
-
 // 일지 상세 정보 조회 (journal 정보만)
 export const FIND_BY_ID_JOURNAL_DETAIL_QUERY = /* sql */ `
   SELECT
@@ -205,4 +180,61 @@ export const FIND_JOURNAL_EVENTS_WITH_EMOTIONS_QUERY = /* sql */ `
   WHERE je.journal_id = $1
   GROUP BY je.id, je.type, je.price, je.quantity, je.memo, je.created_at
   ORDER BY je.created_at DESC
+`;
+
+export const UPDATE_JOURNAL_QUERY = /* sql */ `
+  UPDATE journals
+  SET
+    symbol_name = COALESCE($2, symbol_name),
+    status = COALESCE($3, status),
+    updated_at = NOW()
+  WHERE user_id = $1 AND id = $4
+  RETURNING
+    id,
+    user_id AS "userId",
+    symbol,
+    symbol_name AS "symbolName",
+    buy_price AS "buyPrice",
+    initial_quantity AS "initialQuantity",
+    buy_date AS "buyDate",
+    total_quantity AS "totalQuantity",
+    total_cost AS "totalCost",
+    average_cost AS "averageCost",
+    price_updated_at AS "priceUpdatedAt",
+    created_at AS "createdAt",
+    updated_at AS "updatedAt",
+    deleted_at AS "deletedAt",
+    status
+`;
+
+// journal_events 업데이트 쿼리 (메모 수정)
+export const UPDATE_JOURNAL_EVENT_QUERY = /* sql */ `
+  UPDATE journal_events
+  SET
+    memo = COALESCE($3, memo),
+    updated_at = NOW()
+  WHERE id = $1 AND journal_id IN (
+    SELECT id FROM journals WHERE user_id = $2
+  )
+  RETURNING
+    id,
+    journal_id AS "journalId",
+    type,
+    price,
+    quantity,
+    memo,
+    created_at AS "createdAt",
+    updated_at AS "updatedAt"
+`;
+
+// journal_events 감정 태그 업데이트를 위한 삭제/삽입 쿼리
+export const DELETE_JOURNAL_EVENT_EMOTIONS_QUERY = /* sql */ `
+  DELETE FROM journal_event_emotions
+  WHERE event_id = $1
+`;
+
+// 감정 태그 재삽입 쿼리 (여러 개)
+export const INSERT_JOURNAL_EVENT_EMOTIONS_BATCH_QUERY = /* sql */ `
+  INSERT INTO journal_event_emotions (event_id, emotion_tag_id)
+  SELECT $1, id FROM emotion_tags WHERE code = ANY($2::text[])
 `;

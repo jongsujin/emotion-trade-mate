@@ -9,22 +9,31 @@ import {
   JournalEntity,
   JournalListEntity,
   JournalStatus,
+  UpdateJournalEntity,
+  UpdateJournalEventEntity,
 } from './entities/journals.entities';
 import {
   COUNT_ALL_JOURNALS_QUERY,
+  DELETE_JOURNAL_EVENT_EMOTIONS_QUERY,
   DELETE_JOURNAL_QUERY,
   FIND_ALL_JOURNALS_QUERY,
   FIND_BY_ID_JOURNAL_DETAIL_QUERY,
   FIND_BY_ID_JOURNAL_QUERY,
   FIND_JOURNAL_EVENTS_WITH_EMOTIONS_QUERY,
+  INSERT_JOURNAL_EVENT_EMOTIONS_BATCH_QUERY,
   INSERT_JOURNAL_EVENT_QUERY,
   INSERT_JOURNAL_QUERY,
+  UPDATE_JOURNAL_EVENT_QUERY,
+  UPDATE_JOURNAL_QUERY,
 } from 'src/core/database/sql/journals/query';
 import {
   CreateFirstEmotionDto,
   JournalDetailResponseDto,
 } from 'src/core/dto/journals.dto';
-import { JournalEventType } from '../journal_events/entities/journal_event.entities';
+import {
+  JournalEventType,
+  JournalEventsEntity,
+} from '../journal_events/entities/journal_event.entities';
 
 @Injectable()
 export class JournalsRepository {
@@ -131,9 +140,60 @@ export class JournalsRepository {
     return result;
   }
 
+  async update(
+    userId: number,
+    journalId: number,
+    journal: UpdateJournalEntity,
+  ): Promise<JournalEntity | null> {
+    const query = UPDATE_JOURNAL_QUERY;
+    const values = [userId, journalId, journal];
+    const result = await this.databaseService.queryOne<JournalEntity>(
+      query,
+      values,
+    );
+    return result;
+  }
+
+  async updateEvent(
+    userId: number,
+    eventId: number,
+    event: UpdateJournalEventEntity,
+  ): Promise<JournalEventsEntity | null> {
+    return await this.databaseService.transaction(async (client) => {
+      // 1. journal_event 메모 업데이트
+      const eventValues = [eventId, userId, event.memo];
+      const eventResult = await client.query(
+        UPDATE_JOURNAL_EVENT_QUERY,
+        eventValues,
+      );
+
+      // 2. 감정 태그가 있으면 기존 감정 삭제 후 재삽입
+      if (event.emotionCodes && event.emotionCodes.length > 0) {
+        // 기존 감정 태그 삭제
+        await client.query(DELETE_JOURNAL_EVENT_EMOTIONS_QUERY, [eventId]);
+
+        // 새로운 감정 태그 삽입
+        const emotionValues = [eventId, event.emotionCodes];
+        await client.query(
+          INSERT_JOURNAL_EVENT_EMOTIONS_BATCH_QUERY,
+          emotionValues,
+        );
+      }
+
+      return eventResult.rows[0] as JournalEventsEntity;
+    });
+  }
+
   async delete(userId: number, journalId: number): Promise<boolean> {
     const query = DELETE_JOURNAL_QUERY;
     const values = [userId, journalId];
+    const result = await this.databaseService.query(query, values);
+    return result.length > 0;
+  }
+
+  async deleteEvent(userId: number, eventId: number): Promise<boolean> {
+    const query = DELETE_JOURNAL_EVENT_EMOTIONS_QUERY;
+    const values = [userId, eventId];
     const result = await this.databaseService.query(query, values);
     return result.length > 0;
   }

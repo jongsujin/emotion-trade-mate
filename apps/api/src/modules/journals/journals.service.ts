@@ -9,6 +9,8 @@ import {
   JournalEntity,
   JournalListEntity,
   JournalStatus,
+  UpdateJournalEntity,
+  UpdateJournalEventEntity,
 } from './entities/journals.entities';
 import { Pagination } from 'src/core/common/types/common';
 import {
@@ -83,6 +85,26 @@ export class JournalsService {
 
   async deleteJournal(userId: number, journalId: number): Promise<boolean> {
     return await this.journalsRepository.delete(userId, journalId);
+  }
+
+  async updateJournal(
+    userId: number,
+    journalId: number,
+    updateData: UpdateJournalEntity,
+  ): Promise<JournalEntity | null> {
+    return await this.journalsRepository.update(userId, journalId, updateData);
+  }
+
+  async updateJournalEvent(
+    userId: number,
+    eventId: number,
+    updateData: UpdateJournalEventEntity,
+  ): Promise<any> {
+    return await this.journalsRepository.updateEvent(
+      userId,
+      eventId,
+      updateData,
+    );
   }
 
   async getJournalDetail(

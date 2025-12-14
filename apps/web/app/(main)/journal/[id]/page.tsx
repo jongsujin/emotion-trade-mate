@@ -3,7 +3,6 @@
 import { use } from 'react'
 import Link from 'next/link'
 import { ROUTES } from '@/constants'
-import { MOCK_JOURNAL_DETAIL } from '@/constants/journals'
 import {
   JournalDetailEmotionTimeLine,
   JournalDetailHeader,
@@ -20,28 +19,36 @@ export default function JournalDetailPage({ params }: { params: Promise<{ id: st
 
   const { data: journalDetail } = useGetJournalDetail(Number(id))
   console.log('journalDetail:', journalDetail)
-  return (
+  return journalDetail?.data ? (
     <div className="min-h-screen bg-[#F4F5F7] pb-32">
       {/* 헤더 */}
-      <JournalDetailHeader symbol={MOCK_JOURNAL_DETAIL.symbol} />
+      <JournalDetailHeader symbol={journalDetail.data.journal.symbol} />
 
       <div className="space-y-4 px-5 pt-2">
         {/* 종목 요약 */}
         <JournalDetailSummary
-          symbolName={MOCK_JOURNAL_DETAIL.symbolName}
-          currentPrice={MOCK_JOURNAL_DETAIL.currentPrice}
-          returnRate={MOCK_JOURNAL_DETAIL.returnRate}
-          buyPrice={MOCK_JOURNAL_DETAIL.buyPrice}
-          profit={MOCK_JOURNAL_DETAIL.profit}
-          totalQuantity={MOCK_JOURNAL_DETAIL.totalQuantity}
-          buyDate={MOCK_JOURNAL_DETAIL.buyDate}
+          symbolName={journalDetail.data.journal.symbolName}
+          currentPrice={journalDetail.data.metrics.currentPrice}
+          returnRate={journalDetail.data.metrics.profitPercentage}
+          buyPrice={journalDetail.data.journal.buyPrice}
+          profit={journalDetail.data.metrics.profit}
+          totalQuantity={journalDetail.data.journal.totalQuantity}
+          buyDate={journalDetail.data.journal.buyDate}
         />
 
         {/* 감정 타임라인 */}
         <JournalDetailEmotionTimeLine
-          totalRecords={MOCK_JOURNAL_DETAIL.totalRecords}
-          emotionHistory={MOCK_JOURNAL_DETAIL.emotionHistory}
-          buyPrice={MOCK_JOURNAL_DETAIL.buyPrice}
+          totalRecords={journalDetail.data.events.length}
+          emotionHistory={journalDetail.data.events.map((event) => ({
+            id: event.id,
+            type: event.type,
+            price: event.price,
+            emotions: event.emotions,
+            quantity: event.quantity,
+            memo: event.memo,
+            createdAt: event.createdAt,
+          }))}
+          buyPrice={journalDetail.data.journal.buyPrice}
         />
       </div>
 
@@ -70,6 +77,10 @@ export default function JournalDetailPage({ params }: { params: Promise<{ id: st
           </Link>
         </div>
       </div>
+    </div>
+  ) : (
+    <div>
+      <h1>일지를 찾을 수 없습니다.</h1>
     </div>
   )
 }

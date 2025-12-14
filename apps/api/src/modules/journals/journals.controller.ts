@@ -5,12 +5,18 @@ import {
   Get,
   HttpException,
   Param,
+  Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { JournalsService } from './journals.service';
-import { JournalListEntity } from './entities/journals.entities';
+import {
+  JournalEntity,
+  JournalListEntity,
+  UpdateJournalEntity,
+  UpdateJournalEventEntity,
+} from './entities/journals.entities';
 import { Pagination } from 'src/core/common/types/common';
 import {
   CreateJournalDto,
@@ -19,6 +25,7 @@ import {
 } from '../../core/dto/journals.dto';
 import { CurrentUser } from 'src/core/common/decorators/user.decorator';
 import { JwtAuthGuard } from 'src/core/common/guards/jwt-auth.guard';
+import { JournalEventsEntity } from '../journal_events/entities/journal_event.entities';
 
 @Controller('journals')
 export class JournalsController {
@@ -80,5 +87,32 @@ export class JournalsController {
   ): Promise<JournalDetailResponseDto | null> {
     const userId = user.userId;
     return await this.journalsService.getJournalDetail(userId, id);
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  async updateJournal(
+    @CurrentUser() user: { userId: number },
+    @Param('id') id: number,
+    @Body() updateData: UpdateJournalEntity,
+  ): Promise<JournalEntity | null> {
+    const userId = user.userId;
+    return await this.journalsService.updateJournal(userId, id, updateData);
+  }
+
+  @Patch(':id/events/:eventId')
+  @UseGuards(JwtAuthGuard)
+  async updateJournalEvent(
+    @CurrentUser() user: { userId: number },
+    @Param('id') id: number,
+    @Param('eventId') eventId: number,
+    @Body() updateData: UpdateJournalEventEntity,
+  ): Promise<JournalEventsEntity | null> {
+    const userId = user.userId;
+    return await this.journalsService.updateJournalEvent(
+      userId,
+      eventId,
+      updateData,
+    );
   }
 }

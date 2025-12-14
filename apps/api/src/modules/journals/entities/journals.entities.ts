@@ -46,29 +46,22 @@ export class JournalListEntity {
   latestEvent: JournalEventsEntity;
 }
 
-export class JournalDetailEntity {
+export class UpdateJournalEntity {
+  symbolName?: string;
+  status?: JournalStatus;
+}
+
+export class UpdateJournalEventEntity {
+  memo?: string;
+  emotionCodes?: string[];
+}
+
+export class DeleteJournalEntity {
   id: number;
-  symbol: string;
-  symbolName: string;
-  buyDate: Date;
+}
 
-  buyPrice: number;
-  initialQuantity: number;
-
-  averageCost: number;
-  totalCost: number;
-
-  currentPrice: number;
-  totalQuantity: number;
-
-  // 평가손익 (보유분 기준)
-  profitPercentage: number;
-  profit: number;
-
-  // 확정손익(실제 매도해서 확정된 부분)
-  realizedProfit: number;
-
-  eventList: JournalEventsEntity[];
+export class DeleteJournalEventEntity {
+  id: number;
 }
 
 export enum JournalStatus {

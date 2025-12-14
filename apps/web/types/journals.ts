@@ -1,5 +1,4 @@
 import type { EmotionType } from '@/constants/emotions'
-import { EmotionHistoryResponse } from './emotion'
 
 /**
  * @description 일지 리스트 페이지 헤더 컴포넌트 타입
@@ -50,34 +49,6 @@ export interface JournalItemData {
 }
 
 /**
- * @description 일지 상세 페이지 컴포넌트 타입
- * @param id 일지 고유 아이디
- * @param symbol 종목 심볼
- * @param symbolName 종목 이름
- * @param buyDate 매수 일자
- * @param buyPrice 매수 가격
- * @param currentPrice 현재 가격
- * @param totalQuantity 보유 수량
- * @param returnRate 수익률
- * @param profit 수익
- * @param totalRecords 감정 횟수
- * @param emotionHistory 감정 기록
- */
-export interface JournalDetailItemProps {
-  id: number
-  symbol: string
-  symbolName: string
-  buyDate: string
-  buyPrice: number
-  currentPrice: number
-  totalQuantity: number
-  returnRate: number
-  profit: number
-  totalRecords: number
-  emotionHistory: JournalDetailEmotionHistoryItemProps[]
-}
-
-/**
  * @description 일지 상세 페이지에서 사용하는 감정 기록 항목 타입
  * @param date 감정 기록 일자
  * @param emotion 감정 이모지
@@ -103,7 +74,7 @@ export interface JournalDetailEmotionHistoryItemProps {
  */
 export interface JournalDetailEmotionTimeLineProps {
   totalRecords: number
-  emotionHistory: JournalDetailEmotionHistoryItemProps[]
+  emotionHistory: JournalDetailEventProps[]
   buyPrice: number
 }
 
@@ -236,18 +207,43 @@ export interface JournalUpdateRequest extends JournalCreateRequest {
   id: number
 }
 
-export interface JournalDetailResponse {
+export interface JournalDetailItemProps {
   id: number
   symbol: string
   symbolName: string
+  status: 'OPEN' | 'CLOSED'
+
   buyDate: string
   buyPrice: number
   initialQuantity: number
-  averageCost: number
-  totalCost: number
-  currentPrice: number
+
   totalQuantity: number
-  profitPercentage: number
+  totalCost: number
+  averageCost: number
+}
+
+export interface JournalDetailMetricsProps {
+  currentPrice: number
   profit: number
-  emotionList: EmotionHistoryResponse[]
+  profitPercentage: number
+  realizedProfit: number
+}
+
+export interface JournalDetailEventProps {
+  id: number
+  type: 'BUY' | 'SELL' | 'NOTE' | 'EMOTION'
+  price: number
+  quantity?: number
+  memo?: string
+  emotions: Array<{
+    code: string
+    label: string
+  }>
+  createdAt: string
+}
+
+export interface JournalDetailResponse {
+  journal: JournalDetailItemProps
+  metrics: JournalDetailMetricsProps
+  events: JournalDetailEventProps[]
 }
