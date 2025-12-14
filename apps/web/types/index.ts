@@ -49,6 +49,25 @@ export interface CreateJournalRequest {
   firstEmotion?: CreateFirstEmotionRequest
 }
 
+export interface CreateJournalEventRequest {
+  type: 'BUY' | 'SELL' | 'EMOTION' | 'NOTE'
+  price: number
+  quantity?: number
+  memo?: string
+  emotionCodes?: string[]
+}
+
+export interface JournalEventResponse {
+  id: number
+  journalId: number
+  type: 'BUY' | 'SELL' | 'EMOTION' | 'NOTE'
+  price: number
+  quantity?: number | null
+  memo?: string | null
+  createdAt: string
+  updatedAt?: string | null
+}
+
 /**
  * 일지 수정 요청 타입 (백엔드 UpdateJournalDto와 동기화)
  */

@@ -5,7 +5,14 @@
 
 import { API_ROUTES } from '@/constants'
 import { apiClient } from '@/lib/api'
-import type { Journal, Pagination, CreateJournalRequest, UpdateJournalRequest } from '@/types'
+import type {
+  Journal,
+  Pagination,
+  CreateJournalRequest,
+  CreateJournalEventRequest,
+  JournalEventResponse,
+  UpdateJournalRequest
+} from '@/types'
 import { JournalDetailResponse } from '@/types/journals'
 
 /**
@@ -51,4 +58,16 @@ export async function deleteJournal(id: number) {
  */
 export async function getJournalDetail(id: number) {
   return apiClient.get<JournalDetailResponse>(API_ROUTES.JOURNAL.DETAIL(id.toString()))
+}
+
+/**
+ * 감정 이벤트 생성 (POST /journals/:id/events)
+ * @param journalId 일지 ID
+ * @param data 이벤트 데이터
+ */
+export async function createJournalEvent(journalId: number, data: CreateJournalEventRequest) {
+  return apiClient.post<JournalEventResponse>(
+    API_ROUTES.JOURNAL.CREATE_EVENT(journalId.toString()),
+    data
+  )
 }

@@ -94,7 +94,7 @@ export const FIND_ALL_JOURNALS_QUERY = /* sql */ `
 `;
 
 export const FIND_BY_ID_JOURNAL_QUERY = /* sql */ `
-  SELECT 
+  SELECT
     id,
     user_id AS "userId",
     symbol,
@@ -110,7 +110,6 @@ export const FIND_BY_ID_JOURNAL_QUERY = /* sql */ `
     updated_at AS "updatedAt",
     deleted_at AS "deletedAt"
   FROM journals
-  LEFT JOIN journal_events ON journals.id = journal_events.journal_id
   WHERE user_id = $1 AND id = $2
 `;
 
@@ -214,7 +213,7 @@ export const UPDATE_JOURNAL_EVENT_QUERY = /* sql */ `
     memo = COALESCE($3, memo),
     updated_at = NOW()
   WHERE id = $1 AND journal_id IN (
-    SELECT id FROM journals WHERE user_id = $2
+    SELECT journals.id FROM journals WHERE user_id = $2
   )
   RETURNING
     id,

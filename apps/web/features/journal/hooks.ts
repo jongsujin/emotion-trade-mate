@@ -6,9 +6,11 @@ import {
   type UseMutationResult,
 } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { getJournals, createJournal, updateJournal, deleteJournal, getJournalDetail } from './api'
+import { getJournals, createJournal, createJournalEvent, updateJournal, deleteJournal, getJournalDetail } from './api'
 import type {
   CreateJournalRequest,
+  CreateJournalEventRequest,
+  JournalEventResponse,
   UpdateJournalRequest,
   Journal,
   Pagination,
@@ -98,5 +100,27 @@ export function useGetJournalDetail(
   return useQuery({
     queryKey: ['journalDetail', id],
     queryFn: () => getJournalDetail(id),
+  })
+}
+
+/**
+ * 감정 이벤트 생성 훅
+ */
+export function useCreateJournalEvent(): UseMutationResult<
+  ApiResponse<JournalEventResponse>,
+  Error,
+  { journalId: number; data: CreateJournalEventRequest },
+  unknown
+> {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ journalId, data }: { journalId: number; data: CreateJournalEventRequest }) =>
+      createJournalEvent(journalId, data),
+    onSuccess: (response, { journalId }) => {
+      // 관련 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ['journalDetail', journalId] })
+      queryClient.invalidateQueries({ queryKey: ['journals'] })
+    },
   })
 }

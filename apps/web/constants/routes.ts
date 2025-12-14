@@ -49,6 +49,7 @@ export const API_ROUTES = {
     DETAIL: (id: string) => `/api/journals/${id}/detail`, // GET
     UPDATE: (id: string) => `/api/journals/${id}`, // PUT
     DELETE: (id: string) => `/api/journals/${id}`, // DELETE
+    CREATE_EVENT: (id: string) => `/api/journals/${id}/events`, // POST
     ADD_EMOTION: (id: string) => `/api/journals/${id}/emotion`,
   },
   OCR: {

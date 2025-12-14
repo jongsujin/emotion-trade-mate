@@ -125,7 +125,52 @@ export class JournalsRepository {
         eventValues,
       );
 
-      // 2. emotionCodes가 있으면 감정 태그 연결
+      // 2. BUY/SELL 이벤트인 경우 journal의 total_quantity, total_cost, average_cost 업데이트
+      if (
+        (event.type === 'BUY' || event.type === 'SELL') &&
+        event.quantity &&
+        event.price
+      ) {
+        // 현재 journal 정보 조회
+        const currentJournalResult = await client.query(
+          'SELECT total_quantity, total_cost FROM journals WHERE id = $1 AND user_id = $2',
+          [journalId, userId],
+        );
+
+        if (currentJournalResult.rows[0]) {
+          const current = currentJournalResult.rows[0];
+          let newTotalQuantity = current.total_quantity;
+          let newTotalCost = current.total_cost;
+
+          if (event.type === 'BUY') {
+            // 매수: 수량 증가, 비용 증가
+            newTotalQuantity += event.quantity;
+            newTotalCost += event.price * event.quantity;
+          } else if (event.type === 'SELL') {
+            // 매도: 수량 감소, 비용 감소 (평균단가 기준)
+            if (newTotalQuantity >= event.quantity) {
+              const averageCost =
+                newTotalQuantity > 0 ? newTotalCost / newTotalQuantity : 0;
+              newTotalQuantity -= event.quantity;
+              newTotalCost -= averageCost * event.quantity;
+            }
+          }
+
+          // 평균단가 재계산
+          const newAverageCost =
+            newTotalQuantity > 0 ? newTotalCost / newTotalQuantity : 0;
+
+          // journal 업데이트
+          await client.query(
+            `UPDATE journals
+             SET total_quantity = $1, total_cost = $2, average_cost = $3, updated_at = NOW()
+             WHERE id = $4 AND user_id = $5`,
+            [newTotalQuantity, newTotalCost, newAverageCost, journalId, userId],
+          );
+        }
+      }
+
+      // 3. emotionCodes가 있으면 감정 태그 연결
       if (event.emotionCodes && event.emotionCodes.length > 0) {
         for (const emotionCode of event.emotionCodes) {
           // emotion_tags에서 code로 id 조회
