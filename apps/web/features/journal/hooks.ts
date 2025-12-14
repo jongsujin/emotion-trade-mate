@@ -6,7 +6,7 @@ import {
   type UseMutationResult,
 } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { getJournals, createJournal, updateJournal, deleteJournal } from './api'
+import { getJournals, createJournal, updateJournal, deleteJournal, getJournalDetail } from './api'
 import type {
   CreateJournalRequest,
   UpdateJournalRequest,
@@ -14,6 +14,7 @@ import type {
   Pagination,
   ApiResponse,
 } from '@/types'
+import { JournalDetailResponse } from '@/types/journals'
 
 /**
  * 일지 목록 조회 훅
@@ -85,5 +86,17 @@ export function useDeleteJournal(): UseMutationResult<
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['journals'] })
     },
+  })
+}
+
+/**
+ * 일지 상세 조회 훅
+ */
+export function useGetJournalDetail(
+  id: number
+): UseQueryResult<ApiResponse<JournalDetailResponse>, Error> {
+  return useQuery({
+    queryKey: ['journalDetail', id],
+    queryFn: () => getJournalDetail(id),
   })
 }

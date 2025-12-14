@@ -46,7 +46,7 @@ export const API_ROUTES = {
   JOURNAL: {
     LIST: '/api/journals', // GET
     CREATE: '/api/journals', // POST
-    DETAIL: (id: string) => `/api/journals/${id}`, // GET
+    DETAIL: (id: string) => `/api/journals/${id}/detail`, // GET
     UPDATE: (id: string) => `/api/journals/${id}`, // PUT
     DELETE: (id: string) => `/api/journals/${id}`, // DELETE
     ADD_EMOTION: (id: string) => `/api/journals/${id}/emotion`,

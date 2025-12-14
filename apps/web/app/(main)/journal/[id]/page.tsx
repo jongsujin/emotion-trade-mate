@@ -10,6 +10,7 @@ import {
   JournalDetailSummary,
 } from '@/components/journal/detail'
 import { Button } from '@/components/common/Button'
+import { useGetJournalDetail } from '@/features/journal'
 
 /**
  * 종목별 감정 타임라인 페이지
@@ -17,6 +18,8 @@ import { Button } from '@/components/common/Button'
 export default function JournalDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
 
+  const { data: journalDetail } = useGetJournalDetail(Number(id))
+  console.log('journalDetail:', journalDetail)
   return (
     <div className="min-h-screen bg-[#F4F5F7] pb-32">
       {/* 헤더 */}
@@ -43,15 +46,25 @@ export default function JournalDetailPage({ params }: { params: Promise<{ id: st
       </div>
 
       {/* 하단 고정 액션 버튼 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#F2F4F6] p-5 max-w-[480px] mx-auto shadow-[0_-4px_12px_rgba(0,0,0,0.04)]">
+      <div className="fixed right-0 bottom-0 left-0 mx-auto max-w-[480px] border-t border-[#F2F4F6] bg-white p-5 shadow-[0_-4px_12px_rgba(0,0,0,0.04)]">
         <div className="grid grid-cols-2 gap-3">
           <Link href={ROUTES.JOURNAL.ADD_EMOTION(id)} className="w-full">
-            <Button variant="secondary" fullWidth size="lg" className="font-bold bg-[#E8F3FF] text-[#1B64DA] hover:bg-[#D6E6FA]">
+            <Button
+              variant="secondary"
+              fullWidth
+              size="lg"
+              className="bg-[#E8F3FF] font-bold text-[#1B64DA] hover:bg-[#D6E6FA]"
+            >
               감정 추가
             </Button>
           </Link>
           <Link href={ROUTES.REPORT.DETAIL(id)} className="w-full">
-            <Button variant="primary" fullWidth size="lg" className="font-bold shadow-lg shadow-[#6C9EFF]/30 bg-[#6C9EFF] hover:bg-[#4B82F0]">
+            <Button
+              variant="primary"
+              fullWidth
+              size="lg"
+              className="bg-[#6C9EFF] font-bold shadow-lg shadow-[#6C9EFF]/30 hover:bg-[#4B82F0]"
+            >
               AI 리포트
             </Button>
           </Link>

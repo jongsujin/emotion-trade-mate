@@ -32,16 +32,21 @@ export interface Journal {
 }
 
 /**
- * 일지 생성 요청 타입 (백엔드 CreateJournalDto와 동기화)
+ * 일지 생성 요청 타입
  */
+
+export interface CreateFirstEmotionRequest {
+  price?: number
+  memo?: string
+  emotionCodes?: string[]
+}
 export interface CreateJournalRequest {
   symbol: string
   symbolName: string
   buyPrice: number
   initialQuantity: number
-  buyDate: string // ISO 형식: "2024-01-15"
-  totalQuantity: number
-  memo?: string
+  buyDate: string
+  firstEmotion?: CreateFirstEmotionRequest
 }
 
 /**

@@ -1,0 +1,5 @@
+CREATE TABLE emotion_tags (
+  id SERIAL PRIMARY KEY,
+  code VARCHAR(20) UNIQUE NOT NULL,   -- FEAR, GREED...
+  label_ko VARCHAR(50) NOT NULL
+);

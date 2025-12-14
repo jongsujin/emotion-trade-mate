@@ -6,6 +6,7 @@
 import { API_ROUTES } from '@/constants'
 import { apiClient } from '@/lib/api'
 import type { Journal, Pagination, CreateJournalRequest, UpdateJournalRequest } from '@/types'
+import { JournalDetailResponse } from '@/types/journals'
 
 /**
  * 일지 목록 조회 (GET /journals)
@@ -42,4 +43,12 @@ export async function updateJournal(id: number, data: UpdateJournalRequest) {
  */
 export async function deleteJournal(id: number) {
   return apiClient.delete<boolean>(API_ROUTES.JOURNAL.DELETE(id.toString()))
+}
+
+/**
+ * 일지 상세 조회 (GET /journals/:id/detail)
+ * @param id 일지 ID
+ */
+export async function getJournalDetail(id: number) {
+  return apiClient.get<JournalDetailResponse>(API_ROUTES.JOURNAL.DETAIL(id.toString()))
 }

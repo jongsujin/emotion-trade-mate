@@ -130,8 +130,8 @@ export interface JournalDetailSummaryProps {
 export interface JournalFormProps {
   formData: JournalCreateFormData
   setFormData: React.Dispatch<React.SetStateAction<JournalCreateFormData>>
-  selectedEmotion: EmotionType | null
-  setSelectedEmotion: React.Dispatch<React.SetStateAction<EmotionType | null>>
+  selectedEmotions: string[]
+  setSelectedEmotions: React.Dispatch<React.SetStateAction<string[]>>
 }
 
 /**

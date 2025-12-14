@@ -3,18 +3,19 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   Param,
   Post,
-  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { JournalsService } from './journals.service';
-import { JournalsEntity } from './entities/journals.entities';
+import { JournalListEntity } from './entities/journals.entities';
 import { Pagination } from 'src/core/common/types/common';
 import {
   CreateJournalDto,
-  UpdateJournalDto,
+  CreateJournalResponseDto,
+  JournalDetailResponseDto,
 } from '../../core/dto/journals.dto';
 import { CurrentUser } from 'src/core/common/decorators/user.decorator';
 import { JwtAuthGuard } from 'src/core/common/guards/jwt-auth.guard';
@@ -28,19 +29,23 @@ export class JournalsController {
   async createJournal(
     @Body() dto: CreateJournalDto,
     @CurrentUser() user: { userId: number },
-  ): Promise<JournalsEntity> {
-    const journal = new JournalsEntity();
-    journal.userId = user.userId;
-    journal.symbol = dto.symbol;
-    journal.symbolName = dto.symbolName;
-    journal.buyPrice = dto.buyPrice;
-    journal.initialQuantity = dto.initialQuantity;
-    journal.buyDate = new Date(dto.buyDate);
-    journal.totalQuantity = dto.totalQuantity;
-    journal.totalCost = dto.buyPrice * dto.totalQuantity;
-    journal.averageCost = dto.buyPrice;
-    journal.priceUpdatedAt = new Date();
-    return this.journalsService.createJournal(journal);
+  ): Promise<CreateJournalResponseDto> {
+    try {
+      await this.journalsService.createJournal(dto, user.userId);
+      return {
+        success: true,
+        message: 'Journal created successfully',
+      };
+    } catch (error) {
+      // 에러 발생 시 400 Bad Request 반환
+      throw new HttpException(
+        {
+          success: false,
+          message: error.message || 'Journal creation failed',
+        },
+        400,
+      );
+    }
   }
 
   @Get()
@@ -49,23 +54,12 @@ export class JournalsController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
     @CurrentUser() user: { userId: number },
-  ): Promise<Pagination<JournalsEntity>> {
+  ): Promise<Pagination<JournalListEntity>> {
     const userId = user.userId;
 
     const result = await this.journalsService.getJournals(userId, page, limit);
 
     return result;
-  }
-
-  @Put(':id')
-  @UseGuards(JwtAuthGuard)
-  async updateJournal(
-    @CurrentUser() user: { userId: number },
-    @Param('id') id: number,
-    @Body() dto: UpdateJournalDto,
-  ): Promise<JournalsEntity | null> {
-    const userId = user.userId;
-    return await this.journalsService.updateJournal(userId, id, dto);
   }
 
   @Delete(':id')
@@ -76,5 +70,15 @@ export class JournalsController {
   ): Promise<boolean> {
     const userId = user.userId;
     return await this.journalsService.deleteJournal(userId, id);
+  }
+
+  @Get(':id/detail')
+  @UseGuards(JwtAuthGuard)
+  async getJournalDetail(
+    @CurrentUser() user: { userId: number },
+    @Param('id') id: number,
+  ): Promise<JournalDetailResponseDto | null> {
+    const userId = user.userId;
+    return await this.journalsService.getJournalDetail(userId, id);
   }
 }
