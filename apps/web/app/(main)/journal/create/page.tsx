@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { type EmotionType } from '@/constants'
 import TitleSection from '@/components/common/TitleSection'
 import JournalForm from '@/components/journal/create/JournalForm'
 import { Button } from '@/components/common/Button'
@@ -15,13 +14,13 @@ import type { CreateJournalRequest } from '@/types'
  */
 function convertFormToRequest(
   formData: JournalCreateFormData,
-  emotionId: EmotionType
+  selectedEmotions: string[]
 ): CreateJournalRequest {
   const today = new Date().toISOString().substring(0, 10)
   const buyPrice = Number(formData.price)
   const quantity = Number(formData.quantity)
 
-  console.log('emotionId', emotionId)
+  console.log('selectedEmotions', selectedEmotions)
   if (isNaN(buyPrice) || isNaN(quantity)) {
     throw new Error('가격 또는 수량이 유효한 숫자가 아닙니다')
   }
@@ -35,9 +34,15 @@ function convertFormToRequest(
     symbolName: formData.symbolName.trim() || formData.symbol.trim(),
     buyPrice,
     initialQuantity: quantity,
-    totalQuantity: quantity, // 최초 매수이므로 initialQuantity와 동일
     buyDate: today,
-    memo: formData.memo.trim() || undefined,
+    firstEmotion:
+      selectedEmotions.length > 0
+        ? {
+            price: buyPrice, // 매수 가격을 firstEmotion의 시점 가격으로 사용
+            memo: formData.memo.trim() || undefined,
+            emotionCodes: selectedEmotions,
+          }
+        : undefined,
   }
 }
 
@@ -46,7 +51,7 @@ function convertFormToRequest(
  */
 export default function JournalCreatePage() {
   const router = useRouter()
-  const [selectedEmotion, setSelectedEmotion] = useState<EmotionType | null>(null)
+  const [selectedEmotions, setSelectedEmotions] = useState<string[]>([])
   const [formData, setFormData] = useState<JournalCreateFormData>({
     symbol: '',
     symbolName: '',
@@ -59,8 +64,8 @@ export default function JournalCreatePage() {
 
   const handleSubmit = () => {
     // 유효성 검사
-    if (!selectedEmotion) {
-      alert('감정을 선택해주세요')
+    if (selectedEmotions.length === 0) {
+      alert('감정을 하나 이상 선택해주세요')
       return
     }
 
@@ -75,7 +80,7 @@ export default function JournalCreatePage() {
     }
 
     try {
-      const requestData = convertFormToRequest(formData, selectedEmotion)
+      const requestData = convertFormToRequest(formData, selectedEmotions)
 
       createJournal(requestData, {
         onSuccess: (response) => {
@@ -101,7 +106,7 @@ export default function JournalCreatePage() {
   }
 
   const isFormValid =
-    selectedEmotion && formData.symbol.trim() && formData.price && formData.quantity
+    selectedEmotions.length > 0 && formData.symbol.trim() && formData.price && formData.quantity
 
   return (
     <div className="min-h-screen bg-[#F2F4F6] pb-24">
@@ -112,8 +117,8 @@ export default function JournalCreatePage() {
       <JournalForm
         formData={formData}
         setFormData={setFormData}
-        selectedEmotion={selectedEmotion}
-        setSelectedEmotion={setSelectedEmotion}
+        selectedEmotions={selectedEmotions}
+        setSelectedEmotions={setSelectedEmotions}
       />
 
       {/* 하단 고정 버튼 */}

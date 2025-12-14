@@ -1,0 +1,1 @@
+ALTER TABLE journal_events ALTER COLUMN price DROP NOT NULL;

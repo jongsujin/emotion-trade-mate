@@ -1,4 +1,4 @@
-import { JournalEventsEntity } from 'src/modules/emotions/entities/emotions.entities';
+import { JournalEventsEntity } from 'src/modules/journal_events/entities/journal_event.entities';
 
 export class JournalEntity {
   id: number;
@@ -15,8 +15,22 @@ export class JournalEntity {
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date | null;
+  status: JournalStatus;
 }
 
+export class CreateJournalEntity {
+  userId: number;
+  symbol: string;
+  symbolName: string;
+  buyPrice: number;
+  initialQuantity: number;
+  buyDate: Date;
+  totalQuantity: number;
+  totalCost: number;
+  averageCost: number;
+  priceUpdatedAt: Date;
+  status: JournalStatus;
+}
 export class JournalListEntity {
   id: number;
   symbol: string;

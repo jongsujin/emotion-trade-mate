@@ -1,10 +1,10 @@
 export const INSERT_JOURNAL_QUERY = /* sql */ `
   INSERT INTO journals (
-    user_id, symbol, symbol_name, buy_price, initial_quantity, 
+    user_id, symbol, symbol_name, buy_price, initial_quantity,
     buy_date, total_quantity, total_cost, average_cost, price_updated_at
   )
   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-  RETURNING 
+  RETURNING
     id,
     user_id AS "userId",
     symbol,
@@ -17,8 +17,23 @@ export const INSERT_JOURNAL_QUERY = /* sql */ `
     average_cost AS "averageCost",
     price_updated_at AS "priceUpdatedAt",
     created_at AS "createdAt",
-    updated_at AS "updatedAt",
-    deleted_at AS "deletedAt"
+    updated_at AS "updatedAt"
+`;
+
+export const INSERT_JOURNAL_EVENT_QUERY = /* sql */ `
+  INSERT INTO journal_events (
+     journal_id, type, price, quantity, memo
+  )
+  VALUES ($1, $2, $3, $4, $5)
+  RETURNING
+    id,
+    journal_id AS "journalId",
+    type,
+    price,
+    quantity,
+    memo,
+    created_at AS "createdAt",
+    updated_at AS "updatedAt"
 `;
 
 export const FIND_ALL_JOURNALS_QUERY = /* sql */ `

@@ -10,9 +10,9 @@ export class JournalEventsEntity {
   journalId: number;
   type: JournalEventType;
   memo?: string;
-
   price?: number; // BUY / SELL / EMOTION 모두 시점 가격 기록
   quantity?: number; // BUY(+), SELL(-)일 때 사용
-
   createdAt: Date;
+  updatedAt?: Date | null;
+  deletedAt?: Date | null;
 }
