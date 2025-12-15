@@ -14,6 +14,7 @@ import { LoginDto } from 'src/core/dto/login.dto';
 import { CurrentUser } from 'src/core/common/decorators/user.decorator';
 import { JwtAuthGuard } from 'src/core/common/guards/jwt-auth.guard';
 import { UsersService } from '../users/users.service';
+import { JwtRefreshGuard } from 'src/core/common/guards/jwt-refresh.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -76,6 +77,30 @@ export class AuthController {
       email: userInfo.email,
       nickname: userInfo.nickname,
       createdAt: userInfo.createdAt,
+    };
+  }
+
+  @Post('refresh')
+  @UseGuards(JwtRefreshGuard)
+  refreshTokens(
+    @CurrentUser() user: { userId: number; email: string },
+    @Res({ passthrough: true }) res: express.Response,
+  ) {
+    // user 객체의 구조를 맞춰줘야 함 (id, email)
+    const userForToken = { id: user.userId, email: user.email };
+    const tokens = this.authService.issueTokens(userForToken);
+
+    // 새로운 토큰으로 쿠키 업데이트
+    res.cookie('accessToken', tokens.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60, // 1시간
+      path: '/',
+    });
+
+    return {
+      success: true,
+      message: '토큰 재발급 성공',
     };
   }
 }

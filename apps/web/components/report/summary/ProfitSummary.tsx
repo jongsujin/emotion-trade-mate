@@ -1,4 +1,5 @@
-import type { ProfitSummaryProps } from '@/types/reports'
+import { formatNumber } from '@/lib/utils'
+import type { ReportSummaryProps } from '@/types/reports'
 
 export default function ProfitSummary({
   period,
@@ -6,7 +7,7 @@ export default function ProfitSummary({
   avgReturnRate,
   totalRecords,
   totalSymbols,
-}: ProfitSummaryProps) {
+}: ReportSummaryProps) {
   return (
     <div className="rounded-3xl bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
       <div className="text-center">
@@ -15,7 +16,7 @@ export default function ProfitSummary({
         </span>
         <p className="mt-3 text-sm text-[#9CA3AF]">총 평가 손익</p>
         <div className="mt-1 flex items-baseline justify-center gap-1">
-          <span className="text-4xl font-bold text-[#FF6B6B]">+{totalProfit.toLocaleString()}</span>
+          <span className="text-4xl font-bold text-[#FF6B6B]">+{formatNumber(totalProfit)}</span>
           <span className="text-lg font-medium text-[#9CA3AF]">원</span>
         </div>
         <div className="mt-2 text-base font-semibold text-[#FF6B6B]">+{avgReturnRate}%</div>

@@ -58,7 +58,7 @@ export class AuthService {
   }
 
   // 토큰 발급
-  private issueTokens(user: { id: number; email: string }) {
+  public issueTokens(user: { id: number; email: string }) {
     // 페이로드 생성
     const payload = { sub: user.id, email: user.email };
 

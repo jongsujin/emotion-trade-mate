@@ -46,6 +46,10 @@ export function formatNumber(num: number): string {
 }
 
 /**
+ * @description 숫자 버림 처리
+ */
+
+/**
  * 수익률 계산
  */
 export function calculateReturnRate(buyPrice: number, currentPrice: number): number {
