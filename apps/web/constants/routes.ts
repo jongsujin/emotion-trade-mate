@@ -21,6 +21,7 @@ export const ROUTES = {
 
   // AI 리포트
   REPORT: {
+    INDEX: '/report',
     DETAIL: (id: string) => `/report/${id}`,
     SUMMARY: '/report/summary',
   },

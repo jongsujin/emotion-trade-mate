@@ -11,6 +11,7 @@ export class JournalEntity {
   totalQuantity: number;
   totalCost: number;
   averageCost: number;
+  realizedProfit: number;
   priceUpdatedAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -40,9 +41,12 @@ export class JournalListEntity {
   status: JournalStatus;
   buyDate: Date;
   totalQuantity: number;
-  averagecost: number;
+  averageCost: number;
+  realizedProfit: number;
   createdAt: Date;
   eventCount: number;
+  primaryEmotion?: string;
+  primaryEmotionLabel?: string;
   latestEvent: JournalEventsEntity;
 }
 

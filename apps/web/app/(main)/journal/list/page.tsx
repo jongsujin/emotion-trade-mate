@@ -1,5 +1,7 @@
 'use client'
 
+import { EMOTION_DATA } from '@/constants'
+
 import JournalHeader from '@/components/journal/JournalHeader'
 import JournalList from '@/components/journal/JournalList'
 import JournalEmptyState from '@/components/journal/JournalEmptyState'
@@ -11,18 +13,32 @@ import type { Journal } from '@/types'
  * Journal 타입을 JournalItemData 타입으로 변환
  */
 function transformJournalData(journal: Journal): JournalItemData {
-  // 수익률 계산 (임시로 0% 사용, 나중에 현재가 API 연동 후 계산)
-  const returnRate = 0
+  // 대표 감정 이모지 찾기
+  const emotionData = journal.primaryEmotion
+    ? EMOTION_DATA[journal.primaryEmotion as keyof typeof EMOTION_DATA]
+    : null
+
+  const emoji = emotionData ? emotionData.emoji : '📝'
+  const emotionLabel = journal.primaryEmotionLabel || '기록'
+
+  // 수익률 계산 (현재가 연동 완료)
+  const currentPrice = journal.currentPrice || journal.buyPrice
+  const averageCost = journal.averageCost || journal.buyPrice
+
+  let returnRate = 0
+  if (averageCost > 0) {
+    returnRate = ((currentPrice - averageCost) / averageCost) * 100
+  }
 
   return {
     id: journal.id,
     symbol: journal.symbol,
     symbolName: journal.symbolName,
-    emoji: '📊', // 임시 이모지 (감정 기록 연동 후 실제 감정 사용)
-    emotionLabel: '중립', // 임시 라벨
-    emotionCount: 1, // 임시 값 (감정 기록 수)
+    emoji,
+    emotionLabel,
+    emotionCount: 0,
     returnRate,
-    currentPrice: journal.buyPrice, // 임시로 매수가 사용 (현재가 API 필요)
+    currentPrice,
     buyPrice: journal.buyPrice,
     buyDate: journal.buyDate,
     quantity: journal.totalQuantity,
@@ -52,14 +68,10 @@ export default function JournalListPage() {
   console.log('journals', journals)
 
   // 평균 수익률 계산
-  const avgReturn =
-    journals.length > 0
-      ? journals.reduce((sum, journal) => sum + journal.returnRate, 0) / journals.length
-      : 0
 
-  const floatAverageReturn = parseFloat(avgReturn.toFixed(2))
-  // 총 수익 계산 (임시로 totalCost 합계 사용)
-  const totalProfit = rawJournals.reduce((sum, journal) => sum + journal.totalCost, 0)
+  const floatAverageReturn = 0
+  // 총 수익 계산 (현재가 부재로 인해 0 처리)
+  const totalProfit = 0
 
   return (
     <div className="min-h-screen bg-[#F2F4F6]">

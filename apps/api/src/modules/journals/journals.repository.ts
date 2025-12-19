@@ -133,14 +133,15 @@ export class JournalsRepository {
       ) {
         // 현재 journal 정보 조회
         const currentJournalResult = await client.query(
-          'SELECT total_quantity, total_cost FROM journals WHERE id = $1 AND user_id = $2',
+          'SELECT total_quantity, total_cost, realized_profit FROM journals WHERE id = $1 AND user_id = $2',
           [journalId, userId],
         );
 
         if (currentJournalResult.rows[0]) {
           const current = currentJournalResult.rows[0];
-          let newTotalQuantity = current.total_quantity;
-          let newTotalCost = current.total_cost;
+          let newTotalQuantity = Number(current.total_quantity);
+          let newTotalCost = Number(current.total_cost);
+          let newRealizedProfit = Number(current.realized_profit || 0);
 
           if (event.type === 'BUY') {
             // 매수: 수량 증가, 비용 증가
@@ -148,9 +149,14 @@ export class JournalsRepository {
             newTotalCost += event.price * event.quantity;
           } else if (event.type === 'SELL') {
             // 매도: 수량 감소, 비용 감소 (평균단가 기준)
+            // 실현 손익 계산: (매도가 - 평단가) * 수량
             if (newTotalQuantity >= event.quantity) {
               const averageCost =
                 newTotalQuantity > 0 ? newTotalCost / newTotalQuantity : 0;
+
+              const tradeProfit = (event.price - averageCost) * event.quantity;
+              newRealizedProfit += tradeProfit;
+
               newTotalQuantity -= event.quantity;
               newTotalCost -= averageCost * event.quantity;
             }
@@ -163,9 +169,16 @@ export class JournalsRepository {
           // journal 업데이트
           await client.query(
             `UPDATE journals
-             SET total_quantity = $1, total_cost = $2, average_cost = $3, updated_at = NOW()
-             WHERE id = $4 AND user_id = $5`,
-            [newTotalQuantity, newTotalCost, newAverageCost, journalId, userId],
+             SET total_quantity = $1, total_cost = $2, average_cost = $3, realized_profit = $4, updated_at = NOW()
+             WHERE id = $5 AND user_id = $6`,
+            [
+              newTotalQuantity,
+              newTotalCost,
+              newAverageCost,
+              newRealizedProfit,
+              journalId,
+              userId,
+            ],
           );
         }
       }
@@ -302,6 +315,8 @@ export class JournalsRepository {
       totalQuantity: number;
       totalCost: number;
       averageCost: number;
+      realizedProfit: number;
+      currentPrice: number | null;
     }>(journalQuery, journalValues);
 
     if (!journalData) {
@@ -321,8 +336,10 @@ export class JournalsRepository {
       emotions: any[];
     }>(eventsQuery, eventsValues);
 
-    // 3. 현재가 조회 (임시로 buyPrice 사용, 실제로는 외부 API 연동 필요)
-    const currentPrice = journalData.buyPrice; // TODO: 외부 API로 현재가 조회
+    // 3. 현재가 조회 (DB에 저장된 최신 가격 사용, 없으면 매수가)
+    const currentPrice = journalData.currentPrice
+      ? Number(journalData.currentPrice)
+      : journalData.buyPrice;
 
     // 4. 손익 계산
     const totalValue = currentPrice * journalData.totalQuantity; // 현재 평가금액
@@ -330,10 +347,8 @@ export class JournalsRepository {
     const profitPercentage =
       journalData.totalCost > 0 ? (profit / journalData.totalCost) * 100 : 0; // 수익률 %
 
-    // 5. 확정손익 계산 (SELL 이벤트들의 실현 수익 합계)
-    // TODO: 실제 매수/매도 가격 차이 계산 로직 구현 필요
-    // 현재는 임시로 0 반환
-    const realizedProfit = 0;
+    // 5. 확정손익 (DB에서 가져온 값 사용)
+    const realizedProfit = Number(journalData.realizedProfit || 0);
 
     // 6. 응답 데이터 구성
     return {
@@ -348,6 +363,7 @@ export class JournalsRepository {
         totalQuantity: journalData.totalQuantity,
         totalCost: journalData.totalCost,
         averageCost: journalData.averageCost,
+        realizedProfit: realizedProfit,
       },
       metrics: {
         currentPrice,

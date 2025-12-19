@@ -188,10 +188,18 @@ export interface JournalListResponse {
   id: number
   symbol: string
   symbolName: string
-  journalCount: number
-  currentPrice: number
-  profit: number
-  profitPercentage: number
+  buyPrice: number
+  initialQuantity: number
+  status: 'OPEN' | 'CLOSED'
+  buyDate: string
+  totalQuantity: number
+  totalCost: number
+  averageCost: number
+  realizedProfit: number // 확정 손익
+  primaryEmotion?: string // 대표 감정 코드
+  primaryEmotionLabel?: string // 대표 감정 라벨
+  createdAt: string
+  updatedAt: string
 }
 
 export interface JournalCreateRequest {

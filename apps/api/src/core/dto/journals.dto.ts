@@ -122,6 +122,7 @@ export class JournalDetailResponseDto {
     totalQuantity: number;
     totalCost: number;
     averageCost: number;
+    realizedProfit: number;
   };
 
   metrics: {

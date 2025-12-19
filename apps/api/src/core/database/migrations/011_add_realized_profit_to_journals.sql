@@ -1,0 +1,1 @@
+ALTER TABLE journals ADD COLUMN realized_profit DECIMAL(15,2) DEFAULT 0;

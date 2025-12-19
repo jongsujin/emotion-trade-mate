@@ -37,15 +37,33 @@ export default function JournalDetailEmotionTimeLine({
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="mb-2 flex flex-wrap items-center gap-2">
-                    {record.emotions.map((emotion, emotionIdx) => {
-                      const emotionData = EMOTION_DATA[emotion.code as keyof typeof EMOTION_DATA]
-                      return (
-                        <div key={emotionIdx} className="flex items-center gap-1">
-                          <span className="text-lg">{emotionData?.emoji || '😶'}</span>
-                          <span className="text-sm font-bold text-[#191F28]">{emotion.label}</span>
-                        </div>
-                      )
-                    })}
+                    {record.emotions.length > 0 ? (
+                      record.emotions.map((emotion, emotionIdx) => {
+                        const emotionData = EMOTION_DATA[emotion.code as keyof typeof EMOTION_DATA]
+                        return (
+                          <div key={emotionIdx} className="flex items-center gap-1">
+                            <span className="text-lg">{emotionData?.emoji || '😶'}</span>
+                            <span className="text-sm font-bold text-[#191F28]">
+                              {emotion.label}
+                            </span>
+                          </div>
+                        )
+                      })
+                    ) : (
+                      // 감정이 없는 경우 이벤트 타입별 아이콘 표시
+                      <div className="flex items-center gap-1">
+                        <span className="text-lg">
+                          {record.type === 'BUY' ? '💰' : record.type === 'SELL' ? '💸' : '📝'}
+                        </span>
+                        <span className="text-sm font-bold text-[#191F28]">
+                          {record.type === 'BUY'
+                            ? '추가 매수'
+                            : record.type === 'SELL'
+                              ? '부분 매도'
+                              : '메모'}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <p className="text-xs font-medium text-[#9CA3AF]">{createdDate}</p>
                   <div className="mt-1 flex items-center gap-2">
