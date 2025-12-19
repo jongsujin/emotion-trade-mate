@@ -26,6 +26,7 @@ export interface Journal {
   totalCost: number
   averageCost: number
   realizedProfit: number
+  currentPrice?: number
   primaryEmotion?: string
   primaryEmotionLabel?: string
   priceUpdatedAt: string

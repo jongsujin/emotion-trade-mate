@@ -316,6 +316,7 @@ export class JournalsRepository {
       totalCost: number;
       averageCost: number;
       realizedProfit: number;
+      currentPrice: number | null;
     }>(journalQuery, journalValues);
 
     if (!journalData) {
@@ -335,8 +336,10 @@ export class JournalsRepository {
       emotions: any[];
     }>(eventsQuery, eventsValues);
 
-    // 3. 현재가 조회 (임시로 buyPrice 사용, 실제로는 외부 API 연동 필요)
-    const currentPrice = journalData.buyPrice; // TODO: 외부 API로 현재가 조회
+    // 3. 현재가 조회 (DB에 저장된 최신 가격 사용, 없으면 매수가)
+    const currentPrice = journalData.currentPrice
+      ? Number(journalData.currentPrice)
+      : journalData.buyPrice;
 
     // 4. 손익 계산
     const totalValue = currentPrice * journalData.totalQuantity; // 현재 평가금액

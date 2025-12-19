@@ -21,8 +21,14 @@ function transformJournalData(journal: Journal): JournalItemData {
   const emoji = emotionData ? emotionData.emoji : '📝'
   const emotionLabel = journal.primaryEmotionLabel || '기록'
 
-  // 수익률 계산 (현재가 부재로 0 처리, 추후 외부 시세 연동 시 구현)
-  const returnRate = 0
+  // 수익률 계산 (현재가 연동 완료)
+  const currentPrice = journal.currentPrice || journal.buyPrice
+  const averageCost = journal.averageCost || journal.buyPrice
+
+  let returnRate = 0
+  if (averageCost > 0) {
+    returnRate = ((currentPrice - averageCost) / averageCost) * 100
+  }
 
   return {
     id: journal.id,
@@ -30,11 +36,9 @@ function transformJournalData(journal: Journal): JournalItemData {
     symbolName: journal.symbolName,
     emoji,
     emotionLabel,
-    emotionCount: 0, // 백엔드 eventCount가 DTO에는 있는데 Journal 타입에는 아직 없음? (확인 필요)
-    // types/journals.ts JournalListResponse에는 eventCount가 없음 -> 추가 필요할듯?
-    // 일단 0으로 둠
+    emotionCount: 0,
     returnRate,
-    currentPrice: journal.buyPrice, // 현재가 정보 부재로 매수가 표시
+    currentPrice,
     buyPrice: journal.buyPrice,
     buyDate: journal.buyDate,
     quantity: journal.totalQuantity,
@@ -64,7 +68,6 @@ export default function JournalListPage() {
   console.log('journals', journals)
 
   // 평균 수익률 계산
-  const avgReturn = 0
 
   const floatAverageReturn = 0
   // 총 수익 계산 (현재가 부재로 인해 0 처리)

@@ -155,6 +155,7 @@ export const FIND_BY_ID_JOURNAL_DETAIL_QUERY = /* sql */ `
     total_cost AS "totalCost",
     average_cost AS "averageCost",
     realized_profit AS "realizedProfit",
+    current_price AS "currentPrice",
     price_updated_at AS "priceUpdatedAt",
     created_at AS "createdAt"
   FROM journals
