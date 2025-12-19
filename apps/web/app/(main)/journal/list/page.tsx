@@ -11,18 +11,18 @@ import type { Journal } from '@/types'
  * Journal 타입을 JournalItemData 타입으로 변환
  */
 function transformJournalData(journal: Journal): JournalItemData {
-  // 수익률 계산 (임시로 0% 사용, 나중에 현재가 API 연동 후 계산)
-  const returnRate = 0
+  // 백엔드 List API에서 현재가/수익률/대표감정을 제공하지 않으므로 기본값 처리
+  // 추후 백엔드에서 computed field로 제공해주면 연동 필요
 
   return {
     id: journal.id,
     symbol: journal.symbol,
     symbolName: journal.symbolName,
-    emoji: '📊', // 임시 이모지 (감정 기록 연동 후 실제 감정 사용)
-    emotionLabel: '중립', // 임시 라벨
-    emotionCount: 1, // 임시 값 (감정 기록 수)
-    returnRate,
-    currentPrice: journal.buyPrice, // 임시로 매수가 사용 (현재가 API 필요)
+    emoji: '📝', // 기본 아이콘 (백엔드 연동 전까지)
+    emotionLabel: '기록',
+    emotionCount: 0, // 백엔드 eventCount가 있다면 그것을 사용, 없으면 0
+    returnRate: 0, // 현재가가 없으므로 0% 처리
+    currentPrice: journal.buyPrice, // 현재가 정보 부재로 매수가 표시
     buyPrice: journal.buyPrice,
     buyDate: journal.buyDate,
     quantity: journal.totalQuantity,
@@ -52,14 +52,11 @@ export default function JournalListPage() {
   console.log('journals', journals)
 
   // 평균 수익률 계산
-  const avgReturn =
-    journals.length > 0
-      ? journals.reduce((sum, journal) => sum + journal.returnRate, 0) / journals.length
-      : 0
+  const avgReturn = 0
 
-  const floatAverageReturn = parseFloat(avgReturn.toFixed(2))
-  // 총 수익 계산 (임시로 totalCost 합계 사용)
-  const totalProfit = rawJournals.reduce((sum, journal) => sum + journal.totalCost, 0)
+  const floatAverageReturn = 0
+  // 총 수익 계산 (현재가 부재로 인해 0 처리)
+  const totalProfit = 0
 
   return (
     <div className="min-h-screen bg-[#F2F4F6]">

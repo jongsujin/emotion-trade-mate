@@ -188,10 +188,15 @@ export interface JournalListResponse {
   id: number
   symbol: string
   symbolName: string
-  journalCount: number
-  currentPrice: number
-  profit: number
-  profitPercentage: number
+  buyPrice: number
+  initialQuantity: number
+  status: 'OPEN' | 'CLOSED'
+  buyDate: string
+  totalQuantity: number
+  totalCost: number
+  averageCost: number
+  createdAt: string
+  updatedAt: string
 }
 
 export interface JournalCreateRequest {
