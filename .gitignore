@@ -6,6 +6,8 @@ node_modules
 .pnp.js
 
 
+# docs folder
+/docs
 
 # Local env files
 .env
