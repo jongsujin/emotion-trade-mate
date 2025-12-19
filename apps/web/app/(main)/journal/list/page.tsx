@@ -1,5 +1,7 @@
 'use client'
 
+import { EMOTION_DATA } from '@/constants'
+
 import JournalHeader from '@/components/journal/JournalHeader'
 import JournalList from '@/components/journal/JournalList'
 import JournalEmptyState from '@/components/journal/JournalEmptyState'
@@ -11,17 +13,27 @@ import type { Journal } from '@/types'
  * Journal 타입을 JournalItemData 타입으로 변환
  */
 function transformJournalData(journal: Journal): JournalItemData {
-  // 백엔드 List API에서 현재가/수익률/대표감정을 제공하지 않으므로 기본값 처리
-  // 추후 백엔드에서 computed field로 제공해주면 연동 필요
+  // 대표 감정 이모지 찾기
+  const emotionData = journal.primaryEmotion
+    ? EMOTION_DATA[journal.primaryEmotion as keyof typeof EMOTION_DATA]
+    : null
+
+  const emoji = emotionData ? emotionData.emoji : '📝'
+  const emotionLabel = journal.primaryEmotionLabel || '기록'
+
+  // 수익률 계산 (현재가 부재로 0 처리, 추후 외부 시세 연동 시 구현)
+  const returnRate = 0
 
   return {
     id: journal.id,
     symbol: journal.symbol,
     symbolName: journal.symbolName,
-    emoji: '📝', // 기본 아이콘 (백엔드 연동 전까지)
-    emotionLabel: '기록',
-    emotionCount: 0, // 백엔드 eventCount가 있다면 그것을 사용, 없으면 0
-    returnRate: 0, // 현재가가 없으므로 0% 처리
+    emoji,
+    emotionLabel,
+    emotionCount: 0, // 백엔드 eventCount가 DTO에는 있는데 Journal 타입에는 아직 없음? (확인 필요)
+    // types/journals.ts JournalListResponse에는 eventCount가 없음 -> 추가 필요할듯?
+    // 일단 0으로 둠
+    returnRate,
     currentPrice: journal.buyPrice, // 현재가 정보 부재로 매수가 표시
     buyPrice: journal.buyPrice,
     buyDate: journal.buyDate,

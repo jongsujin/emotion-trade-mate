@@ -32,6 +32,7 @@ export default function JournalDetailPage({ params }: { params: Promise<{ id: st
           returnRate={journalDetail.data.metrics.profitPercentage}
           buyPrice={journalDetail.data.journal.buyPrice}
           profit={journalDetail.data.metrics.profit}
+          realizedProfit={journalDetail.data.metrics.realizedProfit}
           totalQuantity={journalDetail.data.journal.totalQuantity}
           buyDate={journalDetail.data.journal.buyDate}
         />
