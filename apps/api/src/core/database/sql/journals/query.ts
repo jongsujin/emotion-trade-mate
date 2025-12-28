@@ -55,6 +55,19 @@ export const FIND_ALL_JOURNALS_QUERY = /* sql */ `
     FROM journal_events
     WHERE deleted_at IS NULL
     GROUP BY journal_id
+  ),
+  primary_emotion AS (
+    SELECT DISTINCT ON (je.journal_id)
+      je.journal_id,
+      et.code,
+      et.label_ko,
+      COUNT(*) AS emotion_count
+    FROM journal_events je
+    JOIN journal_event_emotions jee ON je.id = jee.event_id
+    JOIN emotion_tags et ON jee.emotion_tag_id = et.id
+    WHERE je.deleted_at IS NULL
+    GROUP BY je.journal_id, et.code, et.label_ko
+    ORDER BY je.journal_id, emotion_count DESC, et.code ASC
   )
   SELECT
     j.id,
@@ -67,12 +80,17 @@ export const FIND_ALL_JOURNALS_QUERY = /* sql */ `
     j.total_quantity AS "totalQuantity",
     j.total_cost AS "totalCost",
     j.average_cost AS "averageCost",
+    j.realized_profit AS "realizedProfit",
     j.price_updated_at AS "priceUpdatedAt",
     j.created_at AS "createdAt",
     j.updated_at AS "updatedAt",
     j.deleted_at AS "deletedAt",
 
     COALESCE(c.event_count, 0) AS "eventCount",
+
+    -- Primary Emotion (최빈 감정)
+    pe.code AS "primaryEmotion",
+    pe.label_ko AS "primaryEmotionLabel",
 
     -- latestEvent를 컬럼으로 펼쳐서 내려주기(매핑 쉬움)
     l.id AS "latestEventId",
@@ -85,6 +103,7 @@ export const FIND_ALL_JOURNALS_QUERY = /* sql */ `
   FROM journals j
   LEFT JOIN counts c ON c.journal_id = j.id
   LEFT JOIN latest l ON l.journal_id = j.id
+  LEFT JOIN primary_emotion pe ON pe.journal_id = j.id
 
   WHERE j.user_id = $1
     AND j.deleted_at IS NULL
@@ -135,6 +154,8 @@ export const FIND_BY_ID_JOURNAL_DETAIL_QUERY = /* sql */ `
     total_quantity AS "totalQuantity",
     total_cost AS "totalCost",
     average_cost AS "averageCost",
+    realized_profit AS "realizedProfit",
+    current_price AS "currentPrice",
     price_updated_at AS "priceUpdatedAt",
     created_at AS "createdAt"
   FROM journals

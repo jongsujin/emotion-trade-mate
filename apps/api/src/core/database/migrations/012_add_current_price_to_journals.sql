@@ -1,0 +1,2 @@
+
+ALTER TABLE journals ADD COLUMN current_price DECIMAL(15, 2) DEFAULT NULL;

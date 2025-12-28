@@ -14,7 +14,7 @@ interface AddEventPageProps {
   params: Promise<{ id: string }>
 }
 
-type EventType = 'BUY' | 'EMOTION'
+type EventType = 'BUY' | 'SELL' | 'EMOTION'
 
 export default function AddEventPage({ params }: AddEventPageProps) {
   const { id } = use(params)
@@ -84,12 +84,12 @@ export default function AddEventPage({ params }: AddEventPageProps) {
         ...baseRequest,
         emotionCodes: selectedEmotions,
       }
-    } else if (eventType === 'BUY') {
+    } else if (eventType === 'BUY' || eventType === 'SELL') {
       if (!formData.quantity || Number(formData.quantity) <= 0) {
-        throw new Error('추가 매수 수량을 입력해주세요')
+        throw new Error('수량을 입력해주세요')
       }
       if (!formData.price && !currentPrice) {
-        throw new Error('매수 가격을 입력하거나 현재가를 불러와주세요')
+        throw new Error('가격을 입력하거나 현재가를 불러와주세요')
       }
 
       return {
@@ -142,7 +142,7 @@ export default function AddEventPage({ params }: AddEventPageProps) {
   const isFormValid = (() => {
     if (eventType === 'EMOTION') {
       return selectedEmotions.length > 0 && (formData.price || currentPrice)
-    } else if (eventType === 'BUY') {
+    } else if (eventType === 'BUY' || eventType === 'SELL') {
       return formData.quantity && (formData.price || currentPrice)
     }
     return false
@@ -197,6 +197,17 @@ export default function AddEventPage({ params }: AddEventPageProps) {
               <div className="text-sm font-semibold">추가 매수</div>
               <div className="mt-1 text-xs">수량과 가격 기록</div>
             </button>
+            <button
+              onClick={() => setEventType('SELL')}
+              className={`flex-1 rounded-lg border-2 p-4 text-center transition-colors ${
+                eventType === 'SELL'
+                  ? 'border-[#FF6B6B] bg-[#FF6B6B]/5 text-[#FF6B6B]'
+                  : 'border-[#E5E8EB] bg-white text-[#6B7684]'
+              }`}
+            >
+              <div className="text-sm font-semibold">부분 매도</div>
+              <div className="mt-1 text-xs">익절/손절 기록</div>
+            </button>
           </div>
         </div>
 
@@ -204,13 +215,23 @@ export default function AddEventPage({ params }: AddEventPageProps) {
         <Card className="mb-4">
           <div>
             <label className="mb-2 block text-sm font-medium text-[#1A1A1A]">
-              {eventType === 'EMOTION' ? '현재 시세' : '매수 가격'}{' '}
+              {eventType === 'EMOTION'
+                ? '현재 시세'
+                : eventType === 'BUY'
+                  ? '매수 가격'
+                  : '매도 가격'}{' '}
               <span className="text-red-500">*</span>
             </label>
             <div className="flex gap-2">
               <input
                 type="number"
-                placeholder={eventType === 'EMOTION' ? '현재 시세 입력' : '매수 가격 입력'}
+                placeholder={
+                  eventType === 'EMOTION'
+                    ? '현재 시세 입력'
+                    : eventType === 'BUY'
+                      ? '매수 가격 입력'
+                      : '매도 가격 입력'
+                }
                 value={formData.price}
                 onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
                 className="flex-1 rounded-lg border border-[#E5E8EB] px-3 py-3 text-sm placeholder-[#B0B8C1] focus:border-[#6C9EFF] focus:outline-none"
@@ -249,11 +270,12 @@ export default function AddEventPage({ params }: AddEventPageProps) {
           <Card className="space-y-4">
             <div>
               <label className="mb-2 block text-sm font-medium text-[#1A1A1A]">
-                추가 매수 수량 <span className="text-red-500">*</span>
+                {eventType === 'BUY' ? '추가 매수' : '매도'} 수량{' '}
+                <span className="text-red-500">*</span>
               </label>
               <input
                 type="number"
-                placeholder="추가 매수 수량 입력"
+                placeholder="수량 입력"
                 value={formData.quantity}
                 onChange={(e) => setFormData((prev) => ({ ...prev, quantity: e.target.value }))}
                 className="w-full rounded-lg border border-[#E5E8EB] px-3 py-3 text-sm placeholder-[#B0B8C1] focus:border-[#6C9EFF] focus:outline-none"

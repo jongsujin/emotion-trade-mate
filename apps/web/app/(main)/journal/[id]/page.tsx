@@ -32,6 +32,7 @@ export default function JournalDetailPage({ params }: { params: Promise<{ id: st
           returnRate={journalDetail.data.metrics.profitPercentage}
           buyPrice={journalDetail.data.journal.buyPrice}
           profit={journalDetail.data.metrics.profit}
+          realizedProfit={journalDetail.data.metrics.realizedProfit}
           totalQuantity={journalDetail.data.journal.totalQuantity}
           buyDate={journalDetail.data.journal.buyDate}
         />
@@ -65,14 +66,14 @@ export default function JournalDetailPage({ params }: { params: Promise<{ id: st
               감정 추가
             </Button>
           </Link>
-          <Link href={ROUTES.REPORT.DETAIL(id)} className="w-full">
+          <Link href={ROUTES.REPORT.INDEX} className="w-full">
             <Button
               variant="primary"
               fullWidth
               size="lg"
               className="bg-[#6C9EFF] font-bold shadow-lg shadow-[#6C9EFF]/30 hover:bg-[#4B82F0]"
             >
-              AI 리포트
+              감정 분석 리포트
             </Button>
           </Link>
         </div>
