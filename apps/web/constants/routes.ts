@@ -43,6 +43,7 @@ export const API_ROUTES = {
     SIGNUP: '/api/auth/signup',
     LOGOUT: '/api/auth/logout',
     ME: '/api/auth/me',
+    REFRESH: '/api/auth/refresh',
   },
   JOURNAL: {
     LIST: '/api/journals', // GET
