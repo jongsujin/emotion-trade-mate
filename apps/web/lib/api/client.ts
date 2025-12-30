@@ -1,4 +1,4 @@
-import { API_CONFIG } from '@/constants'
+import { API_CONFIG, API_ROUTES } from '@/constants'
 import type { ApiResponse } from '@/types'
 
 /**
@@ -7,16 +7,50 @@ import type { ApiResponse } from '@/types'
 class ApiClient {
   private baseURL: string
   private timeout: number
+  private refreshPromise: Promise<boolean> | null
 
   constructor() {
     this.baseURL = API_CONFIG.BASE_URL
     this.timeout = API_CONFIG.TIMEOUT
+    this.refreshPromise = null
+  }
+
+  private isRefreshEndpoint(endpoint: string) {
+    return endpoint === API_ROUTES.AUTH.REFRESH
+  }
+
+  private async refreshAccessToken(): Promise<boolean> {
+    // 동시에 여러 401이 나와도 refresh는 1번만 수행
+    if (this.refreshPromise) return this.refreshPromise
+
+    this.refreshPromise = (async () => {
+      try {
+        const response = await fetch(`${this.baseURL}${API_ROUTES.AUTH.REFRESH}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        })
+        return response.ok
+      } catch {
+        return false
+      } finally {
+        this.refreshPromise = null
+      }
+    })()
+
+    return this.refreshPromise
   }
 
   /**
    * 기본 fetch 래퍼
    */
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {},
+    retryState: { hasRetried: boolean } = { hasRetried: false }
+  ): Promise<ApiResponse<T>> {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), this.timeout)
 
@@ -33,11 +67,31 @@ class ApiClient {
 
       clearTimeout(timeoutId)
 
+      // accessToken 만료 → refresh 후 1회 재시도
+      if (
+        response.status === 401 &&
+        !retryState.hasRetried &&
+        !this.isRefreshEndpoint(endpoint) &&
+        endpoint !== API_ROUTES.AUTH.LOGIN &&
+        endpoint !== API_ROUTES.AUTH.SIGNUP
+      ) {
+        const refreshed = await this.refreshAccessToken()
+        if (refreshed) {
+          return this.request<T>(endpoint, options, { hasRetried: true })
+        }
+      }
+
       if (!response.ok) {
-        const error = await response.json()
+        let error: any = null
+        try {
+          error = await response.json()
+        } catch {
+          // ignore
+        }
         return {
           success: false,
-          error: error.message || 'API 요청 실패',
+          status: response.status,
+          error: error?.message || 'API 요청 실패',
         }
       }
 
@@ -45,6 +99,7 @@ class ApiClient {
       return {
         success: true,
         data,
+        status: response.status,
       }
     } catch (error) {
       clearTimeout(timeoutId)
@@ -53,17 +108,20 @@ class ApiClient {
         if (error.name === 'AbortError') {
           return {
             success: false,
+            status: 408,
             error: '요청 시간이 초과되었습니다.',
           }
         }
         return {
           success: false,
+          status: undefined,
           error: error.message,
         }
       }
 
       return {
         success: false,
+        status: undefined,
         error: '알 수 없는 오류가 발생했습니다.',
       }
     }
