@@ -32,6 +32,10 @@ export default function ReportSummaryPage() {
 
       <div className="space-y-4 px-5 pt-2">
         <ProfitSummary
+          emotionStats={MOCK_SUMMARY.emotionStats}
+          bestSymbol={MOCK_SUMMARY.bestSymbol}
+          worstSymbol={MOCK_SUMMARY.worstSymbol}
+          insights={MOCK_SUMMARY.insights}
           period={MOCK_SUMMARY.period}
           totalProfit={MOCK_SUMMARY.totalProfit}
           avgReturnRate={MOCK_SUMMARY.avgReturnRate}
@@ -46,7 +50,17 @@ export default function ReportSummaryPage() {
 
         <EmotionStats stats={MOCK_SUMMARY.emotionStats} />
 
-        <AIInsights insights={MOCK_SUMMARY.insights} />
+        <AIInsights
+          totalRecords={MOCK_SUMMARY.totalRecords}
+          totalSymbols={MOCK_SUMMARY.totalSymbols}
+          avgReturnRate={MOCK_SUMMARY.avgReturnRate}
+          totalProfit={MOCK_SUMMARY.totalProfit}
+          period={MOCK_SUMMARY.period}
+          emotionStats={MOCK_SUMMARY.emotionStats}
+          bestSymbol={MOCK_SUMMARY.bestSymbol}
+          worstSymbol={MOCK_SUMMARY.worstSymbol}
+          insights={MOCK_SUMMARY.insights}
+        />
 
         <StockReportList symbols={['AAPL', 'TSLA', 'NVDA']} />
 
