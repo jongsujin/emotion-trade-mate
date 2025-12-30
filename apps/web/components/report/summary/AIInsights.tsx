@@ -1,6 +1,6 @@
-import type { AIInsightsProps } from '@/types/reports'
+import { ReportSummaryProps } from '@/types/reports'
 
-export default function AIInsights({ insights }: AIInsightsProps) {
+export default function AIInsights({ insights }: ReportSummaryProps) {
   return (
     <div className="rounded-3xl bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
       <div className="mb-4 flex items-center gap-2">

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- maskable 아이콘은 안전영역을 고려해 중앙에 로고를 배치합니다. -->
+  <rect width="512" height="512" fill="#68CCF4" />
+  <circle cx="256" cy="256" r="170" fill="#ffffff" opacity="0.18" />
+  <path
+    d="M176 314c0-44 36-80 80-80s80 36 80 80c0 8-6 14-14 14H190c-8 0-14-6-14-14Z"
+    fill="#ffffff"
+  />
+  <circle cx="226" cy="258" r="16" fill="#ffffff" />
+  <circle cx="286" cy="258" r="16" fill="#ffffff" />
+  <path
+    d="M220 304c12 14 24 20 36 20s24-6 36-20"
+    fill="none"
+    stroke="#68CCF4"
+    stroke-width="16"
+    stroke-linecap="round"
+  />
+</svg>
+
+
