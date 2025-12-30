@@ -18,7 +18,7 @@ import TitleSection from '@/components/common/TitleSection'
  * AI 리포트 상세 페이지
  */
 export default function ReportDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+  use(params)
   const router = useRouter()
 
   return (

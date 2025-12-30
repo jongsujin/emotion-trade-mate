@@ -89,6 +89,7 @@ export interface JournalDetailEmotionTimeLineProps {
  * @param buyDate 매수 일자
  */
 export interface JournalDetailSummaryProps {
+  symbol: string
   symbolName: string
   currentPrice: number
   returnRate: number

@@ -1,3 +1,4 @@
+import { formatPercent, formatPrice } from '@/lib/utils'
 import { ReportMemoTimelineProps } from '@/types/reports'
 
 export default function ReportMemoTimeline({ memoTimeline }: ReportMemoTimelineProps) {
@@ -22,16 +23,13 @@ export default function ReportMemoTimeline({ memoTimeline }: ReportMemoTimelineP
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-semibold text-gray-900">
-                  ₩{entry.price.toLocaleString()}
-                </p>
+                <p className="text-sm font-semibold text-gray-900">₩{formatPrice(entry.price)}</p>
                 <p
                   className={`text-xs font-medium ${
                     entry.priceChange >= 0 ? 'text-red-500' : 'text-blue-500'
                   }`}
                 >
-                  {entry.priceChange >= 0 ? '+' : ''}
-                  {entry.priceChange}%
+                  {formatPercent(entry.priceChange, { withSign: true, maximumFractionDigits: 2 })}
                 </p>
               </div>
             </div>

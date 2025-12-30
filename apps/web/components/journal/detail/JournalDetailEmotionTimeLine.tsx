@@ -1,5 +1,6 @@
 import { JournalDetailEmotionTimeLineProps } from '@/types/journals'
 import { EMOTION_DATA } from '@/constants/emotions'
+import { formatPrice } from '@/lib/utils'
 
 export default function JournalDetailEmotionTimeLine({
   totalRecords,
@@ -82,14 +83,12 @@ export default function JournalDetailEmotionTimeLine({
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-[#191F28]">
-                    ₩{recordPrice.toLocaleString()}
-                  </p>
+                  <p className="text-sm font-bold text-[#191F28]">₩{formatPrice(recordPrice)}</p>
                   {idx < emotionHistory.length - 1 && (
                     <p
                       className={`text-xs font-medium ${isUp ? 'text-[#FF6B6B]' : 'text-[#6C9EFF]'}`}
                     >
-                      {isUp ? '+' : ''}₩{Math.abs(priceDiff).toLocaleString()}
+                      {isUp ? '+' : ''}₩{formatPrice(Math.abs(priceDiff))}
                     </p>
                   )}
                 </div>

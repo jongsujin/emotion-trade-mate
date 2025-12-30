@@ -27,6 +27,7 @@ export default function JournalDetailPage({ params }: { params: Promise<{ id: st
       <div className="space-y-4 px-5 pt-2">
         {/* 종목 요약 */}
         <JournalDetailSummary
+          symbol={journalDetail.data.journal.symbol}
           symbolName={journalDetail.data.journal.symbolName}
           currentPrice={journalDetail.data.metrics.currentPrice}
           returnRate={journalDetail.data.metrics.profitPercentage}

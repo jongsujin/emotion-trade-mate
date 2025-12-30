@@ -1,6 +1,6 @@
 import { ROUTES } from '@/constants'
 import { JournalHeaderProps } from '@/types/journals'
-import { formatNumber } from '@/lib/utils'
+import { formatDecimal, formatKrwAmount } from '@/lib/utils'
 import Link from 'next/link'
 
 export default function JournalHeader({
@@ -46,7 +46,7 @@ export default function JournalHeader({
             className={`text-3xl font-bold ${safeTotalProfit >= 0 ? 'text-[#E42939]' : 'text-[#3182F6]'}`}
           >
             {safeTotalProfit >= 0 ? '+' : ''}
-            {formatNumber(Math.round(safeTotalProfit))}원
+            {formatKrwAmount(safeTotalProfit)}원
           </span>
         </div>
 
@@ -54,7 +54,7 @@ export default function JournalHeader({
           <div
             className={`rounded-md px-2 py-1 text-xs font-semibold ${safeAvgReturn >= 0 ? 'bg-[#FFF0F1] text-[#E42939]' : 'bg-[#F0F6FF] text-[#3182F6]'}`}
           >
-            {safeAvgReturn >= 0 ? '▲' : '▼'} {Math.abs(safeAvgReturn).toFixed(2)}%
+            {safeAvgReturn >= 0 ? '▲' : '▼'} {formatDecimal(Math.abs(safeAvgReturn), { maximumFractionDigits: 2 })}%
           </div>
           <span className="text-sm text-[#8B95A1]">{holdingCount}종목 보유</span>
         </div>
