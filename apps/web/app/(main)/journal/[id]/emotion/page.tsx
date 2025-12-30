@@ -9,6 +9,7 @@ import { Card } from '@/components/common/Card'
 import { EmotionAddForm } from '@/components/journal/add-emotion'
 import { useGetJournalDetail, useCreateJournalEvent } from '@/features/journal'
 import type { CreateJournalEventRequest } from '@/types'
+import { formatPriceWithSymbol } from '@/lib/utils'
 
 interface AddEventPageProps {
   params: Promise<{ id: string }>
@@ -248,7 +249,7 @@ export default function AddEventPage({ params }: AddEventPageProps) {
             </div>
             {currentPrice && (
               <p className="mt-1 text-xs text-[#6B7684]">
-                현재가: {currentPrice.toLocaleString()}원
+                현재가: {formatPriceWithSymbol(currentPrice, journalSymbol)}
               </p>
             )}
           </div>

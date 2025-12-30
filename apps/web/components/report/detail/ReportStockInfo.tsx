@@ -1,3 +1,4 @@
+import { formatKrwAmount, formatPercent } from '@/lib/utils'
 import { ReportStockInfoProps } from '@/types/reports'
 
 export default function ReportStockInfo({
@@ -20,8 +21,13 @@ export default function ReportStockInfo({
           <p className="text-sm text-gray-600">{symbolName}</p>
         </div>
         <div className="text-right">
-          <div className="text-lg font-bold text-red-500">+{returnRate}%</div>
-          <div className="text-sm text-gray-600">+{profit.toLocaleString()}원</div>
+          <div className="text-lg font-bold text-red-500">
+            {formatPercent(returnRate, { withSign: true })}
+          </div>
+          <div className="text-sm text-gray-600">
+            {profit >= 0 ? '+' : ''}
+            {formatKrwAmount(profit)}원
+          </div>
         </div>
       </div>
 

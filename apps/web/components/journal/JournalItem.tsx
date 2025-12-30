@@ -1,4 +1,4 @@
-import { formatNumber } from '@/lib/utils'
+import { formatPercent, formatPriceWithSymbol } from '@/lib/utils'
 import { JournalItemProps } from '@/types/journals'
 import Link from 'next/link'
 
@@ -36,13 +36,12 @@ export default function JournalItem({ journal, href }: JournalItemProps) {
           {/* 오른쪽: 수익률 */}
           <div className="ml-4 shrink-0 text-right">
             <p className="mb-0.5 text-sm font-medium text-[#333D4B]">
-              {formatNumber(journal.currentPrice)}
+              {formatPriceWithSymbol(journal.currentPrice, journal.symbol)}
             </p>
             <div
               className={`text-base font-bold ${isProfit ? 'text-[#E42939]' : 'text-[#3182F6]'}`}
             >
-              {isProfit ? '+' : ''}
-              {journal.returnRate.toFixed(1)}%
+              {formatPercent(journal.returnRate, { maximumFractionDigits: 1, withSign: true })}
             </div>
           </div>
         </div>
