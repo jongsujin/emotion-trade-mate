@@ -69,7 +69,6 @@ export default function SignupForm() {
         return
       }
 
-      // TODO: 토큰 저장 및 자동 로그인 로직 연결
       console.log('Signup success', response.data)
       router.push('/login?signup=success')
     } catch (err) {

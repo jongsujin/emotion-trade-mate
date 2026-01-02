@@ -1,4 +1,5 @@
 import type { EmotionType } from '@/constants'
+import type { JournalListItemProps } from '@/types/journals'
 
 /**
  * 사용자 타입
@@ -14,25 +15,12 @@ export interface User {
 /**
  * 감정 일지 타입 (백엔드 JournalsEntity와 동기화)
  */
-export interface Journal {
-  id: number
-  userId: number
-  symbol: string
-  symbolName: string
-  buyPrice: number
-  initialQuantity: number
-  buyDate: string // Date를 ISO string으로 받음
-  totalQuantity: number
-  totalCost: number
-  averageCost: number
-  realizedProfit: number
+export type Journal = JournalListItemProps & {
+  /**
+   * 일부 엔드포인트/상황에서만 존재할 수 있어 optional로 유지
+   * (예: 현재가를 포함해 내려주는 경우)
+   */
   currentPrice?: number
-  primaryEmotion?: string
-  primaryEmotionLabel?: string
-  priceUpdatedAt: string
-  createdAt: string
-  updatedAt: string
-  deletedAt?: string | null
 }
 
 /**

@@ -32,7 +32,6 @@ export const metadata: Metadata = {
   icons: {
     icon: ['/pwa-icon.svg'],
     shortcut: ['/favicon.ico'],
-    // iOS Safari는 apple-touch-icon으로 SVG 지원이 제한적인 케이스가 있어 우선 ico로 연결
     apple: ['/favicon.ico'],
   },
 }
@@ -47,7 +46,6 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} bg-[#F2F4F6] antialiased`}>
         <Providers>
           <ServiceWorkerRegister />
-
           <main className="mx-auto min-h-screen max-w-[480px] bg-[#F2F4F6] shadow-sm sm:bg-[#F2F4F6]">
             {children}
           </main>

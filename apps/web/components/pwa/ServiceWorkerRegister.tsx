@@ -1,3 +1,7 @@
+/**
+ * @description PWA Service Worker 등록 컴포넌트
+ */
+
 'use client'
 
 import { useEffect } from 'react'
@@ -14,7 +18,7 @@ export function ServiceWorkerRegister() {
       try {
         await navigator.serviceWorker.register(SERVICE_WORKER_URL, { scope: '/' })
       } catch {
-        // 등록 실패는 앱 기능에 치명적이지 않으므로 조용히 무시합니다.
+        console.error('Service Worker 등록 실패')
       }
     }
 
@@ -23,5 +27,3 @@ export function ServiceWorkerRegister() {
 
   return null
 }
-
-

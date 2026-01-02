@@ -1,6 +1,37 @@
 import type { EmotionType } from '@/constants/emotions'
 
 /**
+ * @description 일지 리스트 아이템 타입
+ *
+ */
+
+export interface JournalListItemProps {
+  id: number
+  userId: number
+  symbol: string
+  symbolName: string
+  buyPrice: number
+  initialQuantity: number
+  buyDate: string
+  totalQuantity: number
+  totalCost: number
+  averageCost: number
+  realizedProfit: number
+  priceUpdatedAt: string
+  createdAt: string
+  updatedAt: string
+  deletedAt: string | null
+  eventCount: number
+  primaryEmotion: string
+  primaryEmotionLabel: string
+  latestEventId: number
+  latestEventType: string
+  latestEventPrice: number
+  latestEventQuantity: number | null
+  latestEventMemo: string | null
+  latestEventCreatedAt: string
+}
+/**
  * @description 일지 리스트 페이지 헤더 컴포넌트 타입
  * @param totalProfit 총 수익
  * @param avgReturn 평균 수익률
@@ -18,7 +49,7 @@ export interface JournalHeaderProps {
  * @param journals 일지 목록
  */
 export interface JournalListProps {
-  journals: JournalItemData[]
+  journals: JournalListItemProps[]
 }
 
 /**
@@ -27,25 +58,8 @@ export interface JournalListProps {
  * @param href 일지 상세 페이지 경로
  */
 export interface JournalItemProps {
-  journal: JournalItemData
+  journal: JournalListItemProps
   href: string
-}
-/**
- * 일지 항목 데이터 (서버에서 받는 데이터)
- * 모든 숫자 필드는 number 타입 사용
- */
-export interface JournalItemData {
-  id: number // 일지 고유 아이디
-  symbol: string // 종목 심볼
-  symbolName: string // 종목 이름
-  emoji: string // 이모지
-  emotionLabel: string // 감정 라벨
-  emotionCount: number // 감정 횟수
-  returnRate: number // 수익률
-  currentPrice: number // 현재 가격
-  buyPrice: number // 매수 가격
-  buyDate: string // 매수 일자
-  quantity: number // 수량
 }
 
 /**
@@ -125,39 +139,6 @@ export interface JournalCreateFormData {
 }
 
 /**
- * @description 일지 생성 API 요청 데이터
- * 서버로 보낼 때는 number 타입으로 변환
- * emotionId는 EmotionType을 사용
- * @param symbol 종목 심볼
- * @param symbolName 종목 이름
- * @param buyPrice 매수 가격
- * @param quantity 수량
- * @param emotionId 감정 타입
- * @param memo 메모
- * @param buyDate 매수 일자
- */
-export interface JournalCreateRequest {
-  symbol: string
-  symbolName?: string
-  buyPrice: number // string -> number 변환 필요
-  quantity: number // string -> number 변환 필요
-  emotionId: EmotionType // EmotionType 사용 (현재는 union type, 추후 enum으로 확장 가능)
-  memo?: string
-  buyDate: string // ISO 형식: "2024-01-15"
-}
-
-/**
- * @description 폼 데이터를 API 요청 데이터로 변환하는 헬퍼 함수의 반환 타입
- * @param formData 일지 생성 폼 데이터
- * @param emotionId 감정 타입
- * @returns 일지 생성 API 요청 데이터
- */
-export type JournalCreateFormToRequest = (
-  formData: JournalCreateFormData,
-  emotionId: EmotionType
-) => JournalCreateRequest
-
-/**
  * @description 감정 추가 폼 데이터
  * @param price 현재 시세 (선택, 없으면 자동 조회)
  * @param quantity 추가 매수 수량 (선택)
@@ -184,37 +165,6 @@ export interface EmotionAddRequest {
 }
 
 /**---------------------------------------------------- */
-
-export interface JournalListResponse {
-  id: number
-  symbol: string
-  symbolName: string
-  buyPrice: number
-  initialQuantity: number
-  status: 'OPEN' | 'CLOSED'
-  buyDate: string
-  totalQuantity: number
-  totalCost: number
-  averageCost: number
-  realizedProfit: number // 확정 손익
-  primaryEmotion?: string // 대표 감정 코드
-  primaryEmotionLabel?: string // 대표 감정 라벨
-  createdAt: string
-  updatedAt: string
-}
-
-export interface JournalCreateRequest {
-  symbol: string
-  buyPrice: number
-  quantity: number
-  emotionId: EmotionType
-  memo?: string
-  buyDate: string
-}
-
-export interface JournalUpdateRequest extends JournalCreateRequest {
-  id: number
-}
 
 export interface JournalDetailItemProps {
   id: number

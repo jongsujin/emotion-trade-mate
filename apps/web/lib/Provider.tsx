@@ -8,8 +8,6 @@ import { useState } from 'react'
  * Client Component로 분리하여 Server Component에서 사용 가능
  */
 export function Providers({ children }: { children: React.ReactNode }) {
-  // useState를 사용하여 QueryClient를 한 번만 생성
-  // 이렇게 하면 리렌더링 시에도 같은 인스턴스 유지
   const [queryClient] = useState(
     () =>
       new QueryClient({

@@ -18,7 +18,6 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
           <p className="mt-2 text-sm text-gray-600">감정 기반 투자 일지</p>
         </div>
 
-        {/* 콘텐츠 */}
         {children}
       </div>
     </div>

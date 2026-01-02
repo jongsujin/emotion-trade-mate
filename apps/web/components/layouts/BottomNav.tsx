@@ -4,6 +4,16 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ROUTES } from '@/constants'
 import { cn } from '@/lib/utils'
+import { useSyncExternalStore } from 'react'
+
+function useIsHydrated() {
+  // 서버 렌더에서는 false, 클라이언트에서는 true가 되도록 보장
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
+}
 
 const NAV_ITEMS = [
   {
@@ -31,21 +41,26 @@ const NAV_ITEMS = [
 
 /**
  * 하단 네비게이션 (모바일)
- * 레퍼런스 앱 스타일 적용
+
  */
 export function BottomNav() {
+  /**
+   * SSR로 렌더된 HTML과 클라이언트 첫 렌더 결과가 달라지면 hydration mismatch가 발생할 수 있음.
+   * (예: 최초 로드 직후 클라이언트 리다이렉트로 pathname이 바뀌는 경우)
+   * 안전하게 mount 이후에만 하단 네비를 렌더링한다.
+   */
+  const isHydrated = useIsHydrated()
+
   const pathname = usePathname()
 
-  // BottomNav를 숨겨야 하는 페이지 조건
-  // 1. 일지 작성 페이지 (/journal/create)
-  // 2. 일지 상세 페이지 (/journal/숫자)
-  // 3. 감정 추가 페이지 (/journal/숫자/emotion)
-  // 4. 리포트 상세 페이지 (/report/문자열)
-  // 5. 온보딩 (/)
-  
+  if (!isHydrated) return null
+
   const isCreatePage = pathname === ROUTES.JOURNAL.CREATE
   // /journal/숫자 형식이면 상세 페이지 (create 제외)
-  const isJournalDetail = pathname.startsWith('/journal/') && pathname !== ROUTES.JOURNAL.LIST && pathname !== ROUTES.JOURNAL.CREATE
+  const isJournalDetail =
+    pathname.startsWith('/journal/') &&
+    pathname !== ROUTES.JOURNAL.LIST &&
+    pathname !== ROUTES.JOURNAL.CREATE
   const isReportDetail = pathname.startsWith('/report/') && pathname !== ROUTES.REPORT.SUMMARY
   const isHome = pathname === '/'
 
@@ -54,7 +69,7 @@ export function BottomNav() {
   }
 
   return (
-    <nav className="safe-area-bottom fixed right-0 bottom-0 left-0 z-40 border-t border-gray-100 bg-white/80 backdrop-blur-lg mx-auto max-w-[480px]">
+    <nav className="safe-area-bottom fixed right-0 bottom-0 left-0 z-40 mx-auto max-w-[480px] border-t border-gray-100 bg-white/80 backdrop-blur-lg">
       <div className="flex items-center justify-around px-4 py-2">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href
@@ -62,7 +77,7 @@ export function BottomNav() {
           if (item.primary) {
             return (
               <Link key={item.href} href={item.href} className="relative -mt-6">
-                <div className="bg-[#3182F6] shadow-[0_8px_16px_rgba(49,130,246,0.4)] flex h-14 w-14 items-center justify-center rounded-full text-2xl transition-transform active:scale-95 border-4 border-[#F2F4F6]">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full border-4 border-[#F2F4F6] bg-[#3182F6] text-2xl shadow-[0_8px_16px_rgba(49,130,246,0.4)] transition-transform active:scale-95">
                   {item.icon}
                 </div>
               </Link>
@@ -79,7 +94,9 @@ export function BottomNav() {
               )}
             >
               <span className="text-2xl">{item.icon}</span>
-              <span className={`text-[10px] font-medium ${isActive ? 'font-bold' : ''}`}>{item.label}</span>
+              <span className={`text-[10px] font-medium ${isActive ? 'font-bold' : ''}`}>
+                {item.label}
+              </span>
             </Link>
           )
         })}
