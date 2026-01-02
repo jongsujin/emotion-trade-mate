@@ -12,10 +12,13 @@ import { MarketModule } from './modules/market/market.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import configuration from './core/config/configuration';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: isProduction ? '.env' : '.env.local',
       load: [configuration],
     }),
     ScheduleModule.forRoot(),
