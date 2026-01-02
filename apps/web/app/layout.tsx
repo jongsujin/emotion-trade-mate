@@ -47,7 +47,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} bg-[#F2F4F6] antialiased`}>
         <Providers>
           <ServiceWorkerRegister />
-          {/* Mobile First Layout Container */}
+
           <main className="mx-auto min-h-screen max-w-[480px] bg-[#F2F4F6] shadow-sm sm:bg-[#F2F4F6]">
             {children}
           </main>
