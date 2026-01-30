@@ -18,7 +18,22 @@ async function bootstrap() {
   });
 
   app.setGlobalPrefix('api');
-  await app.listen(process.env.PORT ?? 4000);
-  console.log(`Server is running on port ${process.env.PORT ?? 4000}`);
+  return app;
 }
-void bootstrap();
+
+// Local Development
+if (!process.env.VERCEL) {
+  (async () => {
+    const app = await bootstrap();
+    await app.listen(process.env.PORT ?? 4000);
+    console.log(`Server is running on port ${process.env.PORT ?? 4000}`);
+  })();
+}
+
+// Vercel Serverless Function
+export default async function (req: any, res: any) {
+  const app = await bootstrap();
+  await app.init();
+  const expressApp = app.getHttpAdapter().getInstance();
+  return expressApp(req, res);
+}
