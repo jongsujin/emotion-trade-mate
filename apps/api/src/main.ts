@@ -8,7 +8,7 @@ async function bootstrap() {
 
   const allowedOrigins = process.env.CORS_ORIGIN?.split(',').map((origin) =>
     origin.trim(),
-  ) ?? ['http://localhost:3000'];
+  ) ?? ['http://localhost:3000', 'https://emotion-trade-mate-web.vercel.app'];
 
   app.enableCors({
     origin: allowedOrigins,
