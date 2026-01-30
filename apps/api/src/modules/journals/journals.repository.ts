@@ -3,7 +3,7 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from 'src/core/database/database.service';
+import { DatabaseService } from '../../core/database/database.service';
 import {
   CreateJournalEntity,
   JournalEntity,
@@ -25,12 +25,12 @@ import {
   INSERT_JOURNAL_QUERY,
   UPDATE_JOURNAL_EVENT_QUERY,
   UPDATE_JOURNAL_QUERY,
-} from 'src/core/database/sql/journals/query';
+} from '../../core/database/sql/journals/query';
 import {
   CreateFirstEmotionDto,
   CreateJournalEventDto,
   JournalDetailResponseDto,
-} from 'src/core/dto/journals.dto';
+} from '../../core/dto/journals.dto';
 import {
   JournalEventType,
   JournalEventsEntity,

@@ -1,4 +1,4 @@
-import { JournalEventsEntity } from 'src/modules/journal_events/entities/journal_event.entities';
+import { JournalEventsEntity } from '../../journal_events/entities/journal_event.entities';
 
 export class JournalEntity {
   id: number;

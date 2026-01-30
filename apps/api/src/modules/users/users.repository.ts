@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from 'src/core/database/database.service';
+import { DatabaseService } from '../../core/database/database.service';
 import { UsersEntity } from './entities/users.entity';
 import {
   FIND_BY_EMAIL_USER_QUERY,
   FIND_BY_ID_USER_QUERY,
   CREATE_USER_QUERY,
   UPDATE_USER_QUERY,
-} from 'src/core/database/sql/users/query';
+} from '../../core/database/sql/users/query';
 
 @Injectable()
 export class UsersRepository {

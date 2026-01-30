@@ -4,9 +4,9 @@ import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { PassportModule } from '@nestjs/passport';
-import { JwtAuthGuard } from 'src/core/common/guards/jwt-auth.guard';
-import { JwtStrategy } from 'src/core/common/strategies/jwt.strategy';
-import { JwtRefreshStrategy } from 'src/core/common/strategies/jwt-refresh.strategy';
+import { JwtAuthGuard } from '../../core/common/guards/jwt-auth.guard';
+import { JwtStrategy } from '../../core/common/strategies/jwt.strategy';
+import { JwtRefreshStrategy } from '../../core/common/strategies/jwt-refresh.strategy';
 
 @Module({
   imports: [

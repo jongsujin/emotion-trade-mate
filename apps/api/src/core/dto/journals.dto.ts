@@ -12,7 +12,7 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
-import { JournalStatus } from 'src/modules/journals/entities/journals.entities';
+import { JournalStatus } from '../../modules/journals/entities/journals.entities';
 
 /**
  * GET /journals?page=1&limit=10

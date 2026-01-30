@@ -12,12 +12,12 @@ import {
   UpdateJournalEntity,
   UpdateJournalEventEntity,
 } from './entities/journals.entities';
-import { Pagination } from 'src/core/common/types/common';
+import { Pagination } from '../../core/common/types/common';
 import {
   CreateJournalDto,
   CreateJournalEventDto,
   JournalDetailResponseDto,
-} from 'src/core/dto/journals.dto';
+} from '../../core/dto/journals.dto';
 import { JournalEventsEntity } from '../journal_events/entities/journal_event.entities';
 
 @Injectable()

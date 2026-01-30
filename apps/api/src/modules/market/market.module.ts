@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MarketService } from './market.service';
-import { DatabaseModule } from 'src/core/database/database.module';
+import { DatabaseModule } from '../../core/database/database.module';
 
 @Module({
   imports: [DatabaseModule],

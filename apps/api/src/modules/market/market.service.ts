@@ -1,10 +1,10 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import YahooFinance from 'yahoo-finance2';
-import { DatabaseService } from 'src/core/database/database.service';
+import { DatabaseService } from '../../core/database/database.service';
 import {
   FIND_ACTIVE_JOURNALS_SYMBOLS_QUERY,
   UPDATE_CURRENT_PRICE_QUERY,
-} from 'src/core/database/sql/market/query';
+} from '../../core/database/sql/market/query';
 import { Cron } from '@nestjs/schedule';
 
 const PRICE_CACHE_TTL_MS = 1000 * 60 * 2; // 2분

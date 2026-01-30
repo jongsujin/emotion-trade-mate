@@ -17,15 +17,15 @@ import {
   UpdateJournalEntity,
   UpdateJournalEventEntity,
 } from './entities/journals.entities';
-import { Pagination } from 'src/core/common/types/common';
+import { Pagination } from '../../core/common/types/common';
 import {
   CreateJournalDto,
   CreateJournalEventDto,
   CreateJournalResponseDto,
   JournalDetailResponseDto,
 } from '../../core/dto/journals.dto';
-import { CurrentUser } from 'src/core/common/decorators/user.decorator';
-import { JwtAuthGuard } from 'src/core/common/guards/jwt-auth.guard';
+import { CurrentUser } from '../../core/common/decorators/user.decorator';
+import { JwtAuthGuard } from '../../core/common/guards/jwt-auth.guard';
 import { JournalEventsEntity } from '../journal_events/entities/journal_event.entities';
 
 @Controller('journals')

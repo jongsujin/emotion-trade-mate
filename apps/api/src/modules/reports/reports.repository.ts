@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from 'src/core/database/database.service';
-import { GET_EMOTION_PERFORMANCE_QUERY } from 'src/core/database/sql/reports/query';
-import { EmotionPerformanceDto } from 'src/core/dto/reports.dto';
+import { DatabaseService } from '../../core/database/database.service';
+import { GET_EMOTION_PERFORMANCE_QUERY } from '../../core/database/sql/reports/query';
+import { EmotionPerformanceDto } from '../../core/dto/reports.dto';
 
 @Injectable()
 export class ReportsRepository {
