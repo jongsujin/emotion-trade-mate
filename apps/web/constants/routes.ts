@@ -6,6 +6,7 @@
 export const ROUTES = {
   // 온보딩 & 홈
   HOME: '/',
+  DASHBOARD: '/dashboard',
 
   // 인증
   LOGIN: '/login',

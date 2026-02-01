@@ -18,11 +18,16 @@ function useIsHydrated() {
 const NAV_ITEMS = [
   {
     label: '홈',
-    href: ROUTES.JOURNAL.LIST,
+    href: ROUTES.DASHBOARD,
     icon: '🏠',
   },
   {
-    label: '일지 작성',
+    label: '일지',
+    href: ROUTES.JOURNAL.LIST,
+    icon: '📝',
+  },
+  {
+    label: '작성',
     href: ROUTES.JOURNAL.CREATE,
     icon: '✏️',
     primary: true,
