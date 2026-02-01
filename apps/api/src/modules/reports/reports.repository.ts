@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '../../core/database/database.service';
-import { GET_EMOTION_PERFORMANCE_QUERY } from '../../core/database/sql/reports/query';
+import {
+  GET_DASHBOARD_SUMMARY_QUERY,
+  GET_EMOTION_PERFORMANCE_QUERY,
+  GET_RECENT_PNL_QUERY,
+  GET_TODAY_EMOTION_QUERY,
+} from '../../core/database/sql/reports/query';
 import { EmotionPerformanceDto } from '../../core/dto/reports.dto';
 
 @Injectable()
@@ -28,5 +33,29 @@ export class ReportsRepository {
         avgProfit: journalCount > 0 ? totalProfit / journalCount : 0,
       };
     });
+  }
+
+  async getDashboardSummary(userId: number) {
+    const result = await this.databaseService.queryOne<{
+      totalProfit: number;
+      tradeCount: string; // count returns string
+      winCount: string;
+    }>(GET_DASHBOARD_SUMMARY_QUERY, [userId]);
+    return result;
+  }
+
+  async getRecentPnl(userId: number) {
+    return await this.databaseService.query<{ date: string; profit: number }>(
+      GET_RECENT_PNL_QUERY,
+      [userId],
+    );
+  }
+
+  async getTodayEmotion(userId: number) {
+    return await this.databaseService.queryOne<{
+      code: string;
+      label: string;
+      count: string;
+    }>(GET_TODAY_EMOTION_QUERY, [userId]);
   }
 }

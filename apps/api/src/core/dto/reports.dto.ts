@@ -22,3 +22,36 @@ export class ReportResponseDto {
   worstEmotion: EmotionPerformanceDto | null;
   details: EmotionPerformanceDto[];
 }
+
+export class DashboardSummaryDto {
+  @IsNumber()
+  totalProfit: number;
+
+  @IsNumber()
+  winRate: number;
+
+  @IsNumber()
+  tradeCount: number;
+}
+
+export class DailyPnlDto {
+  @IsString()
+  date: string;
+
+  @IsNumber()
+  profit: number;
+}
+
+export class TodayEmotionDto {
+  @IsString()
+  code: string;
+
+  @IsString()
+  label: string;
+}
+
+export class DashboardResponseDto {
+  summary: DashboardSummaryDto;
+  recentTrend: DailyPnlDto[];
+  todayEmotion: TodayEmotionDto | null;
+}

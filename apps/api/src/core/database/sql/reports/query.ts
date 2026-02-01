@@ -19,3 +19,41 @@ export const GET_EMOTION_PERFORMANCE_QUERY = /* sql */ `
   HAVING COUNT(DISTINCT j.id) > 0
   ORDER BY "totalProfit" DESC
 `;
+
+export const GET_DASHBOARD_SUMMARY_QUERY = `
+  SELECT
+    COALESCE(SUM(realized_profit), 0) as "totalProfit",
+    COUNT(id) as "tradeCount",
+    COUNT(CASE WHEN realized_profit > 0 THEN 1 END) as "winCount"
+  FROM journals
+  WHERE user_id = $1 AND deleted_at IS NULL
+`;
+
+export const GET_RECENT_PNL_QUERY = `
+  SELECT
+    TO_CHAR(updated_at, 'YYYY-MM-DD') as "date",
+    SUM(realized_profit) as "profit"
+  FROM journals
+  WHERE user_id = $1
+    AND deleted_at IS NULL
+    AND realized_profit != 0
+    AND updated_at >= NOW() - INTERVAL '30 days'
+  GROUP BY TO_CHAR(updated_at, 'YYYY-MM-DD')
+  ORDER BY "date" ASC
+`;
+
+export const GET_TODAY_EMOTION_QUERY = `
+  SELECT
+    et.code,
+    et.label_ko as "label",
+    COUNT(*) as "count"
+  FROM journal_events je
+  JOIN journal_event_emotions jee ON je.id = jee.event_id
+  JOIN emotion_tags et ON jee.emotion_tag_id = et.id
+  JOIN journals j ON je.journal_id = j.id
+  WHERE j.user_id = $1
+    AND je.created_at >= DATE_TRUNC('day', NOW())
+  GROUP BY et.id, et.code, et.label_ko
+  ORDER BY "count" DESC
+  LIMIT 1
+`;
