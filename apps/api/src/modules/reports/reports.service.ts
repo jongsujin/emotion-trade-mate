@@ -42,7 +42,12 @@ export class ReportsService {
 
     return {
       summary: {
-        totalProfit: summary ? Number(summary.totalProfit) : 0,
+        totalProfit: summary
+          ? Number(summary.realizedProfit) + Number(summary.unrealizedProfit)
+          : 0,
+        realizedProfit: summary ? Number(summary.realizedProfit) : 0,
+        unrealizedProfit: summary ? Number(summary.unrealizedProfit) : 0,
+        totalCost: summary ? Number(summary.totalCost) : 0,
         tradeCount,
         winRate: parseFloat(winRate.toFixed(1)),
       },

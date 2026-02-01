@@ -4,16 +4,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ROUTES } from '@/constants'
 import { cn } from '@/lib/utils'
-import { useSyncExternalStore } from 'react'
-
-function useIsHydrated() {
-  // 서버 렌더에서는 false, 클라이언트에서는 true가 되도록 보장
-  return useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false
-  )
-}
 
 const NAV_ITEMS = [
   {
@@ -49,16 +39,7 @@ const NAV_ITEMS = [
 
  */
 export function BottomNav() {
-  /**
-   * SSR로 렌더된 HTML과 클라이언트 첫 렌더 결과가 달라지면 hydration mismatch가 발생할 수 있음.
-   * (예: 최초 로드 직후 클라이언트 리다이렉트로 pathname이 바뀌는 경우)
-   * 안전하게 mount 이후에만 하단 네비를 렌더링한다.
-   */
-  const isHydrated = useIsHydrated()
-
   const pathname = usePathname()
-
-  if (!isHydrated) return null
 
   const isCreatePage = pathname === ROUTES.JOURNAL.CREATE
   // /journal/숫자 형식이면 상세 페이지 (create 제외)

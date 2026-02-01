@@ -88,7 +88,6 @@ export default function DashboardPage() {
                     border: 'none',
                     boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
                   }}
-                  formatter={(value: number) => [`${value?.toLocaleString() || 0}원`, '수익']}
                   itemStyle={{ color: isPositive ? '#EF4444' : '#3B82F6', fontWeight: 'bold' }}
                 />
                 <Area

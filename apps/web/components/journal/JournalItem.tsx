@@ -1,3 +1,4 @@
+import { EMOTION_DATA, EmotionType } from '@/constants/emotions'
 import { formatPercent, formatPriceWithSymbol } from '@/lib/utils'
 import { JournalItemProps } from '@/types/journals'
 import Link from 'next/link'
@@ -7,6 +8,9 @@ import Link from 'next/link'
  */
 export default function JournalItem({ journal, href }: JournalItemProps) {
   const isProfit = journal.realizedProfit >= 0
+  const emotionConfig = EMOTION_DATA[journal.primaryEmotion as EmotionType]
+  const emoji = emotionConfig?.emoji || '😶'
+  const label = emotionConfig?.label || journal.primaryEmotionLabel || '기타'
 
   return (
     <Link href={href} className="block">
@@ -16,12 +20,8 @@ export default function JournalItem({ journal, href }: JournalItemProps) {
           <div className="flex items-center gap-4">
             {/* 이모지 아이콘 */}
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#F2F4F6]">
-              <span
-                className="text-2xl"
-                role="img"
-                aria-label={`감정: ${journal.primaryEmotionLabel}`}
-              >
-                {journal.primaryEmotionLabel}
+              <span className="text-2xl" role="img" aria-label={`감정: ${label}`}>
+                {emoji}
               </span>
             </div>
 

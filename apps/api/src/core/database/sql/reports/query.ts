@@ -22,7 +22,17 @@ export const GET_EMOTION_PERFORMANCE_QUERY = /* sql */ `
 
 export const GET_DASHBOARD_SUMMARY_QUERY = `
   SELECT
-    COALESCE(SUM(realized_profit), 0) as "totalProfit",
+    COALESCE(SUM(realized_profit), 0) as "realizedProfit",
+    COALESCE(SUM(
+      CASE WHEN total_quantity > 0 AND current_price IS NOT NULL
+      THEN (current_price - average_cost) * total_quantity
+      ELSE 0 END
+    ), 0) as "unrealizedProfit",
+    COALESCE(SUM(
+      CASE WHEN total_quantity > 0
+      THEN average_cost * total_quantity
+      ELSE 0 END
+    ), 0) as "totalCost",
     COUNT(id) as "tradeCount",
     COUNT(CASE WHEN realized_profit > 0 THEN 1 END) as "winCount"
   FROM journals

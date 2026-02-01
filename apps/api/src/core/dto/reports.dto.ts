@@ -28,6 +28,15 @@ export class DashboardSummaryDto {
   totalProfit: number;
 
   @IsNumber()
+  realizedProfit: number;
+
+  @IsNumber()
+  unrealizedProfit: number;
+
+  @IsNumber()
+  totalCost: number;
+
+  @IsNumber()
   winRate: number;
 
   @IsNumber()

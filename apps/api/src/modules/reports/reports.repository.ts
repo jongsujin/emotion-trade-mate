@@ -37,7 +37,9 @@ export class ReportsRepository {
 
   async getDashboardSummary(userId: number) {
     const result = await this.databaseService.queryOne<{
-      totalProfit: number;
+      realizedProfit: number;
+      unrealizedProfit: number;
+      totalCost: number;
       tradeCount: string; // count returns string
       winCount: string;
     }>(GET_DASHBOARD_SUMMARY_QUERY, [userId]);

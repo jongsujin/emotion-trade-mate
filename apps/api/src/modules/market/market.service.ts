@@ -7,8 +7,8 @@ import {
 } from '../../core/database/sql/market/query';
 import { Cron } from '@nestjs/schedule';
 
-const PRICE_CACHE_TTL_MS = 1000 * 60 * 2; // 2분
-const REQUEST_DELAY_MS = 250; // Yahoo 요청 간 최소 딜레이(429 완화)
+const PRICE_CACHE_TTL_MS = 1000 * 60 * 10; // 10분
+const REQUEST_DELAY_MS = 1000; // Yahoo 요청 간 최소 딜레이(429 완화)
 const RATE_LIMIT_BACKOFF_INITIAL_MS = 1000 * 30; // 30초
 const RATE_LIMIT_BACKOFF_MAX_MS = 1000 * 60 * 15; // 15분
 

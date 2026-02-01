@@ -1,10 +1,14 @@
 import { apiClient } from '@/lib/api/client'
 import type { ApiResponse } from '@/types'
+import { API_ROUTES } from '@/constants'
 
 export interface DashboardSummary {
   totalProfit: number
   tradeCount: number
   winRate: number
+  realizedProfit: number
+  unrealizedProfit: number
+  totalCost: number
 }
 
 export interface RecentPnl {
@@ -27,5 +31,5 @@ export interface DashboardData {
  * 대시보드 데이터 조회
  */
 export async function getDashboardData(): Promise<ApiResponse<DashboardData>> {
-  return apiClient.get<DashboardData>('/reports/dashboard')
+  return apiClient.get<DashboardData>(API_ROUTES.REPORT.DASHBOARD)
 }
