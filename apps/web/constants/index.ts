@@ -15,8 +15,15 @@ export const APP_CONFIG = {
 /**
  * API 설정
  */
+const getBaseUrl = () => {
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'
+  // Remove trailing slash if exists to avoid double slashes, then check for /api
+  const cleanUrl = url.replace(/\/$/, '')
+  return cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`
+}
+
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api',
+  BASE_URL: getBaseUrl(),
   TIMEOUT: 10000,
 } as const
 

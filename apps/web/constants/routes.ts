@@ -6,6 +6,7 @@
 export const ROUTES = {
   // 온보딩 & 홈
   HOME: '/',
+  DASHBOARD: '/dashboard',
 
   // 인증
   LOGIN: '/login',
@@ -39,26 +40,27 @@ export const ROUTES = {
  */
 export const API_ROUTES = {
   AUTH: {
-    LOGIN: '/api/auth/login',
-    SIGNUP: '/api/auth/signup',
-    LOGOUT: '/api/auth/logout',
-    ME: '/api/auth/me',
-    REFRESH: '/api/auth/refresh',
+    LOGIN: '/auth/login',
+    SIGNUP: '/auth/signup',
+    LOGOUT: '/auth/logout',
+    ME: '/auth/me',
+    REFRESH: '/auth/refresh',
   },
   JOURNAL: {
-    LIST: '/api/journals', // GET
-    CREATE: '/api/journals', // POST
-    DETAIL: (id: string) => `/api/journals/${id}/detail`, // GET
-    UPDATE: (id: string) => `/api/journals/${id}`, // PUT
-    DELETE: (id: string) => `/api/journals/${id}`, // DELETE
-    CREATE_EVENT: (id: string) => `/api/journals/${id}/events`, // POST
-    ADD_EMOTION: (id: string) => `/api/journals/${id}/emotion`,
+    LIST: '/journals', // GET
+    CREATE: '/journals', // POST
+    DETAIL: (id: string) => `/journals/${id}/detail`, // GET
+    UPDATE: (id: string) => `/journals/${id}`, // PUT
+    DELETE: (id: string) => `/journals/${id}`, // DELETE
+    CREATE_EVENT: (id: string) => `/journals/${id}/events`, // POST
+    ADD_EMOTION: (id: string) => `/journals/${id}/emotion`,
   },
   OCR: {
     UPLOAD: '/ocr/upload',
     EXTRACT: '/ocr/extract',
   },
   REPORT: {
+    DASHBOARD: '/reports/dashboard',
     GENERATE: '/report/generate',
     DETAIL: (id: string) => `/report/${id}`,
     PDF: (id: string) => `/report/${id}/pdf`,

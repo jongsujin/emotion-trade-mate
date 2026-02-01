@@ -7,8 +7,8 @@ import { Card } from '@/components/common/Card'
 export default function JournalForm({
   formData,
   setFormData,
-  selectedEmotions,
-  setSelectedEmotions,
+  selectedEmotion,
+  setSelectedEmotion,
 }: JournalFormProps) {
   return (
     <div className="space-y-4 px-5 pt-2">
@@ -62,38 +62,25 @@ export default function JournalForm({
       {/* 2. 감정 선택 */}
       <Card className="p-6">
         <h2 className="mb-1 text-[17px] font-bold text-[#191F28]">그때 기분이 어땠나요?</h2>
-        <p className="mb-3 text-sm text-[#8B95A1]">솔직한 감정이 정확한 분석을 만듭니다</p>
-        <p className="mb-5 text-xs text-[#8B95A1]">최대 3개까지 선택할 수 있어요</p>
+        <p className="mb-3 text-sm text-[#8B95A1]">가장 지배적인 감정 하나를 선택해주세요</p>
 
         <div className="grid grid-cols-3 gap-3">
           {Object.values(EMOTION_DATA).map((emotion) => {
-            const isSelected = selectedEmotions.includes(emotion.id)
-            const isDisabled = !isSelected && selectedEmotions.length >= 3
+            const isSelected = selectedEmotion === emotion.id
 
             return (
               <button
                 key={emotion.id}
-                onClick={() => {
-                  if (isSelected) {
-                    // 선택 해제
-                    setSelectedEmotions(selectedEmotions.filter(id => id !== emotion.id))
-                  } else if (!isDisabled) {
-                    // 선택 추가
-                    setSelectedEmotions([...selectedEmotions, emotion.id])
-                  }
-                }}
-                disabled={isDisabled && !isSelected}
+                onClick={() => setSelectedEmotion(emotion.id)}
                 className={`relative flex flex-col items-center justify-center gap-2 rounded-2xl py-5 transition-all duration-200 ${
                   isSelected
                     ? 'bg-[#E8F3FF] text-[#1B64DA] ring-2 ring-[#3182F6]'
-                    : isDisabled
-                    ? 'bg-[#F9FAFB] text-[#B0B8C1] cursor-not-allowed opacity-50'
-                    : 'bg-[#F9FAFB] text-[#4E5968] hover:bg-[#F2F4F6] cursor-pointer'
+                    : 'cursor-pointer bg-[#F9FAFB] text-[#4E5968] hover:bg-[#F2F4F6]'
                 }`}
               >
                 {isSelected && (
-                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#3182F6] rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">✓</span>
+                  <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#3182F6]">
+                    <span className="text-xs font-bold text-white">✓</span>
                   </div>
                 )}
                 <span className="mb-1 text-3xl drop-shadow-sm filter">{emotion.emoji}</span>
@@ -103,22 +90,19 @@ export default function JournalForm({
           })}
         </div>
 
-        {selectedEmotions.length > 0 && (
-          <div className="mt-4 p-3 bg-[#F8F9FA] rounded-lg">
-            <p className="text-sm font-medium text-[#191F28] mb-2">선택된 감정:</p>
+        {selectedEmotion && (
+          <div className="mt-4 rounded-lg bg-[#F8F9FA] p-3">
+            <p className="mb-2 text-sm font-medium text-[#191F28]">선택된 감정:</p>
             <div className="flex flex-wrap gap-2">
-              {selectedEmotions.map(emotionId => {
-                const emotion = EMOTION_DATA[emotionId as keyof typeof EMOTION_DATA]
+              {(() => {
+                const emotion = EMOTION_DATA[selectedEmotion as keyof typeof EMOTION_DATA]
                 return (
-                  <span
-                    key={emotionId}
-                    className="inline-flex items-center gap-1 px-3 py-1 bg-[#E8F3FF] text-[#1B64DA] rounded-full text-sm font-medium"
-                  >
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#E8F3FF] px-3 py-1 text-sm font-medium text-[#1B64DA]">
                     <span>{emotion.emoji}</span>
                     <span>{emotion.label}</span>
                   </span>
                 )
-              })}
+              })()}
             </div>
           </div>
         )}

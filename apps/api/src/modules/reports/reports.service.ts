@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ReportsRepository } from './reports.repository';
-import { ReportResponseDto } from '../../core/dto/reports.dto';
+import {
+  DashboardResponseDto,
+  ReportResponseDto,
+} from '../../core/dto/reports.dto';
 
 @Injectable()
 export class ReportsService {
@@ -23,6 +26,38 @@ export class ReportsService {
       bestEmotion,
       worstEmotion,
       details: sortedByProfit,
+    };
+  }
+
+  async getDashboard(userId: number): Promise<DashboardResponseDto> {
+    const [summary, recentTrend, todayEmotion] = await Promise.all([
+      this.reportsRepository.getDashboardSummary(userId),
+      this.reportsRepository.getRecentPnl(userId),
+      this.reportsRepository.getTodayEmotion(userId),
+    ]);
+
+    const tradeCount = summary ? Number(summary.tradeCount) : 0;
+    const winCount = summary ? Number(summary.winCount) : 0;
+    const winRate = tradeCount > 0 ? (winCount / tradeCount) * 100 : 0;
+
+    return {
+      summary: {
+        totalProfit: summary
+          ? Number(summary.realizedProfit) + Number(summary.unrealizedProfit)
+          : 0,
+        realizedProfit: summary ? Number(summary.realizedProfit) : 0,
+        unrealizedProfit: summary ? Number(summary.unrealizedProfit) : 0,
+        totalCost: summary ? Number(summary.totalCost) : 0,
+        tradeCount,
+        winRate: parseFloat(winRate.toFixed(1)),
+      },
+      recentTrend: recentTrend.map((r) => ({
+        ...r,
+        profit: Number(r.profit),
+      })),
+      todayEmotion: todayEmotion
+        ? { code: todayEmotion.code, label: todayEmotion.label }
+        : null,
     };
   }
 }

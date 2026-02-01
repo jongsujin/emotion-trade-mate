@@ -12,15 +12,18 @@ import type { CreateJournalRequest } from '@/types'
 /**
  * 폼 데이터를 API 요청 데이터로 변환
  */
+/**
+ * 폼 데이터를 API 요청 데이터로 변환
+ */
 function convertFormToRequest(
   formData: JournalCreateFormData,
-  selectedEmotions: string[]
+  selectedEmotion: string | null
 ): CreateJournalRequest {
   const today = new Date().toISOString().substring(0, 10)
   const buyPrice = Number(formData.price)
   const quantity = Number(formData.quantity)
 
-  console.log('selectedEmotions', selectedEmotions)
+  console.log('selectedEmotion', selectedEmotion)
   if (isNaN(buyPrice) || isNaN(quantity)) {
     throw new Error('가격 또는 수량이 유효한 숫자가 아닙니다')
   }
@@ -35,14 +38,13 @@ function convertFormToRequest(
     buyPrice,
     initialQuantity: quantity,
     buyDate: today,
-    firstEmotion:
-      selectedEmotions.length > 0
-        ? {
-            price: buyPrice, // 매수 가격을 firstEmotion의 시점 가격으로 사용
-            memo: formData.memo.trim() || undefined,
-            emotionCodes: selectedEmotions,
-          }
-        : undefined,
+    firstEmotion: selectedEmotion
+      ? {
+          price: buyPrice, // 매수 가격을 firstEmotion의 시점 가격으로 사용
+          memo: formData.memo.trim() || undefined,
+          emotionCodes: [selectedEmotion], // API는 아직 배열을 기대하므로 배열로 감싸서 전달
+        }
+      : undefined,
   }
 }
 
@@ -51,7 +53,7 @@ function convertFormToRequest(
  */
 export default function JournalCreatePage() {
   const router = useRouter()
-  const [selectedEmotions, setSelectedEmotions] = useState<string[]>([])
+  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null)
   const [formData, setFormData] = useState<JournalCreateFormData>({
     symbol: '',
     symbolName: '',
@@ -64,8 +66,8 @@ export default function JournalCreatePage() {
 
   const handleSubmit = () => {
     // 유효성 검사
-    if (selectedEmotions.length === 0) {
-      alert('감정을 하나 이상 선택해주세요')
+    if (!selectedEmotion) {
+      alert('감정을 선택해주세요')
       return
     }
 
@@ -80,7 +82,7 @@ export default function JournalCreatePage() {
     }
 
     try {
-      const requestData = convertFormToRequest(formData, selectedEmotions)
+      const requestData = convertFormToRequest(formData, selectedEmotion)
 
       createJournal(requestData, {
         onSuccess: (response) => {
@@ -106,7 +108,7 @@ export default function JournalCreatePage() {
   }
 
   const isFormValid =
-    selectedEmotions.length > 0 && formData.symbol.trim() && formData.price && formData.quantity
+    !!selectedEmotion && formData.symbol.trim() && formData.price && formData.quantity
 
   return (
     <div className="min-h-screen bg-[#F2F4F6] pb-24">
@@ -117,8 +119,8 @@ export default function JournalCreatePage() {
       <JournalForm
         formData={formData}
         setFormData={setFormData}
-        selectedEmotions={selectedEmotions}
-        setSelectedEmotions={setSelectedEmotions}
+        selectedEmotion={selectedEmotion}
+        setSelectedEmotion={setSelectedEmotion}
       />
 
       {/* 하단 고정 버튼 */}

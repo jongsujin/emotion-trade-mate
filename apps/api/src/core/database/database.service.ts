@@ -32,9 +32,12 @@ export class DatabaseService implements OnModuleDestroy, OnModuleInit {
       user: this.configService.get<string>('DB_USER', 'postgres'),
       password: this.configService.get<string>('DB_PASSWORD', ''),
       database: this.configService.get<string>('DB_NAME', 'postgres'),
-      ssl: { rejectUnauthorized: false }, // Supabase requires SSL, usually with rejectUnauthorized: false for simple setups or proper CA.
-      max: 1, // Serverless 환경에서는 연결 수를 최소로 제한 (Cold Start 방지 및 Connection Pool 고갈 방지)
-      idleTimeoutMillis: 3000, // 유휴 연결을 빨리 끊음
+      ssl:
+        process.env.DB_SSL === 'true'
+          ? { rejectUnauthorized: false }
+          : undefined, // check env var string
+      max: 10, // Increase max connection pool for local dev comfort
+      idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 5000,
     };
 
