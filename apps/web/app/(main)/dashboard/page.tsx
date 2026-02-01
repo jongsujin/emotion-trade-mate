@@ -3,26 +3,11 @@
 import { Card } from '@/components/common/Card'
 import { motion } from 'framer-motion'
 import { Area, AreaChart, ResponsiveContainer, Tooltip } from 'recharts'
-import {
-  TrendingUp,
-  Brain,
-  AlertCircle,
-  ArrowRight,
-  ChevronRight,
-  TrendingDown,
-} from 'lucide-react'
+import { Brain, AlertCircle, ArrowRight } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { getDashboardData } from '@/features/report/api'
 
-// Mock Data for Prototype
-const MOCK_ASSET_DATA = [
-  { date: '1일', value: 1000000 },
-  { date: '5일', value: 1050000 },
-  { date: '10일', value: 1030000 },
-  { date: '15일', value: 1120000 },
-  { date: '20일', value: 1080000 },
-  { date: '25일', value: 1250000 },
-  { date: '오늘', value: 1320000 },
-]
-
+// Animation Variants
 const container = {
   hidden: { opacity: 0 },
   show: {
@@ -39,9 +24,30 @@ const item = {
 }
 
 export default function DashboardPage() {
-  const currentProfit = 320000
-  const profitRate = 32.0
-  const isPositive = currentProfit >= 0
+  const { data: response, isLoading } = useQuery({
+    queryKey: ['dashboard'],
+    queryFn: getDashboardData,
+  })
+
+  // Loading State (Skeleton)
+  if (isLoading) {
+    return (
+      <div className="animate-pulse space-y-6">
+        <div className="h-64 rounded-3xl bg-gray-200" />
+        <div className="grid grid-cols-2 gap-4">
+          <div className="h-40 rounded-3xl bg-gray-200" />
+          <div className="h-40 rounded-3xl bg-gray-200" />
+        </div>
+      </div>
+    )
+  }
+
+  const dashboardData = response?.data
+
+  if (!dashboardData) return null
+
+  const { summary, recentTrend, todayEmotion } = dashboardData
+  const isPositive = summary.totalProfit >= 0
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
@@ -50,33 +56,30 @@ export default function DashboardPage() {
         <h2 className="mb-4 text-xl font-bold text-gray-800">내 자산</h2>
         <Card className="relative overflow-hidden p-0!">
           <div className="p-6 pb-0">
-            <span className="text-sm font-medium text-gray-500">이번 달 수익</span>
+            <span className="text-sm font-medium text-gray-500">총 누적 손익</span>
             <div className="mt-1 flex items-baseline gap-2">
               <span className="text-3xl font-bold text-gray-900">
-                {currentProfit.toLocaleString()}원
+                {summary.totalProfit.toLocaleString()}원
               </span>
-              <span
-                className={`flex items-center text-sm font-bold ${
-                  isPositive ? 'text-red-500' : 'text-blue-500'
-                }`}
-              >
-                {isPositive ? (
-                  <TrendingUp className="mr-1 h-4 w-4" />
-                ) : (
-                  <TrendingDown className="mr-1 h-4 w-4" />
-                )}
-                {profitRate}%
-              </span>
+              {/* 수익률 계산 로직이 필요하다면 추가 */}
             </div>
           </div>
 
           <div className="mt-4 h-[150px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={MOCK_ASSET_DATA}>
+              <AreaChart data={recentTrend}>
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#FB7185" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="#FB7185" stopOpacity={0} />
+                    <stop
+                      offset="5%"
+                      stopColor={isPositive ? '#EF4444' : '#3B82F6'}
+                      stopOpacity={0.2}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor={isPositive ? '#EF4444' : '#3B82F6'}
+                      stopOpacity={0}
+                    />
                   </linearGradient>
                 </defs>
                 <Tooltip
@@ -85,12 +88,13 @@ export default function DashboardPage() {
                     border: 'none',
                     boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
                   }}
-                  itemStyle={{ color: '#E11D48', fontWeight: 'bold' }}
+                  formatter={(value: number) => [`${value?.toLocaleString() || 0}원`, '수익']}
+                  itemStyle={{ color: isPositive ? '#EF4444' : '#3B82F6', fontWeight: 'bold' }}
                 />
                 <Area
                   type="monotone"
-                  dataKey="value"
-                  stroke="#E11D48" // Rose-600
+                  dataKey="profit"
+                  stroke={isPositive ? '#EF4444' : '#3B82F6'}
                   strokeWidth={3}
                   fillOpacity={1}
                   fill="url(#colorValue)"
@@ -105,23 +109,22 @@ export default function DashboardPage() {
       <motion.section variants={item}>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-800">감정 기상청</h2>
-          <button className="text-sm font-medium text-gray-400 hover:text-gray-600">더보기</button>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <Card className="flex flex-col items-center justify-center gap-3 bg-linear-to-br from-blue-50 to-white py-8">
-            <div className="text-5xl">🌤️</div>
+            <div className="text-5xl">{todayEmotion ? '🌤️' : '☁️'}</div>
             <div className="text-center">
               <span className="block text-sm text-gray-500">오늘의 감정</span>
-              <span className="text-lg font-bold text-blue-600">평온함</span>
+              <span className="text-lg font-bold text-blue-600">
+                {todayEmotion ? todayEmotion.label : '기록 없음'}
+              </span>
             </div>
           </Card>
           <Card className="flex flex-col justify-between bg-white p-5">
             <div>
-              <span className="block text-sm text-gray-500">승률 분석</span>
+              <span className="block text-sm text-gray-500">전체 승률</span>
               <span className="text-lg font-bold text-gray-900">
-                평온할 때
-                <br />
-                <span className="text-blue-600">83% 승리</span>
+                <span className="text-blue-600">{summary.winRate}%</span> 승리
               </span>
             </div>
             <div className="mt-4 flex items-center justify-end">
@@ -131,7 +134,7 @@ export default function DashboardPage() {
         </div>
       </motion.section>
 
-      {/* 3. AI 인사이트 (Insight) */}
+      {/* 3. AI 인사이트 (Insight) - 데이터 연동 전 정적 표시 */}
       <motion.section variants={item}>
         <Card className="group relative overflow-hidden bg-black text-white transition-all hover:bg-gray-900">
           <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
@@ -140,15 +143,12 @@ export default function DashboardPage() {
               <AlertCircle className="h-6 w-6 text-yellow-300" />
             </div>
             <div className="flex-1">
-              <h3 className="mb-1 text-lg font-bold text-yellow-300">AI Warning</h3>
+              <h3 className="mb-1 text-lg font-bold text-yellow-300">AI Insight</h3>
               <p className="mb-3 text-sm leading-relaxed text-gray-300">
-                최근 <strong>&apos;불안&apos;</strong> 감정이 감지될 때마다 평균{' '}
-                <span className="text-red-400">-5.2%</span> 손실이 발생했어요. 오늘은 매매를
-                쉬어보는 건 어떨까요?
+                아직 충분한 데이터가 쌓이지 않았습니다.
+                <br />
+                꾸준히 일지를 기록하여 패턴을 분석해보세요!
               </p>
-              <button className="flex items-center text-sm font-bold text-white/80 transition-colors group-hover:text-white">
-                자세히 보기 <ChevronRight className="ml-1 h-4 w-4" />
-              </button>
             </div>
           </div>
         </Card>

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/common/Button'
 import { LoginFormData } from '@/types/auth'
 import { login } from '@/features/auth'
+import { ROUTES } from '@/constants'
 
 /**
  * 로그인 폼 컴포넌트
@@ -31,7 +32,7 @@ export default function LoginForm() {
       }
 
       console.log('Login:', response.data)
-      router.push('/')
+      router.push(ROUTES.DASHBOARD)
     } catch (err) {
       setError(`로그인 중 오류가 발생했습니다: ${err}`)
     } finally {
