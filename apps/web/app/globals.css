@@ -2,6 +2,23 @@
 @config '../tailwind.config.ts';
 
 :root {
+  --font-geist-sans:
+    'Pretendard',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    system-ui,
+    sans-serif;
+  --font-geist-mono:
+    'JetBrains Mono',
+    'SFMono-Regular',
+    Menlo,
+    Monaco,
+    Consolas,
+    'Liberation Mono',
+    'Courier New',
+    monospace;
+
   --background: #f6f9fc;
   --foreground: #0f172a;
 

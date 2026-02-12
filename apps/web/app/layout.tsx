@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/lib/Provider'
 import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister'
@@ -7,16 +6,6 @@ import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister'
 const APP_NAME = 'EmotionTrade'
 const APP_DESCRIPTION = '감정 기반 투자 일지'
 const THEME_COLOR = '#68CCF4'
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-})
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-})
 
 export const metadata: Metadata = {
   title: APP_NAME,
@@ -43,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={`${geistSans.variable} ${geistMono.variable} bg-[#F2F4F6] antialiased`}>
+      <body className="bg-[#F2F4F6] antialiased">
         <Providers>
           <ServiceWorkerRegister />
           <main className="mx-auto min-h-screen max-w-[480px] bg-[#F2F4F6] shadow-sm sm:bg-[#F2F4F6]">
