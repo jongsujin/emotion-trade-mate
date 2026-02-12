@@ -1,70 +1,73 @@
+import Link from 'next/link'
+import { Filter, Search, Sparkles, TrendingUp } from 'lucide-react'
 import { ROUTES } from '@/constants'
 import { JournalHeaderProps } from '@/types/journals'
 import { formatDecimal, formatKrwAmount } from '@/lib/utils'
-import Link from 'next/link'
 
 export default function JournalHeader({
   totalProfit,
   avgReturn,
   holdingCount,
 }: JournalHeaderProps) {
-  // 숫자 데이터 검증 및 기본값 설정
-  const safeTotalProfit = typeof totalProfit === 'number' ? totalProfit : 0
-  const safeAvgReturn = typeof avgReturn === 'number' ? avgReturn : 0
+  const safeTotalProfit = Number.isFinite(totalProfit) ? totalProfit : 0
+  const safeAvgReturn = Number.isFinite(avgReturn) ? avgReturn : 0
+  const isPositive = safeTotalProfit >= 0
 
-  // 간단한 감정 분석 메시지 (실제 데이터 연동 전 목업)
-  const emotionMessage =
-    safeTotalProfit >= 0
-      ? '평온한 마음으로 투자를 잘하고 계시네요! 🌤️'
-      : '조금 불안하신가요? AI 조언을 확인해보세요. ☂️'
+  const moodLabel = safeAvgReturn >= 3 ? '낙관적' : safeAvgReturn >= 0 ? '중립적' : '주의 필요'
 
   return (
-    <section className="px-5 pt-6 pb-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#191F28]">내 투자</h1>
-        <div className="flex gap-3">
-          <Link
-            href="/report/summary"
-            className="flex items-center justify-center rounded-full bg-[#E5E8EB] px-3 py-1.5 text-xs font-semibold text-[#4E5968] transition-colors active:bg-[#D1D6DB]"
-          >
-            AI 분석
-          </Link>
-          <Link
-            href={ROUTES.JOURNAL.CREATE}
-            className="flex items-center justify-center text-base font-semibold text-[#3182F6] transition-opacity active:opacity-70"
-          >
-            추가
-          </Link>
+    <section className="border-b border-[#f1f5f9] bg-white px-5 pb-4 pt-12 shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-[-0.02em] text-[#0f172a]">내 저널</h1>
+          <p className="mt-1 text-xs font-medium text-[#64748b]">거래와 감정을 함께 기록하세요</p>
+        </div>
+
+        <div className="flex items-center gap-1">
+          <button className="flex h-10 w-10 items-center justify-center rounded-full text-[#64748b] transition-colors hover:bg-[#f8fafc]">
+            <Search className="h-5 w-5" />
+          </button>
+          <button className="flex h-10 w-10 items-center justify-center rounded-full text-[#64748b] transition-colors hover:bg-[#f8fafc]">
+            <Filter className="h-5 w-5" />
+          </button>
         </div>
       </div>
 
-      {/* 총 수익 카드 */}
-      <div className="rounded-3xl bg-white p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-        <p className="mb-1 text-sm font-medium text-[#8B95A1]">총 평가 손익</p>
-        <div className="flex items-baseline gap-2">
-          <span
-            className={`text-3xl font-bold ${safeTotalProfit >= 0 ? 'text-[#E42939]' : 'text-[#3182F6]'}`}
-          >
-            {safeTotalProfit >= 0 ? '+' : ''}
-            {formatKrwAmount(safeTotalProfit)}원
-          </span>
-        </div>
-
-        <div className="mt-3 flex items-center gap-3">
-          <div
-            className={`rounded-md px-2 py-1 text-xs font-semibold ${safeAvgReturn >= 0 ? 'bg-[#FFF0F1] text-[#E42939]' : 'bg-[#F0F6FF] text-[#3182F6]'}`}
-          >
-            {safeAvgReturn >= 0 ? '▲' : '▼'} {formatDecimal(Math.abs(safeAvgReturn), { maximumFractionDigits: 2 })}%
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="flex items-center gap-3 rounded-xl border border-[rgba(103,204,244,0.22)] bg-[rgba(103,204,244,0.1)] px-3 py-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[rgba(103,204,244,0.2)]">
+            <TrendingUp className="h-4 w-4 text-[#67ccf4]" />
           </div>
-          <span className="text-sm text-[#8B95A1]">{holdingCount}종목 보유</span>
+          <div>
+            <p className="text-[10px] font-semibold tracking-[0.06em] text-[#64748b] uppercase">순손익</p>
+            <p className="text-sm font-bold text-[#0f172a]">
+              {isPositive ? '+' : ''}
+              {formatKrwAmount(safeTotalProfit)}원
+            </p>
+          </div>
         </div>
 
-        {/* 감정 코멘트 (투자 복기 요소) */}
-        <div className="mt-5 border-t border-gray-50 pt-4">
-          <p className="flex items-center gap-2 text-sm font-medium text-[#4E5968]">
-            💡 {emotionMessage}
-          </p>
+        <div className="flex items-center gap-3 rounded-xl border border-[#f1f5f9] bg-white px-3 py-3 shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#ffedd5]">
+            <Sparkles className="h-4 w-4 text-[#f97316]" />
+          </div>
+          <div>
+            <p className="text-[10px] font-semibold tracking-[0.06em] text-[#64748b] uppercase">감정 흐름</p>
+            <p className="text-sm font-bold text-[#0f172a]">{moodLabel}</p>
+          </div>
         </div>
+      </div>
+
+      <div className="mt-3 flex items-center justify-between">
+        <p className="text-xs text-[#94a3b8]">
+          보유 종목 {holdingCount}개 · 평균 {formatDecimal(safeAvgReturn, { maximumFractionDigits: 2 })}%
+        </p>
+        <Link
+          href={ROUTES.JOURNAL.CREATE}
+          className="text-xs font-semibold text-[#67ccf4] transition-opacity hover:opacity-80"
+        >
+          새 기록 추가
+        </Link>
       </div>
     </section>
   )

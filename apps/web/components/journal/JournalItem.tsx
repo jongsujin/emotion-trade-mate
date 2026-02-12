@@ -1,54 +1,61 @@
-import { EMOTION_DATA, EmotionType } from '@/constants/emotions'
-import { formatPercent, formatPriceWithSymbol } from '@/lib/utils'
-import { JournalItemProps } from '@/types/journals'
 import Link from 'next/link'
+import { EMOTION_DATA, EmotionType } from '@/constants/emotions'
+import { formatKrwAmount, formatPercent } from '@/lib/utils'
+import { JournalItemProps } from '@/types/journals'
 
-/**
- * 개별 일지 항목 컴포넌트
- */
 export default function JournalItem({ journal, href }: JournalItemProps) {
-  const isProfit = journal.realizedProfit >= 0
   const emotionConfig = EMOTION_DATA[journal.primaryEmotion as EmotionType]
   const emoji = emotionConfig?.emoji || '😶'
   const label = emotionConfig?.label || journal.primaryEmotionLabel || '기타'
 
+  const isProfit = journal.realizedProfit >= 0
+  const timeLabel = new Date(journal.latestEventCreatedAt).toLocaleTimeString('ko-KR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  })
+
+  const memo = journal.latestEventMemo?.trim() || '기록된 메모가 없습니다.'
+  const positionLabel = journal.totalQuantity > 0 ? '보유중' : '종료'
+
   return (
     <Link href={href} className="block">
-      <div className="group relative overflow-hidden rounded-3xl bg-white p-5 transition-all duration-200 active:scale-[0.98] active:bg-[#F9FAFB]">
-        <div className="flex items-center justify-between">
-          {/* 왼쪽: 종목 정보 */}
-          <div className="flex items-center gap-4">
-            {/* 이모지 아이콘 */}
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#F2F4F6]">
-              <span className="text-2xl" role="img" aria-label={`감정: ${label}`}>
-                {emoji}
-              </span>
+      <article className="rounded-2xl border border-[#f1f5f9] bg-white p-5 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] transition-transform active:scale-[0.99]">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f1f5f9] text-lg">
+              <span aria-label={label}>{emoji}</span>
             </div>
 
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[17px] font-bold text-[#191F28]">{journal.symbol}</span>
-                <span className="rounded-full bg-[#F2F4F6] px-1.5 py-0.5 text-[10px] font-medium text-[#8B95A1]">
-                  {journal.eventCount}회 기록
-                </span>
-              </div>
-              <p className="mt-0.5 truncate text-sm text-[#8B95A1]">{journal.symbolName}</p>
+            <div>
+              <h3 className="text-lg font-bold leading-none text-[#0f172a]">{journal.symbol}</h3>
+              <p className="mt-1 text-xs font-medium text-[#64748b]">
+                {journal.totalQuantity}주 · {positionLabel}
+              </p>
             </div>
           </div>
 
-          {/* 오른쪽: 수익률 */}
-          <div className="ml-4 shrink-0 text-right">
-            <p className="mb-0.5 text-sm font-medium text-[#333D4B]">
-              {formatPriceWithSymbol(journal.buyPrice, journal.symbol)}
+          <div className="text-right">
+            <p className={`text-lg font-bold ${isProfit ? 'text-[#10b981]' : 'text-[#f43f5e]'}`}>
+              {isProfit ? '+' : '-'}{formatKrwAmount(Math.abs(journal.realizedProfit))}원
             </p>
-            <div
-              className={`text-base font-bold ${isProfit ? 'text-[#E42939]' : 'text-[#3182F6]'}`}
-            >
-              {formatPercent(journal.realizedProfit, { maximumFractionDigits: 1, withSign: true })}
-            </div>
+            <p className={`text-xs font-medium ${isProfit ? 'text-[#059669b3]' : 'text-[#e11d48b3]'}`}>
+              {formatPercent(journal.realizedProfit, { withSign: true, maximumFractionDigits: 1 })}
+            </p>
           </div>
         </div>
-      </div>
+
+        <p className="mt-4 max-h-[4.5rem] overflow-hidden text-sm leading-6 text-[#475569]">{memo}</p>
+
+        <div className="mt-4 flex items-center justify-between border-t border-[#f8fafc] pt-3">
+          <span className="inline-flex items-center gap-1 rounded-full bg-[rgba(103,204,244,0.1)] px-3 py-1 text-xs font-semibold text-[#67ccf4]">
+            <span>{emoji}</span>
+            <span>{label}</span>
+          </span>
+
+          <span className="text-xs font-medium text-[#94a3b8]">{timeLabel}</span>
+        </div>
+      </article>
     </Link>
   )
 }
