@@ -17,6 +17,10 @@ export async function getMe() {
   return apiClient.get<UserInfo>(API_ROUTES.AUTH.ME)
 }
 
+export async function logout() {
+  return apiClient.post<{ success: boolean; message: string }>(API_ROUTES.AUTH.LOGOUT)
+}
+
 /**
  * accessToken 재발급 (refreshToken 쿠키 기반)
  * 보통은 apiClient가 401에서 자동으로 호출하지만, 필요 시 수동 호출용으로 제공합니다.
