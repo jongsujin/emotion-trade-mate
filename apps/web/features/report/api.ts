@@ -22,10 +22,20 @@ export interface TodayEmotion {
   label: string
 }
 
+export interface DashboardFxInfo {
+  baseCurrency: 'KRW'
+  quoteCurrency: 'USD'
+  usdKrwRate: number
+  updatedAt: string | null
+  stale: boolean
+  source: 'cache' | 'live' | 'fallback'
+}
+
 export interface DashboardData {
   summary: DashboardSummary
   recentTrend: RecentPnl[]
   todayEmotion: TodayEmotion | null
+  fx: DashboardFxInfo
 }
 
 /**

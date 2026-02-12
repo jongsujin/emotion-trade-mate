@@ -84,6 +84,7 @@ describe('JournalsRepository.createEvent', () => {
     expect(Number(params[2])).toBeCloseTo(103.3333, 3);
     expect(Number(params[3])).toBe(100);
     expect(params[4]).toBe(JournalStatus.OPEN);
+    expect(Number(params[5])).toBe(120);
   });
 
   it('SELL 이벤트 시 실현손익을 반영하고 수량을 차감한다', async () => {
@@ -112,6 +113,7 @@ describe('JournalsRepository.createEvent', () => {
     expect(Number(params[2])).toBeCloseTo(100, 6);
     expect(Number(params[3])).toBeCloseTo(300, 6);
     expect(params[4]).toBe(JournalStatus.OPEN);
+    expect(Number(params[5])).toBe(150);
   });
 
   it('전량 SELL 이벤트 시 status를 CLOSED로 변경한다', async () => {
@@ -140,6 +142,7 @@ describe('JournalsRepository.createEvent', () => {
     expect(Number(params[2])).toBe(0);
     expect(Number(params[3])).toBeCloseTo(150, 6);
     expect(params[4]).toBe(JournalStatus.CLOSED);
+    expect(Number(params[5])).toBe(120);
   });
 
   it('보유 수량을 초과한 SELL은 에러를 반환한다', async () => {
@@ -163,5 +166,34 @@ describe('JournalsRepository.createEvent', () => {
       ([sql]) => typeof sql === 'string' && sql.includes('INSERT INTO journal_events'),
     );
     expect(hasInsertCall).toBe(false);
+  });
+
+  it('EMOTION 이벤트도 journals.current_price를 갱신한다', async () => {
+    const { repository, client } = createRepositoryWithMockedClient({
+      total_quantity: 3,
+      total_cost: 300,
+      realized_profit: 0,
+    });
+
+    const event: CreateJournalEventDto = {
+      type: 'EMOTION',
+      price: 88,
+      emotionCodes: ['FEAR'],
+    };
+
+    await repository.createEvent(1, 1, event);
+
+    const updateCall = client.query.mock.calls.find(
+      ([sql]) =>
+        typeof sql === 'string' &&
+        sql.includes('UPDATE journals') &&
+        sql.includes('current_price = $1'),
+    );
+    expect(updateCall).toBeDefined();
+
+    const params = updateCall?.[1] as unknown[];
+    expect(Number(params[0])).toBe(88);
+    expect(Number(params[1])).toBe(1);
+    expect(Number(params[2])).toBe(1);
   });
 });

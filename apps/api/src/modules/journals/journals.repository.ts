@@ -52,6 +52,7 @@ export class JournalsRepository {
       const totalQuantity = journal.initialQuantity;
       const totalCost = journal.buyPrice * journal.initialQuantity;
       const averageCost = totalCost / journal.initialQuantity;
+      const initialCurrentPrice = firstEmotion?.price ?? journal.buyPrice;
 
       const journalValues = [
         journal.userId,
@@ -63,6 +64,7 @@ export class JournalsRepository {
         totalQuantity,
         totalCost,
         averageCost,
+        initialCurrentPrice,
         journal.priceUpdatedAt,
       ];
       const journalResult = await client.query(
@@ -199,17 +201,31 @@ export class JournalsRepository {
              average_cost = $3,
              realized_profit = $4,
              status = $5,
+             current_price = $6,
+             price_updated_at = NOW(),
              updated_at = NOW()
-           WHERE id = $6 AND user_id = $7 AND deleted_at IS NULL`,
+           WHERE id = $7 AND user_id = $8 AND deleted_at IS NULL`,
           [
             newTotalQuantity,
             newTotalCost,
             newAverageCost,
             newRealizedProfit,
             nextStatus,
+            event.price,
             journalId,
             userId,
           ],
+        );
+      } else {
+        // EMOTION/NOTE 이벤트도 입력된 시점 가격을 현재가로 반영해 상세/대시보드 계산을 즉시 갱신
+        await client.query(
+          `UPDATE journals
+           SET
+             current_price = $1,
+             price_updated_at = NOW(),
+             updated_at = NOW()
+           WHERE id = $2 AND user_id = $3 AND deleted_at IS NULL`,
+          [event.price, journalId, userId],
         );
       }
 
@@ -368,16 +384,25 @@ export class JournalsRepository {
     }>(eventsQuery, eventsValues);
 
     // 3. 현재가 조회 (DB에 저장된 최신 가격 사용, 없으면 매수가)
+    const latestEventPrice = eventsData.find((event) => event.price !== null)?.price;
     const currentPrice =
       journalData.currentPrice !== null
         ? Number(journalData.currentPrice)
-        : journalData.buyPrice;
+        : latestEventPrice !== undefined && latestEventPrice !== null
+          ? Number(latestEventPrice)
+          : Number(journalData.buyPrice);
+
+    const totalQuantity = Number(journalData.totalQuantity);
+    const totalCost = Number(journalData.totalCost);
+    const averageCost = Number(journalData.averageCost);
+    const buyPrice = Number(journalData.buyPrice);
+    const initialQuantity = Number(journalData.initialQuantity);
 
     // 4. 손익 계산
-    const totalValue = currentPrice * journalData.totalQuantity; // 현재 평가금액
-    const profit = totalValue - journalData.totalCost; // 평가손익
+    const totalValue = currentPrice * totalQuantity; // 현재 평가금액
+    const profit = totalValue - totalCost; // 평가손익
     const profitPercentage =
-      journalData.totalCost > 0 ? (profit / journalData.totalCost) * 100 : 0; // 수익률 %
+      totalCost > 0 ? (profit / totalCost) * 100 : 0; // 수익률 %
 
     // 5. 확정손익 (DB에서 가져온 값 사용)
     const realizedProfit = Number(journalData.realizedProfit || 0);
@@ -390,11 +415,11 @@ export class JournalsRepository {
         symbolName: journalData.symbolName,
         status: journalData.status,
         buyDate: new Date(journalData.buyDate).toISOString().split('T')[0],
-        buyPrice: journalData.buyPrice,
-        initialQuantity: journalData.initialQuantity,
-        totalQuantity: journalData.totalQuantity,
-        totalCost: journalData.totalCost,
-        averageCost: journalData.averageCost,
+        buyPrice,
+        initialQuantity,
+        totalQuantity,
+        totalCost,
+        averageCost,
         realizedProfit: realizedProfit,
       },
       metrics: {
@@ -406,8 +431,8 @@ export class JournalsRepository {
       events: eventsData.map((event) => ({
         id: event.id,
         type: event.type as 'BUY' | 'SELL' | 'NOTE' | 'EMOTION',
-        price: event.price,
-        quantity: event.quantity,
+        price: Number(event.price),
+        quantity: event.quantity !== null ? Number(event.quantity) : null,
         memo: event.memo,
         emotions: event.emotions || [],
         createdAt: event.createdAt?.toISOString(),

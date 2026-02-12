@@ -1,9 +1,9 @@
 export const INSERT_JOURNAL_QUERY = /* sql */ `
   INSERT INTO journals (
     user_id, symbol, symbol_name, buy_price, initial_quantity,
-    buy_date, total_quantity, total_cost, average_cost, price_updated_at
+    buy_date, total_quantity, total_cost, average_cost, current_price, price_updated_at
   )
-  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
   RETURNING
     id,
     user_id AS "userId",

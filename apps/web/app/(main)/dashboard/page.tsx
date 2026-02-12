@@ -9,7 +9,7 @@ import { getDashboardData } from '@/features/report/api'
 import { useJournals } from '@/features/journal'
 import { useGetMe } from '@/features/auth/hooks'
 import { ROUTES } from '@/constants'
-import { formatKrwAmount, formatPercent } from '@/lib/utils'
+import { formatDecimal, formatKrwAmount, formatPercent } from '@/lib/utils'
 import { EMOTION_DATA, type EmotionType } from '@/constants/emotions'
 
 const MINDSET_OPTIONS = [
@@ -30,6 +30,21 @@ function toShortDateLabel(value: string) {
 function toTradeTime(value: string) {
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return '-'
+  return date.toLocaleString('ko-KR', {
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  })
+}
+
+function toFxUpdatedLabel(value: string | null) {
+  if (!value) return '업데이트 정보 없음'
+
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return '업데이트 정보 없음'
+
   return date.toLocaleString('ko-KR', {
     month: 'numeric',
     day: 'numeric',
@@ -90,6 +105,14 @@ export default function DashboardPage() {
   const dashboardData = dashboardResponse.data
   const summary = dashboardData.summary
   const recentTrend = dashboardData.recentTrend
+  const fx = dashboardData.fx ?? {
+    baseCurrency: 'KRW',
+    quoteCurrency: 'USD',
+    usdKrwRate: 1400,
+    updatedAt: null,
+    stale: true,
+    source: 'fallback' as const,
+  }
 
   const totalProfitRate =
     summary.totalCost > 0 ? (summary.totalProfit / summary.totalCost) * 100 : 0
@@ -168,7 +191,14 @@ export default function DashboardPage() {
             {isPositive ? '+' : '-'}
             {formatKrwAmount(Math.abs(summary.totalProfit))}원
           </p>
-          <p className="mt-2 text-xs text-[#9ca3af]">마지막 업데이트: 방금 전</p>
+          <p className="mt-2 text-xs text-[#9ca3af]">
+            기준통화: {fx.baseCurrency} · 1 USD ={' '}
+            {formatDecimal(fx.usdKrwRate, { maximumFractionDigits: 2 })} KRW
+          </p>
+          <p className={`mt-1 text-[11px] ${fx.stale ? 'text-[#f59e0b]' : 'text-[#9ca3af]'}`}>
+            환율 업데이트: {toFxUpdatedLabel(fx.updatedAt)}
+            {fx.stale ? ' (지연)' : ''}
+          </p>
         </div>
       </section>
 

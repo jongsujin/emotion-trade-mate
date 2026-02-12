@@ -47,6 +47,7 @@ export function useCreateJournal(): UseMutationResult<
     mutationFn: (data: CreateJournalRequest) => createJournal(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['journals'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       router.push('/journal/list')
     },
   })
@@ -68,6 +69,7 @@ export function useUpdateJournal(): UseMutationResult<
       updateJournal(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['journals'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
     },
   })
 }
@@ -87,6 +89,8 @@ export function useDeleteJournal(): UseMutationResult<
     mutationFn: (id: number) => deleteJournal(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['journals'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['report', 'emotion-performance'] })
     },
   })
 }
@@ -125,6 +129,8 @@ export function useCreateJournalEvent(): UseMutationResult<
       // 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: ['journalDetail', journalId] })
       queryClient.invalidateQueries({ queryKey: ['journals'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['report', 'emotion-performance'] })
     },
   })
 }

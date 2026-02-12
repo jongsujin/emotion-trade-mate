@@ -4,13 +4,21 @@ import {
   DashboardResponseDto,
   ReportResponseDto,
 } from '../../core/dto/reports.dto';
+import { FxService } from '../fx/fx.service';
 
 @Injectable()
 export class ReportsService {
-  constructor(private readonly reportsRepository: ReportsRepository) {}
+  constructor(
+    private readonly reportsRepository: ReportsRepository,
+    private readonly fxService: FxService,
+  ) {}
 
   async getEmotionPerformance(userId: number): Promise<ReportResponseDto> {
-    const stats = await this.reportsRepository.getEmotionPerformance(userId);
+    const fxInfo = await this.fxService.getUsdKrwRate();
+    const stats = await this.reportsRepository.getEmotionPerformance(
+      userId,
+      fxInfo.rate,
+    );
 
     // 승률 높은 순 & 수익금 높은 순 등으로 정렬 로직 고도화 가능
     // 여기서는 '평균 수익' 기준으로 Best/Worst 선정
@@ -30,9 +38,11 @@ export class ReportsService {
   }
 
   async getDashboard(userId: number): Promise<DashboardResponseDto> {
+    const fxInfo = await this.fxService.getUsdKrwRate();
+
     const [summary, recentTrend, todayEmotion] = await Promise.all([
-      this.reportsRepository.getDashboardSummary(userId),
-      this.reportsRepository.getRecentPnl(userId),
+      this.reportsRepository.getDashboardSummary(userId, fxInfo.rate),
+      this.reportsRepository.getRecentPnl(userId, fxInfo.rate),
       this.reportsRepository.getTodayEmotion(userId),
     ]);
 
@@ -58,6 +68,14 @@ export class ReportsService {
       todayEmotion: todayEmotion
         ? { code: todayEmotion.code, label: todayEmotion.label }
         : null,
+      fx: {
+        baseCurrency: 'KRW',
+        quoteCurrency: 'USD',
+        usdKrwRate: fxInfo.rate,
+        updatedAt: fxInfo.updatedAt,
+        stale: fxInfo.isStale,
+        source: fxInfo.source,
+      },
     };
   }
 }

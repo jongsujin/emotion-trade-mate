@@ -14,10 +14,11 @@ export class ReportsRepository {
 
   async getEmotionPerformance(
     userId: number,
+    usdKrwRate: number,
   ): Promise<EmotionPerformanceDto[]> {
     const rows = await this.databaseService.query<any>(
       GET_EMOTION_PERFORMANCE_QUERY,
-      [userId],
+      [userId, usdKrwRate],
     );
 
     return rows.map((row) => {
@@ -35,21 +36,21 @@ export class ReportsRepository {
     });
   }
 
-  async getDashboardSummary(userId: number) {
+  async getDashboardSummary(userId: number, usdKrwRate: number) {
     const result = await this.databaseService.queryOne<{
       realizedProfit: number;
       unrealizedProfit: number;
       totalCost: number;
       tradeCount: string; // count returns string
       winCount: string;
-    }>(GET_DASHBOARD_SUMMARY_QUERY, [userId]);
+    }>(GET_DASHBOARD_SUMMARY_QUERY, [userId, usdKrwRate]);
     return result;
   }
 
-  async getRecentPnl(userId: number) {
+  async getRecentPnl(userId: number, usdKrwRate: number) {
     return await this.databaseService.query<{ date: string; profit: number }>(
       GET_RECENT_PNL_QUERY,
-      [userId],
+      [userId, usdKrwRate],
     );
   }
 
