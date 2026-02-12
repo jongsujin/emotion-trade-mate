@@ -8,47 +8,83 @@ const config = {
   theme: {
     extend: {
       colors: {
-        // Brand Colors (Pastel Tone)
+        // Brand Colors
+        brand: {
+          50: '#ECF9FE',
+          100: '#D6F1FC',
+          200: '#ACE3FA',
+          300: '#84D6F7',
+          400: '#68CCF4',
+          500: '#43B8E6',
+          600: '#2797C2',
+          700: '#1F7698',
+          800: '#1F5F79',
+          900: '#1F5065',
+        },
+
+        // Backward-compatible alias
         primary: {
-          50: '#EFF6FF', // Very light blue
-          100: '#DBEAFE',
-          200: '#BFDBFE',
-          300: '#93C5FD',
-          400: '#60A5FA',
-          500: '#6C9EFF', // Main Brand Color (Soft Blue)
-          600: '#4B82F0',
-          700: '#1D4ED8',
-          800: '#1E40AF',
-          900: '#1E3A8A',
+          50: '#ECF9FE',
+          100: '#D6F1FC',
+          200: '#ACE3FA',
+          300: '#84D6F7',
+          400: '#68CCF4',
+          500: '#43B8E6',
+          600: '#2797C2',
+          700: '#1F7698',
+          800: '#1F5F79',
+          900: '#1F5065',
         },
-        // Gray Scale (Soft)
+
+        surface: {
+          base: '#F6F9FC',
+          card: '#FFFFFF',
+          muted: '#EAF0F6',
+        },
+
+        text: {
+          primary: '#0F172A',
+          secondary: '#334155',
+          muted: '#64748B',
+        },
+
+        border: {
+          DEFAULT: '#DCE6F0',
+          strong: '#BFCFE0',
+        },
+
+        // Gray Scale
         gray: {
-          50: '#FAFAFA',
-          100: '#F4F5F7', // Main Background
-          200: '#E5E7EB',
-          300: '#D1D5DB',
-          400: '#9CA3AF',
-          500: '#6B7280',
-          600: '#4B5563',
-          700: '#374151',
-          800: '#1F2937',
-          900: '#111827',
+          50: '#F8FAFC',
+          100: '#F1F5F9',
+          200: '#E2E8F0',
+          300: '#CBD5E1',
+          400: '#94A3B8',
+          500: '#64748B',
+          600: '#475569',
+          700: '#334155',
+          800: '#1E293B',
+          900: '#0F172A',
         },
-        // Status Colors (Pastel)
+
+        // Status Colors
         status: {
-          up: '#FF6B6B', // Soft Red
-          upBg: '#FFF0F0', // Very light red
-          down: '#6C9EFF', // Soft Blue
-          downBg: '#F0F7FF', // Very light blue
+          up: '#EA5B5B',
+          upBg: '#FFF2F2',
+          down: '#4F9CE8',
+          downBg: '#F0F8FF',
+          warn: '#F59E0B',
+          warnBg: '#FFF7E8',
         },
-        // Emotion Colors (Pastel)
+
+        // Emotion Colors
         emotion: {
-          joy: '#FCD34D', // Soft Yellow
-          fear: '#A78BFA', // Soft Purple
-          greed: '#34D399', // Soft Green
-          anxiety: '#F87171', // Soft Red
-          confidence: '#60A5FA', // Soft Blue
-          regret: '#9CA3AF', // Soft Gray
+          joy: '#F6C84F',
+          fear: '#87A5FF',
+          greed: '#3CCF95',
+          anxiety: '#F97F7F',
+          confidence: '#57B8EA',
+          regret: '#9AA8B7',
         },
       },
       fontFamily: {
@@ -62,13 +98,13 @@ const config = {
         ],
       },
       boxShadow: {
-        soft: '0 4px 20px rgba(0, 0, 0, 0.05)',
-        card: '0 2px 10px rgba(0, 0, 0, 0.03)',
+        soft: '0 4px 14px rgba(15, 23, 42, 0.05)',
+        card: '0 8px 24px rgba(15, 23, 42, 0.06)',
       },
       borderRadius: {
-        xl: '16px',
+        xl: '14px',
         '2xl': '20px',
-        '3xl': '28px',
+        '3xl': '24px',
       },
     },
   },

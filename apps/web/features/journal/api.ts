@@ -36,12 +36,12 @@ export async function createJournal(data: CreateJournalRequest) {
 }
 
 /**
- * 일지 수정 (PUT /journals/:id)
+ * 일지 수정 (PATCH /journals/:id)
  * @param id 일지 ID
  * @param data 수정할 데이터
  */
 export async function updateJournal(id: number, data: UpdateJournalRequest) {
-  return apiClient.put<Journal | null>(API_ROUTES.JOURNAL.UPDATE(id.toString()), data)
+  return apiClient.patch<Journal | null>(API_ROUTES.JOURNAL.UPDATE(id.toString()), data)
 }
 
 /**

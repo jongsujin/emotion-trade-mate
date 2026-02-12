@@ -6,8 +6,6 @@
 export { Button } from './Button'
 export { Card } from './Card'
 export { Badge } from './Badge'
-
-// TODO: 추가 컴포넌트 구현
-// export { Input } from './Input'
-// export { Modal } from './Modal'
-// export { Loading } from './Loading'
+export { Input } from './Input'
+export { Tag } from './Tag'
+export { EmptyState } from './EmptyState'
