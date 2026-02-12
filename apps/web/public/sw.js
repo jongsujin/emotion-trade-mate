@@ -1,5 +1,3 @@
-/* eslint-disable no-restricted-globals */
-
 // EmotionTrade PWA Service Worker (minimal, dependency-free)
 // - Navigations: network-first, offline fallback
 // - Static assets: cache-first
@@ -117,5 +115,4 @@ self.addEventListener('fetch', (event) => {
     )
   }
 })
-
 

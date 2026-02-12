@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Post,
   Res,
@@ -77,6 +78,24 @@ export class AuthController {
       email: userInfo.email,
       nickname: userInfo.nickname,
       createdAt: userInfo.createdAt,
+    };
+  }
+
+  @Delete('me')
+  @UseGuards(JwtAuthGuard)
+  async deleteMe(
+    @CurrentUser() user: { userId: number; email: string },
+    @Res({ passthrough: true }) res: express.Response,
+  ) {
+    const deleted = await this.usersService.deleteById(user.userId);
+    if (!deleted) {
+      throw new UnauthorizedException('사용자를 찾을 수 없습니다');
+    }
+
+    this.authService.logout(res);
+    return {
+      success: true,
+      message: '회원 탈퇴가 완료되었습니다.',
     };
   }
 

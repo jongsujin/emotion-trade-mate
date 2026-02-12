@@ -2,37 +2,70 @@ import { JournalListProps } from '@/types/journals'
 import JournalItem from './JournalItem'
 import { ROUTES } from '@/constants'
 
-/**
- * 일지 리스트 컴포넌트
- */
-export default function JournalList({ journals }: JournalListProps) {
+function isSameDay(date: Date, target: Date) {
   return (
-    <section className="px-5 pb-24">
-      {/* 필터 칩 (가로 스크롤) - 투자 복기 요소 */}
-      <div className="scrollbar-hide mb-2 flex gap-2 overflow-x-auto pb-4">
-        {['전체', '수익중', '손실중', '😍 행복', '😨 불안'].map((filter, idx) => (
-          <button
-            key={filter}
-            className={`rounded-full px-3.5 py-1.5 text-sm font-semibold whitespace-nowrap transition-colors ${
-              idx === 0
-                ? 'border border-[#191F28] bg-[#191F28] text-white'
-                : 'border border-[#E5E8EB] bg-white text-[#4E5968] active:bg-[#F2F4F6]'
-            }`}
-          >
-            {filter}
-          </button>
-        ))}
-      </div>
+    date.getFullYear() === target.getFullYear() &&
+    date.getMonth() === target.getMonth() &&
+    date.getDate() === target.getDate()
+  )
+}
 
-      <div className="flex flex-col gap-3">
-        {journals.map((journal) => (
-          <JournalItem
-            key={journal.id}
-            journal={journal}
-            href={ROUTES.JOURNAL.DETAIL(journal.id)}
-          />
-        ))}
-      </div>
+export default function JournalList({ journals }: JournalListProps) {
+  const today = new Date()
+
+  const grouped = journals.reduce(
+    (acc, journal) => {
+      const eventDate = new Date(journal.latestEventCreatedAt)
+      if (isSameDay(eventDate, today)) {
+        acc.today.push(journal)
+      } else {
+        acc.previous.push(journal)
+      }
+      return acc
+    },
+    {
+      today: [] as JournalListProps['journals'],
+      previous: [] as JournalListProps['journals'],
+    }
+  )
+
+  return (
+    <section className="space-y-5 px-5 pb-24 pt-6">
+      {grouped.today.length > 0 ? (
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <h2 className="text-xs font-bold tracking-[0.12em] text-[#94a3b8] uppercase">오늘</h2>
+            <div className="h-px flex-1 bg-[#e2e8f0]" />
+          </div>
+          <div className="space-y-3">
+            {grouped.today.map((journal) => (
+              <JournalItem
+                key={journal.id}
+                journal={journal}
+                href={ROUTES.JOURNAL.DETAIL(journal.id)}
+              />
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {grouped.previous.length > 0 ? (
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <h2 className="text-xs font-bold tracking-[0.12em] text-[#94a3b8] uppercase">이전</h2>
+            <div className="h-px flex-1 bg-[#e2e8f0]" />
+          </div>
+          <div className="space-y-3">
+            {grouped.previous.map((journal) => (
+              <JournalItem
+                key={journal.id}
+                journal={journal}
+                href={ROUTES.JOURNAL.DETAIL(journal.id)}
+              />
+            ))}
+          </div>
+        </div>
+      ) : null}
     </section>
   )
 }

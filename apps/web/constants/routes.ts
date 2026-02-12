@@ -44,13 +44,14 @@ export const API_ROUTES = {
     SIGNUP: '/auth/signup',
     LOGOUT: '/auth/logout',
     ME: '/auth/me',
+    DELETE_ME: '/auth/me',
     REFRESH: '/auth/refresh',
   },
   JOURNAL: {
     LIST: '/journals', // GET
     CREATE: '/journals', // POST
     DETAIL: (id: string) => `/journals/${id}/detail`, // GET
-    UPDATE: (id: string) => `/journals/${id}`, // PUT
+    UPDATE: (id: string) => `/journals/${id}`, // PATCH
     DELETE: (id: string) => `/journals/${id}`, // DELETE
     CREATE_EVENT: (id: string) => `/journals/${id}/events`, // POST
     ADD_EMOTION: (id: string) => `/journals/${id}/emotion`,
@@ -61,6 +62,7 @@ export const API_ROUTES = {
   },
   REPORT: {
     DASHBOARD: '/reports/dashboard',
+    EMOTION_PERFORMANCE: '/reports/emotions/performance',
     GENERATE: '/report/generate',
     DETAIL: (id: string) => `/report/${id}`,
     PDF: (id: string) => `/report/${id}/pdf`,

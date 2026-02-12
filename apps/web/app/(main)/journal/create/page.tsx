@@ -2,19 +2,13 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import TitleSection from '@/components/common/TitleSection'
+import { Save } from 'lucide-react'
 import JournalForm from '@/components/journal/create/JournalForm'
 import { Button } from '@/components/common/Button'
 import { useCreateJournal } from '@/features/journal'
 import type { JournalCreateFormData } from '@/types/journals'
 import type { CreateJournalRequest } from '@/types'
 
-/**
- * 폼 데이터를 API 요청 데이터로 변환
- */
-/**
- * 폼 데이터를 API 요청 데이터로 변환
- */
 function convertFormToRequest(
   formData: JournalCreateFormData,
   selectedEmotion: string | null
@@ -23,8 +17,7 @@ function convertFormToRequest(
   const buyPrice = Number(formData.price)
   const quantity = Number(formData.quantity)
 
-  console.log('selectedEmotion', selectedEmotion)
-  if (isNaN(buyPrice) || isNaN(quantity)) {
+  if (Number.isNaN(buyPrice) || Number.isNaN(quantity)) {
     throw new Error('가격 또는 수량이 유효한 숫자가 아닙니다')
   }
 
@@ -33,24 +26,21 @@ function convertFormToRequest(
   }
 
   return {
-    symbol: formData.symbol.trim(),
-    symbolName: formData.symbolName.trim() || formData.symbol.trim(),
+    symbol: formData.symbol.trim().toUpperCase(),
+    symbolName: formData.symbolName.trim() || formData.symbol.trim().toUpperCase(),
     buyPrice,
     initialQuantity: quantity,
     buyDate: today,
     firstEmotion: selectedEmotion
       ? {
-          price: buyPrice, // 매수 가격을 firstEmotion의 시점 가격으로 사용
+          price: buyPrice,
           memo: formData.memo.trim() || undefined,
-          emotionCodes: [selectedEmotion], // API는 아직 배열을 기대하므로 배열로 감싸서 전달
+          emotionCodes: [selectedEmotion],
         }
       : undefined,
   }
 }
 
-/**
- * 감정 일지 작성 페이지
- */
 export default function JournalCreatePage() {
   const router = useRouter()
   const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null)
@@ -65,14 +55,13 @@ export default function JournalCreatePage() {
   const { mutate: createJournal, isPending } = useCreateJournal()
 
   const handleSubmit = () => {
-    // 유효성 검사
     if (!selectedEmotion) {
       alert('감정을 선택해주세요')
       return
     }
 
     if (!formData.symbol.trim()) {
-      alert('종목명을 입력해주세요')
+      alert('종목 심볼을 입력해주세요')
       return
     }
 
@@ -86,15 +75,11 @@ export default function JournalCreatePage() {
 
       createJournal(requestData, {
         onSuccess: (response) => {
-          if (response.success) {
-            // 성공 시 자동으로 /journal/list로 이동 (hooks.ts에서 처리)
-            console.log('일지 생성 성공:', response.data)
-          } else {
+          if (!response.success) {
             alert(response.error || '일지 생성에 실패했습니다')
           }
         },
         onError: (error) => {
-          console.error('일지 생성 에러:', error)
           alert(error.message || '일지 생성 중 오류가 발생했습니다')
         },
       })
@@ -108,35 +93,47 @@ export default function JournalCreatePage() {
   }
 
   const isFormValid =
-    !!selectedEmotion && formData.symbol.trim() && formData.price && formData.quantity
+    !!selectedEmotion &&
+    formData.symbol.trim().length > 0 &&
+    formData.price.trim().length > 0 &&
+    formData.quantity.trim().length > 0
 
   return (
-    <div className="min-h-screen bg-[#F2F4F6] pb-24">
-      <div className="sticky top-0 z-10 bg-[#F2F4F6]">
-        <TitleSection title="일지 작성" onClick={() => router.back()} />
+    <div className="min-h-screen bg-[#f6f7f8] pb-36">
+      <header className="sticky top-0 z-20 border-b border-[#e2e8f0] bg-[rgba(246,247,248,0.9)] backdrop-blur-md">
+        <div className="mx-auto flex max-w-[480px] items-center justify-between px-4 py-4">
+          <button
+            onClick={() => router.back()}
+            className="text-sm font-medium text-[#64748b] transition-colors hover:text-[#334155]"
+          >
+            취소
+          </button>
+          <h1 className="text-lg font-semibold tracking-[-0.02em] text-[#1e293b]">새 기록</h1>
+          <div className="w-10" />
+        </div>
+      </header>
+
+      <div className="mx-auto max-w-[480px]">
+        <JournalForm
+          formData={formData}
+          setFormData={setFormData}
+          selectedEmotion={selectedEmotion}
+          setSelectedEmotion={setSelectedEmotion}
+        />
       </div>
 
-      <JournalForm
-        formData={formData}
-        setFormData={setFormData}
-        selectedEmotion={selectedEmotion}
-        setSelectedEmotion={setSelectedEmotion}
-      />
-
-      {/* 하단 고정 버튼 */}
-      <div className="fixed right-0 bottom-0 left-0 mx-auto max-w-[480px] border-t border-gray-100 bg-white p-5 pb-8 shadow-[0_-4px_12px_rgba(0,0,0,0.04)]">
+      <div className="fixed right-0 bottom-0 left-0 z-30 mx-auto max-w-[480px] border-t border-[#e2e8f0] bg-[rgba(246,247,248,0.92)] p-4 pb-8 backdrop-blur-md">
         <Button
           onClick={handleSubmit}
           disabled={!isFormValid || isPending}
           fullWidth
           size="lg"
-          className={`text-[17px] font-bold ${
-            isFormValid && !isPending
-              ? 'shadow-lg shadow-[#3182F6]/30'
-              : 'bg-[#E5E8EB] text-[#B0B8C1]'
-          }`}
+          className="h-14 rounded-xl text-base font-semibold shadow-[0_10px_15px_-3px_rgba(103,204,244,0.3),0_4px_6px_-4px_rgba(103,204,244,0.3)]"
         >
-          {isPending ? '저장 중...' : isFormValid ? '작성 완료' : '내용을 입력해주세요'}
+          <span className="flex items-center gap-2">
+            <Save className="h-4 w-4" />
+            {isPending ? '저장 중...' : '일지 저장하기'}
+          </span>
         </Button>
       </div>
     </div>

@@ -35,7 +35,7 @@ export interface EmotionStatProps {
   label: string
   count: number
   percentage: number
-  avgReturn: number
+  avgProfit: number
 }
 
 export interface BestSymbolProps {

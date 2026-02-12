@@ -69,10 +69,9 @@ export default function SignupForm() {
         return
       }
 
-      console.log('Signup success', response.data)
       router.push('/login?signup=success')
     } catch (err) {
-      setError(`회원가입 중 오류가 발생했습니다: ${err}`)
+      setError(err instanceof Error ? err.message : '회원가입 중 오류가 발생했습니다')
     } finally {
       setIsLoading(false)
     }

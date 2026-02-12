@@ -13,11 +13,11 @@ export class ReportsController {
 
   @Get('emotions/performance')
   async getEmotionPerformance(@Req() req): Promise<ReportResponseDto> {
-    return this.reportsService.getEmotionPerformance(req.user.id);
+    return this.reportsService.getEmotionPerformance(req.user.userId);
   }
 
   @Get('dashboard')
   async getDashboard(@Req() req): Promise<DashboardResponseDto> {
-    return this.reportsService.getDashboard(req.user.id);
+    return this.reportsService.getDashboard(req.user.userId);
   }
 }

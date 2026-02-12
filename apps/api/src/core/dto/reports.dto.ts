@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class EmotionPerformanceDto {
   @IsString()
@@ -63,4 +63,26 @@ export class DashboardResponseDto {
   summary: DashboardSummaryDto;
   recentTrend: DailyPnlDto[];
   todayEmotion: TodayEmotionDto | null;
+  fx: DashboardFxDto;
+}
+
+export class DashboardFxDto {
+  @IsString()
+  baseCurrency: string;
+
+  @IsString()
+  quoteCurrency: string;
+
+  @IsNumber()
+  usdKrwRate: number;
+
+  @IsOptional()
+  @IsString()
+  updatedAt?: string | null;
+
+  @IsBoolean()
+  stale: boolean;
+
+  @IsString()
+  source: 'cache' | 'live' | 'fallback';
 }

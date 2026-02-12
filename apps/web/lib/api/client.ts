@@ -82,9 +82,12 @@ class ApiClient {
       }
 
       if (!response.ok) {
-        let error: any = null
+        let error: { message?: string } | null = null
         try {
-          error = await response.json()
+          const parsed = await response.json()
+          if (typeof parsed === 'object' && parsed !== null) {
+            error = parsed as { message?: string }
+          }
         } catch {
           // ignore
         }
@@ -149,11 +152,11 @@ class ApiClient {
   }
 
   /**
-   * PUT 요청
+   * PATCH 요청
    */
-  async put<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
+  async patch<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
-      method: 'PUT',
+      method: 'PATCH',
       body: data ? JSON.stringify(data) : undefined,
     })
   }
