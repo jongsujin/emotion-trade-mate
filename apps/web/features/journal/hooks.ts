@@ -95,11 +95,15 @@ export function useDeleteJournal(): UseMutationResult<
  * 일지 상세 조회 훅
  */
 export function useGetJournalDetail(
-  id: number
+  id: number,
+  options?: {
+    enabled?: boolean
+  }
 ): UseQueryResult<ApiResponse<JournalDetailResponse>, Error> {
   return useQuery({
     queryKey: ['journalDetail', id],
     queryFn: () => getJournalDetail(id),
+    enabled: options?.enabled ?? true,
   })
 }
 

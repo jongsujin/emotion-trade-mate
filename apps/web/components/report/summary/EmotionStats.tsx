@@ -1,4 +1,5 @@
 import { EmotionStatProps } from '@/types/reports'
+import { formatKrwAmount } from '@/lib/utils'
 
 export interface EmotionStatsProps {
   stats: EmotionStatProps[]
@@ -24,11 +25,11 @@ export default function EmotionStats({ stats }: EmotionStatsProps) {
               </div>
               <div
                 className={`text-base font-bold ${
-                  stat.avgReturn >= 0 ? 'text-red-500' : 'text-blue-500'
+                  stat.avgProfit >= 0 ? 'text-red-500' : 'text-blue-500'
                 }`}
               >
-                {stat.avgReturn >= 0 ? '+' : ''}
-                {stat.avgReturn}%
+                {stat.avgProfit >= 0 ? '+' : '-'}
+                {formatKrwAmount(Math.abs(stat.avgProfit))}원
               </div>
             </div>
           </div>
@@ -37,4 +38,3 @@ export default function EmotionStats({ stats }: EmotionStatsProps) {
     </div>
   )
 }
-

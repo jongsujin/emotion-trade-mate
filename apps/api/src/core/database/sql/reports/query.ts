@@ -11,6 +11,7 @@ export const GET_EMOTION_PERFORMANCE_QUERY = /* sql */ `
   JOIN journals j ON je.journal_id = j.id
   WHERE j.user_id = $1
     AND j.deleted_at IS NULL
+    AND je.deleted_at IS NULL
     -- 확정 손익이 0이 아닌 경우에만 집계 (매매가 발생한 건만)
     -- 혹은 매매가 없어도 감정 기록이 있으면 포함? -> 성과 분석이므로 매매 결과(realized_profit)가 있는 것만 보는 게 의미 있음
     -- 하지만 realized_profit이 0인 경우(본절)도 있을 수 있으므로 조건 신중히
@@ -62,6 +63,8 @@ export const GET_TODAY_EMOTION_QUERY = `
   JOIN emotion_tags et ON jee.emotion_tag_id = et.id
   JOIN journals j ON je.journal_id = j.id
   WHERE j.user_id = $1
+    AND j.deleted_at IS NULL
+    AND je.deleted_at IS NULL
     AND je.created_at >= DATE_TRUNC('day', NOW())
   GROUP BY et.id, et.code, et.label_ko
   ORDER BY "count" DESC

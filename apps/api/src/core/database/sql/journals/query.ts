@@ -129,17 +129,27 @@ export const FIND_BY_ID_JOURNAL_QUERY = /* sql */ `
     updated_at AS "updatedAt",
     deleted_at AS "deletedAt"
   FROM journals
-  WHERE user_id = $1 AND id = $2
+  WHERE user_id = $1
+    AND id = $2
+    AND deleted_at IS NULL
 `;
 
 export const DELETE_JOURNAL_QUERY = /* sql */ `
-  DELETE FROM journals 
-  WHERE user_id = $1 AND id = $2
+  UPDATE journals
+  SET
+    deleted_at = NOW(),
+    updated_at = NOW()
+  WHERE user_id = $1
+    AND id = $2
+    AND deleted_at IS NULL
   RETURNING id
 `;
 
 export const COUNT_ALL_JOURNALS_QUERY = `
-  SELECT COUNT(*) FROM journals WHERE user_id = $1
+  SELECT COUNT(*)
+  FROM journals
+  WHERE user_id = $1
+    AND deleted_at IS NULL
 `;
 
 // 일지 상세 정보 조회 (journal 정보만)
@@ -148,6 +158,7 @@ export const FIND_BY_ID_JOURNAL_DETAIL_QUERY = /* sql */ `
     id,
     symbol,
     symbol_name AS "symbolName",
+    status,
     buy_date AS "buyDate",
     buy_price AS "buyPrice",
     initial_quantity AS "initialQuantity",
@@ -159,21 +170,9 @@ export const FIND_BY_ID_JOURNAL_DETAIL_QUERY = /* sql */ `
     price_updated_at AS "priceUpdatedAt",
     created_at AS "createdAt"
   FROM journals
-  WHERE user_id = $1 AND id = $2
-`;
-
-// 일지별 감정 기록 조회
-export const FIND_EMOTIONS_BY_JOURNAL_ID_QUERY = /* sql */ `
-  SELECT
-    id,
-    emotion_id AS "emotionCode",
-    price,
-    quantity,
-    memo,
-    created_at AS "createdAt"
-  FROM emotions
-  WHERE journal_id = $1
-  ORDER BY created_at DESC
+  WHERE user_id = $1
+    AND id = $2
+    AND deleted_at IS NULL
 `;
 
 // 일지 이벤트 + 감정 정보 조회 (JournalDetailResponseDto용)
@@ -198,6 +197,7 @@ export const FIND_JOURNAL_EVENTS_WITH_EMOTIONS_QUERY = /* sql */ `
   LEFT JOIN journal_event_emotions jee ON je.id = jee.event_id
   LEFT JOIN emotion_tags et ON jee.emotion_tag_id = et.id
   WHERE je.journal_id = $1
+    AND je.deleted_at IS NULL
   GROUP BY je.id, je.type, je.price, je.quantity, je.memo, je.created_at
   ORDER BY je.created_at DESC
 `;
@@ -208,7 +208,9 @@ export const UPDATE_JOURNAL_QUERY = /* sql */ `
     symbol_name = COALESCE($2, symbol_name),
     status = COALESCE($3, status),
     updated_at = NOW()
-  WHERE user_id = $1 AND id = $4
+  WHERE user_id = $1
+    AND id = $4
+    AND deleted_at IS NULL
   RETURNING
     id,
     user_id AS "userId",

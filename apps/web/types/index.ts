@@ -64,10 +64,8 @@ export interface JournalEventResponse {
  * 일지 수정 요청 타입 (백엔드 UpdateJournalDto와 동기화)
  */
 export interface UpdateJournalRequest {
-  buyPrice?: number
-  quantity?: number
-  emotionId?: number
-  memo?: string
+  symbolName?: string
+  status?: 'OPEN' | 'CLOSED'
 }
 
 /**

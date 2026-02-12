@@ -112,7 +112,46 @@ export class JournalsRepository {
     event: CreateJournalEventDto,
   ): Promise<JournalEventsEntity> {
     return await this.databaseService.transaction(async (client) => {
-      // 1. journal_event 생성
+      let currentJournal:
+        | {
+            total_quantity: number;
+            total_cost: number;
+            realized_profit: number;
+          }
+        | undefined;
+
+      // 1. BUY/SELL 이벤트는 포지션 상태를 잠그고 선검증
+      if (event.type === 'BUY' || event.type === 'SELL') {
+        if (!event.quantity || event.quantity <= 0) {
+          throw new Error('BUY/SELL 이벤트에는 quantity가 필요합니다.');
+        }
+
+        const currentJournalResult = await client.query<{
+          total_quantity: number;
+          total_cost: number;
+          realized_profit: number;
+        }>(
+          `SELECT total_quantity, total_cost, realized_profit
+           FROM journals
+           WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL
+           FOR UPDATE`,
+          [journalId, userId],
+        );
+
+        currentJournal = currentJournalResult.rows[0];
+        if (!currentJournal) {
+          throw new Error('Journal not found or access denied');
+        }
+
+        if (event.type === 'SELL') {
+          const currentQuantity = Number(currentJournal.total_quantity);
+          if (currentQuantity < event.quantity) {
+            throw new Error('SELL 수량이 현재 보유 수량을 초과합니다.');
+          }
+        }
+      }
+
+      // 2. journal_event 생성
       const eventValues = [
         journalId, // $1: journal_id
         event.type, // $2: type
@@ -125,65 +164,51 @@ export class JournalsRepository {
         eventValues,
       );
 
-      // 2. BUY/SELL 이벤트인 경우 journal의 total_quantity, total_cost, average_cost 업데이트
-      if (
-        (event.type === 'BUY' || event.type === 'SELL') &&
-        event.quantity &&
-        event.price
-      ) {
-        // 현재 journal 정보 조회
-        const currentJournalResult = await client.query(
-          'SELECT total_quantity, total_cost, realized_profit FROM journals WHERE id = $1 AND user_id = $2',
-          [journalId, userId],
-        );
+      // 3. BUY/SELL 이벤트인 경우 journal의 summary 상태 업데이트
+      if ((event.type === 'BUY' || event.type === 'SELL') && currentJournal) {
+        let newTotalQuantity = Number(currentJournal.total_quantity);
+        let newTotalCost = Number(currentJournal.total_cost);
+        let newRealizedProfit = Number(currentJournal.realized_profit || 0);
 
-        if (currentJournalResult.rows[0]) {
-          const current = currentJournalResult.rows[0];
-          let newTotalQuantity = Number(current.total_quantity);
-          let newTotalCost = Number(current.total_cost);
-          let newRealizedProfit = Number(current.realized_profit || 0);
+        if (event.type === 'BUY') {
+          newTotalQuantity += event.quantity!;
+          newTotalCost += event.price * event.quantity!;
+        } else {
+          const averageCost = newTotalQuantity > 0 ? newTotalCost / newTotalQuantity : 0;
+          const tradeProfit = (event.price - averageCost) * event.quantity!;
 
-          if (event.type === 'BUY') {
-            // 매수: 수량 증가, 비용 증가
-            newTotalQuantity += event.quantity;
-            newTotalCost += event.price * event.quantity;
-          } else if (event.type === 'SELL') {
-            // 매도: 수량 감소, 비용 감소 (평균단가 기준)
-            // 실현 손익 계산: (매도가 - 평단가) * 수량
-            if (newTotalQuantity >= event.quantity) {
-              const averageCost =
-                newTotalQuantity > 0 ? newTotalCost / newTotalQuantity : 0;
-
-              const tradeProfit = (event.price - averageCost) * event.quantity;
-              newRealizedProfit += tradeProfit;
-
-              newTotalQuantity -= event.quantity;
-              newTotalCost -= averageCost * event.quantity;
-            }
-          }
-
-          // 평균단가 재계산
-          const newAverageCost =
-            newTotalQuantity > 0 ? newTotalCost / newTotalQuantity : 0;
-
-          // journal 업데이트
-          await client.query(
-            `UPDATE journals
-             SET total_quantity = $1, total_cost = $2, average_cost = $3, realized_profit = $4, updated_at = NOW()
-             WHERE id = $5 AND user_id = $6`,
-            [
-              newTotalQuantity,
-              newTotalCost,
-              newAverageCost,
-              newRealizedProfit,
-              journalId,
-              userId,
-            ],
-          );
+          newRealizedProfit += tradeProfit;
+          newTotalQuantity -= event.quantity!;
+          newTotalCost = Math.max(0, newTotalCost - averageCost * event.quantity!);
         }
+
+        const newAverageCost = newTotalQuantity > 0 ? newTotalCost / newTotalQuantity : 0;
+        const nextStatus =
+          newTotalQuantity > 0 ? JournalStatus.OPEN : JournalStatus.CLOSED;
+
+        await client.query(
+          `UPDATE journals
+           SET
+             total_quantity = $1,
+             total_cost = $2,
+             average_cost = $3,
+             realized_profit = $4,
+             status = $5,
+             updated_at = NOW()
+           WHERE id = $6 AND user_id = $7 AND deleted_at IS NULL`,
+          [
+            newTotalQuantity,
+            newTotalCost,
+            newAverageCost,
+            newRealizedProfit,
+            nextStatus,
+            journalId,
+            userId,
+          ],
+        );
       }
 
-      // 3. emotionCodes가 있으면 감정 태그 연결
+      // 4. emotionCodes가 있으면 감정 태그 연결
       if (event.emotionCodes && event.emotionCodes.length > 0) {
         for (const emotionCode of event.emotionCodes) {
           // emotion_tags에서 code로 id 조회
@@ -246,7 +271,7 @@ export class JournalsRepository {
     journal: UpdateJournalEntity,
   ): Promise<JournalEntity | null> {
     const query = UPDATE_JOURNAL_QUERY;
-    const values = [userId, journalId, journal];
+    const values = [userId, journal.symbolName, journal.status, journalId];
     const result = await this.databaseService.queryOne<JournalEntity>(
       query,
       values,
@@ -315,6 +340,7 @@ export class JournalsRepository {
       totalQuantity: number;
       totalCost: number;
       averageCost: number;
+      status: JournalStatus;
       realizedProfit: number;
       currentPrice: number | null;
     }>(journalQuery, journalValues);
@@ -337,8 +363,9 @@ export class JournalsRepository {
     }>(eventsQuery, eventsValues);
 
     // 3. 현재가 조회 (DB에 저장된 최신 가격 사용, 없으면 매수가)
-    const currentPrice = journalData.currentPrice
-      ? Number(journalData.currentPrice)
+    const currentPrice =
+      journalData.currentPrice !== null
+        ? Number(journalData.currentPrice)
       : journalData.buyPrice;
 
     // 4. 손익 계산
@@ -356,8 +383,8 @@ export class JournalsRepository {
         id: journalData.id,
         symbol: journalData.symbol,
         symbolName: journalData.symbolName,
-        status: JournalStatus.OPEN, // TODO: 실제 status 필드 추가
-        buyDate: journalData.buyDate.toISOString().split('T')[0],
+        status: journalData.status,
+        buyDate: new Date(journalData.buyDate).toISOString().split('T')[0],
         buyPrice: journalData.buyPrice,
         initialQuantity: journalData.initialQuantity,
         totalQuantity: journalData.totalQuantity,
