@@ -5,7 +5,10 @@ export const UPDATE_CURRENT_PRICE_QUERY = /* sql */ `
 `;
 
 export const FIND_ACTIVE_JOURNALS_SYMBOLS_QUERY = /* sql */ `
-  SELECT id, symbol
+  SELECT
+    id,
+    symbol,
+    price_updated_at AS "priceUpdatedAt"
   FROM journals
   WHERE status = 'OPEN' AND deleted_at IS NULL
 `;

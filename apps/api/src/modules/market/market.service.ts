@@ -7,7 +7,8 @@ import {
 } from '../../core/database/sql/market/query';
 import { Cron } from '@nestjs/schedule';
 
-const PRICE_CACHE_TTL_MS = 1000 * 60 * 10; // 10분
+const PRICE_REFRESH_INTERVAL_MS = 1000 * 60 * 10; // 10분(외부 시세 재요청 기준)
+const PRICE_CACHE_TTL_MS = PRICE_REFRESH_INTERVAL_MS; // 메모리 캐시 TTL
 const REQUEST_DELAY_MS = 1000; // Yahoo 요청 간 최소 딜레이(429 완화)
 const RATE_LIMIT_BACKOFF_INITIAL_MS = 1000 * 30; // 30초
 const RATE_LIMIT_BACKOFF_MAX_MS = 1000 * 60 * 15; // 15분
@@ -27,6 +28,7 @@ export class MarketService implements OnModuleInit {
   >();
   private rateLimitCooldownUntilMs = 0;
   private rateLimitBackoffMs = RATE_LIMIT_BACKOFF_INITIAL_MS;
+  private isUpdating = false;
 
   constructor(private readonly databaseService: DatabaseService) {}
 
@@ -45,8 +47,20 @@ export class MarketService implements OnModuleInit {
   @Cron('0 */5 * * * *') // 매 5분마다 실행 (테스트용)
   // @Cron(CronExpression.EVERY_MINUTE) // 디버깅용 1분
   async handleCron() {
+    if (this.isUpdating) {
+      this.logger.warn(
+        'Previous market price update is still running. Skipping this tick.',
+      );
+      return;
+    }
+
+    this.isUpdating = true;
     this.logger.debug('Starting market price update...');
-    await this.updateMarketPrices();
+    try {
+      await this.updateMarketPrices();
+    } finally {
+      this.isUpdating = false;
+    }
   }
 
   async updateMarketPrices() {
@@ -54,6 +68,7 @@ export class MarketService implements OnModuleInit {
     const journals = await this.databaseService.query<{
       id: number;
       symbol: string;
+      priceUpdatedAt: Date | string | null;
     }>(FIND_ACTIVE_JOURNALS_SYMBOLS_QUERY);
 
     if (journals.length === 0) {
@@ -65,16 +80,32 @@ export class MarketService implements OnModuleInit {
       `Found ${journals.length} active journals. fetching prices...`,
     );
 
-    // 2. 심볼 중복 제거 (API 호출 최소화)
-    const uniqueSymbols = [...new Set(journals.map((j) => j.symbol))];
+    const now = Date.now();
+    const staleJournals = journals.filter((journal) =>
+      this.isPriceStale(journal.priceUpdatedAt, now),
+    );
+
+    if (staleJournals.length === 0) {
+      this.logger.debug(
+        `All active journals were updated within ${Math.round(PRICE_REFRESH_INTERVAL_MS / 60000)}m. skipping market API calls.`,
+      );
+      return;
+    }
+
+    // 2. 심볼 중복 제거 (stale 대상만 호출)
+    const uniqueSymbols = [...new Set(staleJournals.map((j) => j.symbol))];
+
+    this.logger.debug(
+      `Refreshing ${staleJournals.length}/${journals.length} journals (${uniqueSymbols.length} unique symbols).`,
+    );
 
     // 3. 가격 조회 및 업데이트
     for (const symbol of uniqueSymbols) {
       if (!symbol) continue;
 
       try {
-        const now = Date.now();
-        if (now < this.rateLimitCooldownUntilMs) {
+        const requestNow = Date.now();
+        if (requestNow < this.rateLimitCooldownUntilMs) {
           this.logger.warn(
             `Rate limit cooldown active. Skipping symbol '${symbol}' until ${new Date(this.rateLimitCooldownUntilMs).toISOString()}`,
           );
@@ -85,7 +116,7 @@ export class MarketService implements OnModuleInit {
         let targetSymbol = symbol;
 
         const cached = this.priceCache.get(symbol);
-        if (cached && cached.expiresAtMs > now) {
+        if (cached && cached.expiresAtMs > requestNow) {
           currentPrice = cached.price;
         }
 
@@ -93,16 +124,16 @@ export class MarketService implements OnModuleInit {
 
         try {
           // 1차 시도: 입력된 심볼 그대로 조회
-          if (!currentPrice) {
+          if (currentPrice === null) {
             this.logger.debug(`Fetching quote for: ${symbol}`);
             await this.delay(REQUEST_DELAY_MS);
 
             const quote: any = await this.yahooFinance.quote(symbol);
-            if (quote && quote.regularMarketPrice) {
+            if (quote && Number.isFinite(quote.regularMarketPrice)) {
               currentPrice = quote.regularMarketPrice;
               this.priceCache.set(symbol, {
                 price: currentPrice ?? 0,
-                expiresAtMs: now + PRICE_CACHE_TTL_MS,
+                expiresAtMs: requestNow + PRICE_CACHE_TTL_MS,
               });
               this.onMarketRequestSucceeded();
             }
@@ -119,7 +150,7 @@ export class MarketService implements OnModuleInit {
 
         // 2차 시도: 검색 API로 심볼 찾기 (1차 실패 시)
         // 단, 429(레이트리밋)인 경우 검색까지 연쇄 호출하면 더 악화되므로 시도하지 않음.
-        if (!currentPrice && !quoteFailedDueToRateLimit) {
+        if (currentPrice === null && !quoteFailedDueToRateLimit) {
           try {
             this.logger.debug(`Searching symbol for: ${symbol}`);
             await this.delay(REQUEST_DELAY_MS);
@@ -133,12 +164,12 @@ export class MarketService implements OnModuleInit {
               await this.delay(REQUEST_DELAY_MS);
 
               const quote: any = await this.yahooFinance.quote(foundSymbol);
-              if (quote && quote.regularMarketPrice) {
+              if (quote && Number.isFinite(quote.regularMarketPrice)) {
                 currentPrice = quote.regularMarketPrice;
                 targetSymbol = foundSymbol; // 추후 DB 업데이트 고려
                 this.priceCache.set(symbol, {
                   price: currentPrice ?? 0,
-                  expiresAtMs: now + PRICE_CACHE_TTL_MS,
+                  expiresAtMs: requestNow + PRICE_CACHE_TTL_MS,
                 });
                 this.onMarketRequestSucceeded();
               }
@@ -153,7 +184,7 @@ export class MarketService implements OnModuleInit {
           }
         }
 
-        if (currentPrice) {
+        if (currentPrice !== null) {
           // 해당 심볼을 가진 모든 일지 업데이트
           const targetJournals = journals.filter((j) => j.symbol === symbol); // 원래 심볼로 필터링
           for (const journal of targetJournals) {
@@ -214,5 +245,17 @@ export class MarketService implements OnModuleInit {
   private onMarketRequestSucceeded() {
     // 성공 시 백오프를 초기값으로 리셋(과도한 쿨다운 누적 방지)
     this.rateLimitBackoffMs = RATE_LIMIT_BACKOFF_INITIAL_MS;
+  }
+
+  private isPriceStale(
+    priceUpdatedAt: Date | string | null,
+    nowMs: number,
+  ): boolean {
+    if (!priceUpdatedAt) return true;
+
+    const updatedAtMs = new Date(priceUpdatedAt).getTime();
+    if (Number.isNaN(updatedAtMs)) return true;
+
+    return nowMs - updatedAtMs >= PRICE_REFRESH_INTERVAL_MS;
   }
 }
