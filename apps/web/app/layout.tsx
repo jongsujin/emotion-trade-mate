@@ -5,14 +5,12 @@ import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister'
 
 const APP_NAME = 'EmotionTrade'
 const APP_DESCRIPTION = '감정 기반 투자 일지'
-const THEME_COLOR = '#68CCF4'
 
 export const metadata: Metadata = {
   title: APP_NAME,
   description: APP_DESCRIPTION,
   applicationName: APP_NAME,
   manifest: '/manifest.webmanifest',
-  themeColor: THEME_COLOR,
   appleWebApp: {
     capable: true,
     title: APP_NAME,

@@ -18,3 +18,9 @@ export const UPDATE_USER_QUERY = /* sql */ `
   WHERE id = $1
   RETURNING *
 `;
+
+export const DELETE_USER_QUERY = /* sql */ `
+  DELETE FROM users
+  WHERE id = $1
+  RETURNING id
+`;

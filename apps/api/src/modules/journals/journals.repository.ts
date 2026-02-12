@@ -174,15 +174,20 @@ export class JournalsRepository {
           newTotalQuantity += event.quantity!;
           newTotalCost += event.price * event.quantity!;
         } else {
-          const averageCost = newTotalQuantity > 0 ? newTotalCost / newTotalQuantity : 0;
+          const averageCost =
+            newTotalQuantity > 0 ? newTotalCost / newTotalQuantity : 0;
           const tradeProfit = (event.price - averageCost) * event.quantity!;
 
           newRealizedProfit += tradeProfit;
           newTotalQuantity -= event.quantity!;
-          newTotalCost = Math.max(0, newTotalCost - averageCost * event.quantity!);
+          newTotalCost = Math.max(
+            0,
+            newTotalCost - averageCost * event.quantity!,
+          );
         }
 
-        const newAverageCost = newTotalQuantity > 0 ? newTotalCost / newTotalQuantity : 0;
+        const newAverageCost =
+          newTotalQuantity > 0 ? newTotalCost / newTotalQuantity : 0;
         const nextStatus =
           newTotalQuantity > 0 ? JournalStatus.OPEN : JournalStatus.CLOSED;
 
@@ -366,7 +371,7 @@ export class JournalsRepository {
     const currentPrice =
       journalData.currentPrice !== null
         ? Number(journalData.currentPrice)
-      : journalData.buyPrice;
+        : journalData.buyPrice;
 
     // 4. 손익 계산
     const totalValue = currentPrice * journalData.totalQuantity; // 현재 평가금액

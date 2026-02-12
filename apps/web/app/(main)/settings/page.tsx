@@ -11,7 +11,7 @@ import Statistics from '@/components/settings/Statistics'
 import AppInfo from '@/components/settings/AppInfo'
 import MyDataManagement from '@/components/settings/MyDataManagement'
 import { useGetMe } from '@/features/auth/hooks'
-import { logout } from '@/features/auth'
+import { deleteMe, logout } from '@/features/auth'
 import { useJournals } from '@/features/journal'
 import { getDashboardData } from '@/features/report'
 import { ROUTES } from '@/constants'
@@ -24,6 +24,7 @@ export default function SettingsPage() {
   const queryClient = useQueryClient()
   const [notifications, setNotifications] = useState(true)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false)
   const [actionError, setActionError] = useState<string | null>(null)
 
   const { data: me, isLoading: isMeLoading } = useGetMe()
@@ -61,9 +62,25 @@ export default function SettingsPage() {
     }
   }
 
-  const handleDeleteAccount = () => {
-    if (confirm('정말 탈퇴하시겠어요? 모든 데이터가 삭제됩니다.')) {
-      setActionError('회원 탈퇴 API는 아직 구현되지 않았습니다.')
+  const handleDeleteAccount = async () => {
+    if (!confirm('정말 탈퇴하시겠어요? 모든 데이터가 삭제됩니다.')) return
+
+    setActionError(null)
+    setIsDeletingAccount(true)
+    try {
+      const response = await deleteMe()
+      if (!response.success) {
+        setActionError(response.error || '회원 탈퇴에 실패했습니다.')
+        return
+      }
+
+      queryClient.clear()
+      router.replace(ROUTES.SIGNUP)
+      router.refresh()
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : '회원 탈퇴 중 오류가 발생했습니다.')
+    } finally {
+      setIsDeletingAccount(false)
     }
   }
 
@@ -114,9 +131,10 @@ export default function SettingsPage() {
           <div className="mx-4 h-px bg-[#F2F4F6]" />
           <button
             onClick={handleDeleteAccount}
+            disabled={isDeletingAccount}
             className="w-full rounded-2xl p-4 text-center text-[15px] font-medium text-[#FF6B6B] transition-all hover:bg-[#FFF0F0] active:scale-[0.98]"
           >
-            회원 탈퇴
+            {isDeletingAccount ? '회원 탈퇴 처리 중...' : '회원 탈퇴'}
           </button>
         </div>
 

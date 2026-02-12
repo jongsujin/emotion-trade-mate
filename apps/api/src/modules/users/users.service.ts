@@ -42,4 +42,8 @@ export class UsersService {
   async findById(id: number): Promise<UsersEntity | null> {
     return this.usersRepository.findById(id);
   }
+
+  async deleteById(id: number): Promise<boolean> {
+    return this.usersRepository.deleteById(id);
+  }
 }

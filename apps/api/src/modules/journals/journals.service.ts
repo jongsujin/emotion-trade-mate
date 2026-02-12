@@ -76,7 +76,10 @@ export class JournalsService {
       throw new Error('SELL 수량이 현재 보유 수량을 초과합니다.');
     }
 
-    if (dto.type === 'EMOTION' && (!dto.emotionCodes || dto.emotionCodes.length === 0)) {
+    if (
+      dto.type === 'EMOTION' &&
+      (!dto.emotionCodes || dto.emotionCodes.length === 0)
+    ) {
       throw new Error('EMOTION 이벤트에는 대표 감정 1개 이상이 필요합니다.');
     }
 

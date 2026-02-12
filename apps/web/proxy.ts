@@ -8,7 +8,7 @@ const PROTECTED_ROUTES = ['/dashboard', '/journal', '/report', '/settings']
 // 인증 페이지 목록 (로그인 상태에서 접근 불가)
 const AUTH_ROUTES = ['/login', '/signup']
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // 쿠키에서 accessToken 확인 (httpOnly 쿠키 이름: accessToken)
