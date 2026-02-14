@@ -15,6 +15,7 @@ import TitleSection from '@/components/common/TitleSection'
 import { EmptyState } from '@/components/common/EmptyState'
 import { useGetJournalDetail } from '@/features/journal'
 import { EMOTION_DATA, type EmotionType } from '@/constants/emotions'
+import { formatProfitWithSymbol } from '@/lib/utils'
 import type { InsightItem, KeywordItem, MemoTimelineEntry } from '@/types/reports'
 
 const KEYWORD_STOPWORDS = new Set([
@@ -68,6 +69,7 @@ function buildInsights(args: {
   dominantPercentage: number
   profitPercentage: number
   realizedProfit: number
+  symbol: string
   buyCount: number
   sellCount: number
   memoCount: number
@@ -77,6 +79,7 @@ function buildInsights(args: {
     dominantPercentage,
     profitPercentage,
     realizedProfit,
+    symbol,
     buyCount,
     sellCount,
     memoCount,
@@ -94,7 +97,7 @@ function buildInsights(args: {
 
   insights.push({
     title: profitPercentage >= 0 ? '평가손익이 플러스입니다' : '평가손익이 마이너스입니다',
-    description: `현재 수익률은 ${profitPercentage.toFixed(1)}%이고, 확정손익은 ${Math.round(realizedProfit).toLocaleString('ko-KR')}원입니다.`,
+    description: `현재 수익률은 ${profitPercentage.toFixed(1)}%이고, 확정손익은 ${formatProfitWithSymbol(realizedProfit, symbol, { withPlus: true })}입니다.`,
     type: profitPercentage >= 0 ? 'positive' : 'warning',
   })
 
@@ -273,6 +276,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
     dominantPercentage: dominant?.percentage || 0,
     profitPercentage: detail.metrics.profitPercentage,
     realizedProfit: detail.metrics.realizedProfit,
+    symbol: detail.journal.symbol,
     buyCount,
     sellCount,
     memoCount: memos.length,
@@ -318,7 +322,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
         )}
 
         {memoTimeline.length > 0 ? (
-          <ReportMemoTimeline memoTimeline={memoTimeline} />
+          <ReportMemoTimeline memoTimeline={memoTimeline} symbol={detail.journal.symbol} />
         ) : (
           <div className="rounded-2xl bg-white p-4 text-sm text-gray-500">
             메모 타임라인을 생성할 데이터가 없습니다.

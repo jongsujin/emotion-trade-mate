@@ -4,6 +4,7 @@ import { CalendarDays, FileText, PieChart, ReceiptText, Sparkles } from 'lucide-
 import { EMOTION_DATA } from '@/constants'
 import type { JournalFormProps } from '@/types/journals'
 import { Card } from '@/components/common/Card'
+import { inferCurrencyFromSymbol } from '@/lib/utils'
 
 const PRIMARY_EMOTION_CODES = [
   'CONFIDENT',
@@ -23,6 +24,7 @@ export default function JournalForm({
   setSelectedEmotion,
 }: JournalFormProps) {
   const emotions = PRIMARY_EMOTION_CODES.map((code) => EMOTION_DATA[code]).filter(Boolean)
+  const currencyLabel = inferCurrencyFromSymbol(formData.symbol || '') === 'USD' ? 'USD' : 'KRW'
   const todayLabel = new Date().toLocaleDateString('ko-KR', {
     year: 'numeric',
     month: 'short',
@@ -80,7 +82,7 @@ export default function JournalForm({
                 onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
                 className="w-full border-none bg-transparent text-lg font-semibold text-[#0f172a] placeholder:text-[#cbd5e1] focus:outline-none"
               />
-              <span className="text-sm font-medium text-[#94a3b8]">원</span>
+              <span className="text-sm font-medium text-[#94a3b8]">{currencyLabel}</span>
             </div>
           </Card>
 

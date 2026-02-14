@@ -42,6 +42,8 @@ export interface JournalHeaderProps {
   totalProfit: number
   avgReturn: number
   holdingCount: number
+  baseCurrency?: string
+  usdKrwRate?: number
 }
 
 /**
@@ -90,6 +92,7 @@ export interface JournalDetailEmotionTimeLineProps {
   totalRecords: number
   emotionHistory: JournalDetailEventProps[]
   buyPrice: number
+  symbol: string
 }
 
 /**

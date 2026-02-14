@@ -26,6 +26,7 @@ export default function JournalListPage() {
 
   const journals = response?.data?.content ?? []
   const summary = dashboardResponse?.data?.summary
+  const fx = dashboardResponse?.data?.fx
 
   const totalValuationProfit = summary?.unrealizedProfit ?? 0
   const totalActiveCost = summary?.totalCost ?? 0
@@ -38,6 +39,8 @@ export default function JournalListPage() {
           totalProfit={totalValuationProfit}
           avgReturn={avgReturn}
           holdingCount={journals.length}
+          baseCurrency={fx?.baseCurrency}
+          usdKrwRate={fx?.usdKrwRate}
         />
 
         {journals.length > 0 ? <JournalList journals={journals} /> : <JournalEmptyState />}
