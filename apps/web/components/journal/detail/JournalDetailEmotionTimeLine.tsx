@@ -1,11 +1,12 @@
 import { JournalDetailEmotionTimeLineProps } from '@/types/journals'
 import { EMOTION_DATA } from '@/constants/emotions'
-import { formatPrice } from '@/lib/utils'
+import { formatPriceWithSymbol, formatProfitWithSymbol } from '@/lib/utils'
 
 export default function JournalDetailEmotionTimeLine({
   totalRecords,
   emotionHistory,
   buyPrice,
+  symbol,
 }: JournalDetailEmotionTimeLineProps) {
   return (
     <div className="rounded-3xl bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
@@ -83,12 +84,14 @@ export default function JournalDetailEmotionTimeLine({
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-[#191F28]">₩{formatPrice(recordPrice)}</p>
+                  <p className="text-sm font-bold text-[#191F28]">
+                    {formatPriceWithSymbol(recordPrice, symbol)}
+                  </p>
                   {idx < emotionHistory.length - 1 && (
                     <p
                       className={`text-xs font-medium ${isUp ? 'text-[#FF6B6B]' : 'text-[#6C9EFF]'}`}
                     >
-                      {isUp ? '+' : ''}₩{formatPrice(Math.abs(priceDiff))}
+                      {formatProfitWithSymbol(priceDiff, symbol, { withPlus: true })}
                     </p>
                   )}
                 </div>

@@ -74,6 +74,7 @@ export default function JournalDetailPage({ params }: { params: Promise<{ id: st
             createdAt: event.createdAt,
           }))}
           buyPrice={journal.buyPrice}
+          symbol={journal.symbol}
         />
       </div>
 

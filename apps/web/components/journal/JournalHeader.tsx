@@ -8,6 +8,8 @@ export default function JournalHeader({
   totalProfit,
   avgReturn,
   holdingCount,
+  baseCurrency = 'KRW',
+  usdKrwRate,
 }: JournalHeaderProps) {
   const safeTotalProfit = Number.isFinite(totalProfit) ? totalProfit : 0
   const safeAvgReturn = Number.isFinite(avgReturn) ? avgReturn : 0
@@ -59,9 +61,15 @@ export default function JournalHeader({
       </div>
 
       <div className="mt-3 flex items-center justify-between">
-        <p className="text-xs text-[#94a3b8]">
-          보유 종목 {holdingCount}개 · 평균 {formatDecimal(safeAvgReturn, { maximumFractionDigits: 2 })}%
-        </p>
+        <div className="space-y-1">
+          <p className="text-xs text-[#94a3b8]">
+            보유 종목 {holdingCount}개 · 평균 {formatDecimal(safeAvgReturn, { maximumFractionDigits: 2 })}%
+          </p>
+          <p className="text-[11px] text-[#94a3b8]">
+            기준통화: {baseCurrency}
+            {usdKrwRate ? ` · 1 USD = ${formatDecimal(usdKrwRate, { maximumFractionDigits: 2 })} KRW` : ''}
+          </p>
+        </div>
         <Link
           href={ROUTES.JOURNAL.CREATE}
           className="text-xs font-semibold text-[#67ccf4] transition-opacity hover:opacity-80"

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { EMOTION_DATA, EmotionType } from '@/constants/emotions'
-import { formatKrwAmount, formatPercent } from '@/lib/utils'
+import { formatPercent, formatProfitWithSymbol } from '@/lib/utils'
 import { JournalItemProps } from '@/types/journals'
 
 export default function JournalItem({ journal, href }: JournalItemProps) {
@@ -17,6 +17,8 @@ export default function JournalItem({ journal, href }: JournalItemProps) {
 
   const memo = journal.latestEventMemo?.trim() || '기록된 메모가 없습니다.'
   const positionLabel = journal.totalQuantity > 0 ? '보유중' : '종료'
+  const realizedReturnRate =
+    journal.totalCost > 0 ? (journal.realizedProfit / journal.totalCost) * 100 : 0
 
   return (
     <Link href={href} className="block">
@@ -37,10 +39,10 @@ export default function JournalItem({ journal, href }: JournalItemProps) {
 
           <div className="text-right">
             <p className={`text-lg font-bold ${isProfit ? 'text-[#10b981]' : 'text-[#f43f5e]'}`}>
-              {isProfit ? '+' : '-'}{formatKrwAmount(Math.abs(journal.realizedProfit))}원
+              {formatProfitWithSymbol(journal.realizedProfit, journal.symbol, { withPlus: true })}
             </p>
             <p className={`text-xs font-medium ${isProfit ? 'text-[#059669b3]' : 'text-[#e11d48b3]'}`}>
-              {formatPercent(journal.realizedProfit, { withSign: true, maximumFractionDigits: 1 })}
+              {formatPercent(realizedReturnRate, { withSign: true, maximumFractionDigits: 1 })}
             </p>
           </div>
         </div>

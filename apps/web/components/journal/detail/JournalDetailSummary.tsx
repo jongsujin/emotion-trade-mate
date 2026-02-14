@@ -1,4 +1,4 @@
-import { formatKrwAmount, formatPercent, formatPrice, formatPriceWithSymbol } from '@/lib/utils'
+import { formatPercent, formatPriceWithSymbol, formatProfitWithSymbol } from '@/lib/utils'
 import { JournalDetailSummaryProps } from '@/types/journals'
 
 export default function JournalDetailSummary({
@@ -33,20 +33,20 @@ export default function JournalDetailSummary({
         <div>
           <p className="mb-1 text-xs font-medium text-[#9CA3AF]">평가 손익</p>
           <p className={`text-base font-bold ${profitColor}`}>
-            {isProfit ? '+' : ''}
-            {formatKrwAmount(profit)}원
+            {formatProfitWithSymbol(profit, symbol, { withPlus: true })}
           </p>
         </div>
         <div>
           <p className="mb-1 text-xs font-medium text-[#9CA3AF]">확정 손익</p>
           <p className={`text-base font-bold ${realizedProfitColor}`}>
-            {realizedProfit > 0 ? '+' : ''}
-            {formatKrwAmount(realizedProfit)}원
+            {formatProfitWithSymbol(realizedProfit, symbol, { withPlus: true })}
           </p>
         </div>
         <div>
           <p className="mb-1 text-xs font-medium text-[#9CA3AF]">평단가</p>
-          <p className="text-base font-bold text-[#374151]">₩{formatPrice(buyPrice)}</p>
+          <p className="text-base font-bold text-[#374151]">
+            {formatPriceWithSymbol(buyPrice, symbol)}
+          </p>
         </div>
         <div>
           <p className="mb-1 text-xs font-medium text-[#9CA3AF]">보유 수량</p>

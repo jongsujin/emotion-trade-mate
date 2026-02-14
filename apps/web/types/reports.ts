@@ -80,6 +80,7 @@ export interface MemoTimelineEntry {
 
 export interface ReportMemoTimelineProps {
   memoTimeline: MemoTimelineEntry[]
+  symbol: string
 }
 
 export interface InsightItem {

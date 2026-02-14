@@ -26,8 +26,8 @@ export const GET_EMOTION_PERFORMANCE_QUERY = /* sql */ `
           WHEN UPPER(ej.symbol) ~ '^[0-9]{6}$'
             OR UPPER(ej.symbol) LIKE '%.KS'
             OR UPPER(ej.symbol) LIKE '%.KQ'
-          THEN 1
-          ELSE $2
+          THEN 1::numeric
+          ELSE $2::numeric
         END
       ),
       0
@@ -60,8 +60,8 @@ export const GET_DASHBOARD_SUMMARY_QUERY = `
         WHEN UPPER(j.symbol) ~ '^[0-9]{6}$'
           OR UPPER(j.symbol) LIKE '%.KS'
           OR UPPER(j.symbol) LIKE '%.KQ'
-        THEN 1
-        ELSE $2
+        THEN 1::numeric
+        ELSE $2::numeric
       END AS fx_multiplier
     FROM journals j
     LEFT JOIN latest_event_price lep ON lep.journal_id = j.id
@@ -94,8 +94,8 @@ export const GET_RECENT_PNL_QUERY = `
         WHEN UPPER(j.symbol) ~ '^[0-9]{6}$'
           OR UPPER(j.symbol) LIKE '%.KS'
           OR UPPER(j.symbol) LIKE '%.KQ'
-        THEN 1
-        ELSE $2
+        THEN 1::numeric
+        ELSE $2::numeric
       END
     ) as "profit"
   FROM journals j

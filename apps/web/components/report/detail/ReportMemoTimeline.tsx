@@ -1,7 +1,7 @@
-import { formatPercent, formatPrice } from '@/lib/utils'
+import { formatPercent, formatPriceWithSymbol } from '@/lib/utils'
 import { ReportMemoTimelineProps } from '@/types/reports'
 
-export default function ReportMemoTimeline({ memoTimeline }: ReportMemoTimelineProps) {
+export default function ReportMemoTimeline({ memoTimeline, symbol }: ReportMemoTimelineProps) {
   return (
     <div className="rounded-2xl bg-white p-4">
       <div className="flex items-center gap-2">
@@ -23,7 +23,9 @@ export default function ReportMemoTimeline({ memoTimeline }: ReportMemoTimelineP
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-semibold text-gray-900">₩{formatPrice(entry.price)}</p>
+                <p className="text-sm font-semibold text-gray-900">
+                  {formatPriceWithSymbol(entry.price, symbol)}
+                </p>
                 <p
                   className={`text-xs font-medium ${
                     entry.priceChange >= 0 ? 'text-red-500' : 'text-blue-500'

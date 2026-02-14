@@ -1,9 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   HttpException,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -45,14 +47,14 @@ export class JournalsController {
         message: 'Journal created successfully',
       };
     } catch (error) {
-      // 에러 발생 시 400 Bad Request 반환
-      throw new HttpException(
-        {
-          success: false,
-          message: error.message || 'Journal creation failed',
-        },
-        400,
-      );
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new BadRequestException({
+        success: false,
+        message: 'Journal creation failed',
+      });
     }
   }
 
@@ -102,7 +104,11 @@ export class JournalsController {
     @Param('id') id: number,
   ): Promise<JournalDetailResponseDto | null> {
     const userId = user.userId;
-    return await this.journalsService.getJournalDetail(userId, id);
+    const detail = await this.journalsService.getJournalDetail(userId, id);
+    if (!detail) {
+      throw new NotFoundException('Journal not found or access denied');
+    }
+    return detail;
   }
 
   @Patch(':id')
